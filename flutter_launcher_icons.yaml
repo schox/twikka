@@ -1,0 +1,10 @@
+flutter_launcher_icons:
+  android: true
+  ios: true
+  remove_alpha_ios: true
+
+  image_path_ios: "assets/icons/twikka_icon_wbg.png"
+  image_path_android: "assets/icons/twikka_icon_wbg.png"
+
+  adaptive_icon_foreground: "assets/icons/twikka_icon_fg.png"
+  adaptive_icon_background: "assets/icons/twikka_icon_bkg.png"

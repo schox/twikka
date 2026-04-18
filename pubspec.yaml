@@ -1,0 +1,103 @@
+name: twikka
+description: "Twikka — your AI-driven training companion"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management
+  flutter_riverpod: ^3.0.0
+  riverpod_annotation: ^4.0.0
+
+  # Routing
+  go_router: ^17.2.1
+
+  # Models / serialization
+  freezed_annotation: ^3.1.0
+  json_annotation: ^4.9.0
+
+  # Local persistence
+  shared_preferences: ^2.3.3
+
+  # Charts (for stats screen)
+  fl_chart: ^1.1.1
+
+  # Typography (Fraunces + Plus Jakarta Sans)
+  google_fonts: ^6.2.1
+
+  # Utilities
+  intl: ^0.20.1
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+  # Code generation
+  build_runner: ^2.7.1
+  riverpod_generator: ^4.0.0+1
+  riverpod_lint: ^3.0.0
+  custom_lint: ^0.8.0
+  freezed: ^3.2.3
+  json_serializable: ^6.9.0
+
+  # Native asset generation
+  flutter_launcher_icons: ^0.14.3
+  flutter_native_splash: ^2.4.4
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/icons/
+    - assets/images/
+
+  fonts:
+    - family: Nunito
+      fonts:
+        - asset: fonts/Nunito-Black.ttf
+          weight: 900
+        - asset: fonts/Nunito-BlackItalic.ttf
+          weight: 900
+          style: italic
+        - asset: fonts/Nunito-Bold.ttf
+          weight: 700
+        - asset: fonts/Nunito-BoldItalic.ttf
+          weight: 700
+          style: italic
+        - asset: fonts/Nunito-ExtraBold.ttf
+          weight: 800
+        - asset: fonts/Nunito-ExtraBoldItalic.ttf
+          weight: 800
+          style: italic
+        - asset: fonts/Nunito-ExtraLight.ttf
+          weight: 200
+        - asset: fonts/Nunito-ExtraLightItalic.ttf
+          weight: 200
+          style: italic
+        - asset: fonts/Nunito-Italic.ttf
+          style: italic
+        - asset: fonts/Nunito-Light.ttf
+          weight: 300
+        - asset: fonts/Nunito-LightItalic.ttf
+          weight: 300
+          style: italic
+        - asset: fonts/Nunito-Medium.ttf
+          weight: 500
+        - asset: fonts/Nunito-MediumItalic.ttf
+          weight: 500
+          style: italic
+        - asset: fonts/Nunito-Regular.ttf
+          weight: 400
+        - asset: fonts/Nunito-SemiBold.ttf
+          weight: 600
+        - asset: fonts/Nunito-SemiBoldItalic.ttf
+          weight: 600
+          style: italic

@@ -1,0 +1,5 @@
+package com.novansa.twikka
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity : FlutterActivity()
