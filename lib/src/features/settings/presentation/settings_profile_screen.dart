@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/branding/abstract_avatar.dart';
 import '../../../core/theme/theme_constants.dart';
 import '../../auth/data/auth_state.dart';
-import '../../auth/data/fake_auth_notifier.dart';
+import '../../auth/data/clerk_auth_notifier.dart';
 import '../../coach/data/coach.dart';
 
 class SettingsProfileScreen extends ConsumerWidget {
@@ -12,7 +12,7 @@ class SettingsProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final auth = ref.watch(fakeAuthProvider);
+    final auth = ref.watch(clerkAuthProvider);
     final user = auth is AuthLoggedIn ? auth : null;
     return Scaffold(
       appBar: AppBar(title: const Text('Profile')),

@@ -10,4 +10,8 @@ class AppEnv {
     'CONVEX_CLIENT_ID',
     defaultValue: 'twikka-flutter-dev',
   );
+
+  static const clerkPublishableKey = String.fromEnvironment(
+    'CLERK_PUBLISHABLE_KEY',
+  );
 }

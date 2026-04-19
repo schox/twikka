@@ -5,7 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../data/models/system_config.dart';
 import '../data/providers/system_config_provider.dart';
 import '../features/auth/data/auth_state.dart';
-import '../features/auth/data/fake_auth_notifier.dart';
+import '../features/auth/data/clerk_auth_notifier.dart';
 import '../features/auth/presentation/login_screen.dart';
 import '../features/auth/presentation/signup_screen.dart';
 import '../features/auth/presentation/verify_code_screen.dart';
@@ -35,7 +35,7 @@ GoRouter appRouter(Ref ref) {
   // refreshListenable so go_router re-runs redirect against freshly read state
   // — rebuilding the GoRouter itself would collide on _rootKey/_shellKey.
   final refresh = ValueNotifier<int>(0);
-  ref.listen(fakeAuthProvider, (_, _) => refresh.value++);
+  ref.listen(clerkAuthProvider, (_, _) => refresh.value++);
   ref.listen(systemConfigProvider, (_, _) => refresh.value++);
   ref.onDispose(refresh.dispose);
 
@@ -45,7 +45,7 @@ GoRouter appRouter(Ref ref) {
     debugLogDiagnostics: true,
     refreshListenable: refresh,
     redirect: (context, state) {
-      final auth = ref.read(fakeAuthProvider);
+      final auth = ref.read(clerkAuthProvider);
       final systemConfig = ref.read(systemConfigProvider).asData?.value;
       return _redirect(auth, systemConfig, state);
     },

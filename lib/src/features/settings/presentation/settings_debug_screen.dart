@@ -6,7 +6,7 @@ import '../../../data/models/system_config.dart';
 import '../../../data/providers/coach_personas_provider.dart';
 import '../../../data/providers/system_config_provider.dart';
 import '../../auth/data/auth_state.dart';
-import '../../auth/data/fake_auth_notifier.dart';
+import '../../auth/data/clerk_auth_notifier.dart';
 import '../../coach/data/chat_notifier.dart';
 
 class SettingsDebugScreen extends ConsumerWidget {
@@ -14,7 +14,7 @@ class SettingsDebugScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final auth = ref.watch(fakeAuthProvider);
+    final auth = ref.watch(clerkAuthProvider);
     final onboardingComplete = auth is AuthLoggedIn ? auth.onboardingComplete : false;
     final systemConfig = ref.watch(systemConfigProvider);
     final personas = ref.watch(coachPersonasProvider);
@@ -26,18 +26,11 @@ class SettingsDebugScreen extends ConsumerWidget {
           SwitchListTile(
             value: onboardingComplete,
             onChanged: (v) async {
+              final notifier = ref.read(clerkAuthProvider.notifier);
               if (v) {
-                await ref.read(fakeAuthProvider.notifier).completeOnboarding();
+                await notifier.completeOnboarding();
               } else {
-                final current = ref.read(fakeAuthProvider);
-                if (current is AuthLoggedIn) {
-                  await ref.read(fakeAuthProvider.notifier).signOut();
-                  await ref.read(fakeAuthProvider.notifier).requestSignupCode(
-                        email: current.email,
-                        displayName: current.displayName,
-                      );
-                  await ref.read(fakeAuthProvider.notifier).verifyCode('000000');
-                }
+                await notifier.resetOnboarding();
               }
               ref.read(chatProvider.notifier).reset();
             },

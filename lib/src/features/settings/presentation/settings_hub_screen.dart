@@ -7,7 +7,7 @@ import '../../../core/theme/theme_constants.dart';
 import '../../../core/widgets/notifications_bell.dart';
 import '../../../routing/app_routes.dart';
 import '../../auth/data/auth_state.dart';
-import '../../auth/data/fake_auth_notifier.dart';
+import '../../auth/data/clerk_auth_notifier.dart';
 import '../../coach/data/coach.dart';
 
 class SettingsHubScreen extends ConsumerWidget {
@@ -28,7 +28,7 @@ class SettingsHubScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final auth = ref.watch(fakeAuthProvider);
+    final auth = ref.watch(clerkAuthProvider);
     final user = auth is AuthLoggedIn ? auth : null;
     final theme = Theme.of(context);
 
@@ -78,7 +78,7 @@ class SettingsHubScreen extends ConsumerWidget {
           ListTile(
             leading: const Icon(Icons.logout, color: twError),
             title: const Text('Sign out', style: TextStyle(color: twError)),
-            onTap: () => ref.read(fakeAuthProvider.notifier).signOut(),
+            onTap: () => ref.read(clerkAuthProvider.notifier).signOut(),
           ),
         ],
       ),

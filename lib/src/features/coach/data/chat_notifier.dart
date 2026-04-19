@@ -1,7 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../auth/data/auth_state.dart';
-import '../../auth/data/fake_auth_notifier.dart';
+import '../../auth/data/clerk_auth_notifier.dart';
 import 'chat_message.dart';
 import 'coach.dart';
 
@@ -21,7 +21,7 @@ class Chat extends _$Chat {
 
   @override
   List<ChatMessage> build() {
-    final auth = ref.watch(fakeAuthProvider);
+    final auth = ref.watch(clerkAuthProvider);
     final isFirstRun = auth is AuthLoggedIn && !auth.onboardingComplete;
     _seq = 0;
     return isFirstRun ? _onboardingSeed() : _midConversationSeed();

@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/theme/theme_constants.dart';
 import '../../../routing/app_routes.dart';
 import '../data/auth_state.dart';
-import '../data/fake_auth_notifier.dart';
+import '../data/clerk_auth_notifier.dart';
 
 class VerifyCodeScreen extends ConsumerStatefulWidget {
   const VerifyCodeScreen({super.key});
@@ -31,7 +31,7 @@ class _VerifyCodeScreenState extends ConsumerState<VerifyCodeScreen> {
       _submitting = true;
       _errorText = null;
     });
-    final ok = await ref.read(fakeAuthProvider.notifier).verifyCode(_codeController.text);
+    final ok = await ref.read(clerkAuthProvider.notifier).verifyCode(_codeController.text);
     if (!mounted) return;
     setState(() => _submitting = false);
     if (!ok) {
@@ -46,14 +46,14 @@ class _VerifyCodeScreenState extends ConsumerState<VerifyCodeScreen> {
   }
 
   Future<void> _changeEmail() async {
-    await ref.read(fakeAuthProvider.notifier).cancelCodeEntry();
+    await ref.read(clerkAuthProvider.notifier).cancelCodeEntry();
     if (!mounted) return;
     context.goNamed(AppRoute.welcome.name);
   }
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(fakeAuthProvider);
+    final state = ref.watch(clerkAuthProvider);
     final email = state is AuthAwaitingCode ? state.email : '';
     final theme = Theme.of(context);
 

@@ -17,6 +17,10 @@ dependencies:
 
   # Backend
   convex_flutter: ^3.0.1
+  clerk_auth: ^0.0.14-beta
+
+  # Platform integration
+  path_provider: ^2.1.4
 
   # Routing
   go_router: ^17.2.1

@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/theme_constants.dart';
 import '../../../routing/app_routes.dart';
-import '../data/fake_auth_notifier.dart';
+import '../data/clerk_auth_notifier.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -27,7 +27,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _submitting = true);
-    await ref.read(fakeAuthProvider.notifier).requestLoginCode(_emailController.text);
+    await ref.read(clerkAuthProvider.notifier).requestLoginCode(_emailController.text);
     if (!mounted) return;
     setState(() => _submitting = false);
     context.goNamed(AppRoute.verifyCode.name);
