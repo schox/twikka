@@ -1,0 +1,12 @@
+{
+  "name": "twikka-convex",
+  "private": true,
+  "description": "Convex backend for Twikka (Flutter client in the same repo root).",
+  "scripts": {
+    "convex:dev": "convex dev",
+    "convex:deploy": "convex deploy"
+  },
+  "dependencies": {
+    "convex": "^1.17.0"
+  }
+}
