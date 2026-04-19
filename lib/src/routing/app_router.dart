@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../data/models/system_config.dart';
+import '../data/providers/system_config_provider.dart';
 import '../features/auth/data/auth_state.dart';
 import '../features/auth/data/fake_auth_notifier.dart';
 import '../features/auth/presentation/login_screen.dart';
@@ -9,6 +11,8 @@ import '../features/auth/presentation/signup_screen.dart';
 import '../features/auth/presentation/verify_code_screen.dart';
 import '../features/auth/presentation/welcome_screen.dart';
 import '../features/coach/presentation/coach_screen.dart';
+import '../features/gating/presentation/offline_screen.dart';
+import '../features/gating/presentation/update_required_screen.dart';
 import '../features/settings/presentation/settings_about_screen.dart';
 import '../features/settings/presentation/settings_debug_screen.dart';
 import '../features/settings/presentation/settings_hub_screen.dart';
@@ -28,13 +32,24 @@ final _shellKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
 @Riverpod(keepAlive: true)
 GoRouter appRouter(Ref ref) {
   final auth = ref.watch(fakeAuthProvider);
+  final systemConfig = ref.watch(systemConfigProvider).asData?.value;
 
   return GoRouter(
     navigatorKey: _rootKey,
     initialLocation: AppPaths.coach,
     debugLogDiagnostics: true,
-    redirect: (context, state) => _redirect(auth, state),
+    redirect: (context, state) => _redirect(auth, systemConfig, state),
     routes: [
+      GoRoute(
+        path: AppPaths.offline,
+        name: AppRoute.offline.name,
+        builder: (_, _) => const OfflineScreen(),
+      ),
+      GoRoute(
+        path: AppPaths.updateRequired,
+        name: AppRoute.updateRequired.name,
+        builder: (_, _) => const UpdateRequiredScreen(),
+      ),
       GoRoute(
         path: AppPaths.welcome,
         name: AppRoute.welcome.name,
@@ -112,8 +127,17 @@ GoRouter appRouter(Ref ref) {
   );
 }
 
-String? _redirect(AuthState auth, GoRouterState state) {
+String? _redirect(
+  AuthState auth,
+  SystemConfig? systemConfig,
+  GoRouterState state,
+) {
   final loc = state.matchedLocation;
+
+  if (systemConfig != null && !systemConfig.available) {
+    return loc == AppPaths.offline ? null : AppPaths.offline;
+  }
+
   final onAuthScreen = loc == AppPaths.welcome ||
       loc == AppPaths.login ||
       loc == AppPaths.signup ||
@@ -125,6 +149,11 @@ String? _redirect(AuthState auth, GoRouterState state) {
     case AuthAwaitingCode():
       return loc == AppPaths.verifyCode ? null : AppPaths.verifyCode;
     case AuthLoggedIn():
-      return onAuthScreen ? AppPaths.coach : null;
+      if (onAuthScreen ||
+          loc == AppPaths.offline ||
+          loc == AppPaths.updateRequired) {
+        return AppPaths.coach;
+      }
+      return null;
   }
 }

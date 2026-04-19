@@ -40,7 +40,7 @@ final class FakeAuthProvider extends $NotifierProvider<FakeAuth, AuthState> {
   }
 }
 
-String _$fakeAuthHash() => r'a3706b658fee5b54a60257f59bfeb248ce98bd55';
+String _$fakeAuthHash() => r'697419e0115552758e906702ddcedac6fb72598b';
 
 abstract class _$FakeAuth extends $Notifier<AuthState> {
   AuthState build();

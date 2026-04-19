@@ -12,6 +12,8 @@ enum AppRoute {
   settingsSubscription,
   settingsAbout,
   settingsDebug,
+  offline,
+  updateRequired,
 }
 
 class AppPaths {
@@ -32,4 +34,7 @@ class AppPaths {
   static const settingsSubscription = 'subscription';
   static const settingsAbout = 'about';
   static const settingsDebug = 'debug';
+
+  static const offline = '/offline';
+  static const updateRequired = '/update-required';
 }
