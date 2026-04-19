@@ -31,14 +31,24 @@ final _shellKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
 
 @Riverpod(keepAlive: true)
 GoRouter appRouter(Ref ref) {
-  final auth = ref.watch(fakeAuthProvider);
-  final systemConfig = ref.watch(systemConfigProvider).asData?.value;
+  // Build the router exactly once. Changes to auth / system_config poke
+  // refreshListenable so go_router re-runs redirect against freshly read state
+  // — rebuilding the GoRouter itself would collide on _rootKey/_shellKey.
+  final refresh = ValueNotifier<int>(0);
+  ref.listen(fakeAuthProvider, (_, _) => refresh.value++);
+  ref.listen(systemConfigProvider, (_, _) => refresh.value++);
+  ref.onDispose(refresh.dispose);
 
   return GoRouter(
     navigatorKey: _rootKey,
     initialLocation: AppPaths.coach,
     debugLogDiagnostics: true,
-    redirect: (context, state) => _redirect(auth, systemConfig, state),
+    refreshListenable: refresh,
+    redirect: (context, state) {
+      final auth = ref.read(fakeAuthProvider);
+      final systemConfig = ref.read(systemConfigProvider).asData?.value;
+      return _redirect(auth, systemConfig, state);
+    },
     routes: [
       GoRoute(
         path: AppPaths.offline,
