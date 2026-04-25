@@ -6,10 +6,7 @@ import '../data/models/system_config.dart';
 import '../data/providers/system_config_provider.dart';
 import '../features/auth/data/auth_state.dart';
 import '../features/auth/data/clerk_auth_notifier.dart';
-import '../features/auth/presentation/login_screen.dart';
-import '../features/auth/presentation/signup_screen.dart';
-import '../features/auth/presentation/verify_code_screen.dart';
-import '../features/auth/presentation/welcome_screen.dart';
+import '../features/auth/presentation/auth_screen.dart';
 import '../features/coach/presentation/coach_screen.dart';
 import '../features/gating/presentation/offline_screen.dart';
 import '../features/gating/presentation/update_required_screen.dart';
@@ -61,24 +58,9 @@ GoRouter appRouter(Ref ref) {
         builder: (_, _) => const UpdateRequiredScreen(),
       ),
       GoRoute(
-        path: AppPaths.welcome,
-        name: AppRoute.welcome.name,
-        builder: (_, _) => const WelcomeScreen(),
-      ),
-      GoRoute(
-        path: AppPaths.login,
-        name: AppRoute.login.name,
-        builder: (_, _) => const LoginScreen(),
-      ),
-      GoRoute(
-        path: AppPaths.signup,
-        name: AppRoute.signup.name,
-        builder: (_, _) => const SignupScreen(),
-      ),
-      GoRoute(
-        path: AppPaths.verifyCode,
-        name: AppRoute.verifyCode.name,
-        builder: (_, _) => const VerifyCodeScreen(),
+        path: AppPaths.auth,
+        name: AppRoute.auth.name,
+        builder: (_, _) => const AuthScreen(),
       ),
       ShellRoute(
         navigatorKey: _shellKey,
@@ -148,16 +130,12 @@ String? _redirect(
     return loc == AppPaths.offline ? null : AppPaths.offline;
   }
 
-  final onAuthScreen = loc == AppPaths.welcome ||
-      loc == AppPaths.login ||
-      loc == AppPaths.signup ||
-      loc == AppPaths.verifyCode;
+  final onAuthScreen = loc == AppPaths.auth;
 
   switch (auth) {
     case AuthLoggedOut():
-      return onAuthScreen ? null : AppPaths.welcome;
     case AuthAwaitingCode():
-      return loc == AppPaths.verifyCode ? null : AppPaths.verifyCode;
+      return onAuthScreen ? null : AppPaths.auth;
     case AuthLoggedIn():
       if (onAuthScreen ||
           loc == AppPaths.offline ||

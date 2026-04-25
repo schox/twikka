@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:clerk_auth/clerk_auth.dart';
 import 'package:convex_flutter/convex_flutter.dart';
@@ -8,6 +9,14 @@ import '../../../core/services/clerk_service.dart';
 import 'auth_state.dart';
 
 part 'clerk_auth_notifier.g.dart';
+
+/// Outcome of an auth-mutating call — UI uses this to render inline errors.
+typedef AuthResult = ({bool ok, String? errorMessage});
+
+/// Outcome of probeEmail — adds [exists] for the morph screen's branch.
+typedef EmailProbeResult = ({bool ok, bool exists, String? errorMessage});
+
+const _ok = (ok: true, errorMessage: null);
 
 @Riverpod(keepAlive: true)
 class ClerkAuth extends _$ClerkAuth {
@@ -21,8 +30,6 @@ class ClerkAuth extends _$ClerkAuth {
       _convexHandle = null;
     });
     final initial = _computeState();
-    // Hook up the Convex token binding if we came back with an existing
-    // Clerk session (e.g., persistor restored a signed-in user on launch).
     _syncConvexAuth(initial);
     return initial;
   }
@@ -33,7 +40,7 @@ class ClerkAuth extends _$ClerkAuth {
       return AuthLoggedIn(
         email: user.email ?? '',
         displayName: user.firstName ?? user.email ?? '',
-        // TODO: persist onboarding state on the Convex user doc (next session).
+        // TODO: persist onboarding state on the Convex user doc.
         onboardingComplete: true,
       );
     }
@@ -64,7 +71,7 @@ class ClerkAuth extends _$ClerkAuth {
 
     if (signedIn && !bound) {
       _convexHandle = await ConvexClient.instance.setAuthWithRefresh(
-        // Clerk's Convex integration injects aud: "convex" into the default
+        // Clerk's Convex integration injects aud:"convex" into the default
         // session token — no dedicated JWT template — so we request the
         // default token (no templateName) and Convex validates the aud
         // claim against applicationID: "convex" in auth.config.ts.
@@ -112,27 +119,53 @@ class ClerkAuth extends _$ClerkAuth {
 
   void _setState(AuthState next) {
     state = next;
-    // Convex binding is a side-effect; don't await.
     _syncConvexAuth(next);
   }
 
-  Future<void> requestLoginCode(String email) async {
+  String _readableClerkError(ClerkError err) =>
+      err.argument?.isNotEmpty == true
+          ? err.argument!
+          : (err.message.isNotEmpty
+              ? err.message
+              : 'Something went wrong. Please try again.');
+
+  /// Asks Clerk's Backend API (via a Convex action) whether the email already
+  /// has a user. Drives the morph screen's sign-in vs sign-up branch.
+  Future<EmailProbeResult> probeEmail(String email) async {
+    try {
+      final raw = await ConvexClient.instance.action(
+        name: 'auth:probeEmail',
+        args: {'email': email.trim()},
+      );
+      final decoded = jsonDecode(raw) as Map<String, dynamic>;
+      return (
+        ok: true,
+        exists: decoded['exists'] as bool,
+        errorMessage: null,
+      );
+    } catch (err) {
+      return (
+        ok: false,
+        exists: false,
+        errorMessage: 'Could not check that email. Try again.',
+      );
+    }
+  }
+
+  Future<AuthResult> requestLoginCode(String email) async {
     try {
       await _auth.attemptSignIn(
         strategy: Strategy.emailCode,
         identifier: email.trim(),
       );
     } on ClerkError catch (err) {
-      // ignore: avoid_print
-      print(
-        'ClerkError (requestLoginCode): ${err.code} — ${err.message} — '
-        'arg=${err.argument} — errors=${err.errors}',
-      );
+      return (ok: false, errorMessage: _readableClerkError(err));
     }
     _setState(_computeState());
+    return _ok;
   }
 
-  Future<void> requestSignupCode({
+  Future<AuthResult> requestSignupCode({
     required String email,
     required String displayName,
   }) async {
@@ -143,18 +176,17 @@ class ClerkAuth extends _$ClerkAuth {
         firstName: displayName.trim(),
       );
     } on ClerkError catch (err) {
-      // ignore: avoid_print
-      print(
-        'ClerkError (requestSignupCode): ${err.code} — ${err.message} — '
-        'arg=${err.argument} — errors=${err.errors}',
-      );
+      return (ok: false, errorMessage: _readableClerkError(err));
     }
     _setState(_computeState());
+    return _ok;
   }
 
-  Future<bool> verifyCode(String code) async {
+  Future<AuthResult> verifyCode(String code) async {
     final current = state;
-    if (current is! AuthAwaitingCode) return false;
+    if (current is! AuthAwaitingCode) {
+      return (ok: false, errorMessage: 'No verification in progress.');
+    }
     final trimmed = code.trim();
     try {
       if (current.isSignup) {
@@ -169,24 +201,23 @@ class ClerkAuth extends _$ClerkAuth {
         );
       }
     } on ClerkError catch (err) {
-      // ignore: avoid_print
-      print(
-        'ClerkError (verifyCode): ${err.code} — ${err.message} — '
-        'arg=${err.argument} — errors=${err.errors}',
-      );
       _setState(_computeState());
-      return false;
+      return (ok: false, errorMessage: _readableClerkError(err));
     }
     _setState(_computeState());
-    return state is AuthLoggedIn;
+    return state is AuthLoggedIn
+        ? _ok
+        : (ok: false, errorMessage: 'Verification did not complete.');
   }
 
-  Future<bool> resendCode() async {
+  Future<AuthResult> resendCode() async {
     final current = state;
-    if (current is! AuthAwaitingCode) return false;
-    // clerk_auth 0.0.14-beta has no resendCode(). Re-invoking attemptSignIn /
-    // attemptSignUp without a code triggers prepareSignIn/prepareSignUp again
-    // on the existing SignIn/SignUp object — which re-sends the email.
+    if (current is! AuthAwaitingCode) {
+      return (ok: false, errorMessage: 'Nothing to resend.');
+    }
+    // Re-invoke attemptSignIn / attemptSignUp without a code; with the
+    // strategy-stripping HttpService shim in place, both paths resolve to
+    // exactly one prepare-verification call (see clerk_service.dart).
     try {
       if (current.isSignup) {
         await _auth.attemptSignUp(
@@ -200,14 +231,9 @@ class ClerkAuth extends _$ClerkAuth {
           identifier: current.email,
         );
       }
-      return true;
+      return _ok;
     } on ClerkError catch (err) {
-      // ignore: avoid_print
-      print(
-        'ClerkError (resendCode): ${err.code} — ${err.message} — '
-        'arg=${err.argument} — errors=${err.errors}',
-      );
-      return false;
+      return (ok: false, errorMessage: _readableClerkError(err));
     }
   }
 
@@ -219,7 +245,6 @@ class ClerkAuth extends _$ClerkAuth {
   Future<void> completeOnboarding() async {
     final current = state;
     if (current is! AuthLoggedIn) return;
-    // TODO: persist to Convex user doc in next session.
     state = current.copyWith(onboardingComplete: true);
   }
 

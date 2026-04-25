@@ -4,7 +4,11 @@ import { v } from "convex/values";
 export default defineSchema({
   organisations: defineTable({
     name: v.string(),
-    kind: v.union(v.literal("personal"), v.literal("team"), v.literal("enterprise")),
+    kind: v.union(
+      v.literal("individual"),
+      v.literal("affiliate"),
+      v.literal("enterprise"),
+    ),
     createdAt: v.number(),
     deletedAt: v.optional(v.number()),
   }).index("by_kind", ["kind"]),
@@ -18,11 +22,11 @@ export default defineSchema({
       v.literal("active_trial"),
       v.literal("active_paying"),
       v.literal("payment_failed"),
-      v.literal("cancelled_active"),
-      v.literal("cancelled_lapsed"),
-      v.literal("lapsed"),
-      v.literal("dormant"),
-      v.literal("deletion_requested"),
+      v.literal("cancelled_trial"),     // cancelled during trial; access until trial end
+      v.literal("cancelled_paying"),    // cancelled during paid period; access until period end
+      v.literal("lapsed"),              // no active subscription; 30-day read-only window (any cause)
+      v.literal("dormant"),             // past 30-day lapse window; account preserved
+      v.literal("deletion_requested"),  // 30-day soft delete
       v.literal("deleted"),
     ),
     suspended: v.boolean(),

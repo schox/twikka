@@ -1,8 +1,5 @@
 enum AppRoute {
-  welcome,
-  login,
-  signup,
-  verifyCode,
+  auth,
   coach,
   stats,
   social,
@@ -19,10 +16,7 @@ enum AppRoute {
 class AppPaths {
   AppPaths._();
 
-  static const welcome = '/welcome';
-  static const login = '/login';
-  static const signup = '/signup';
-  static const verifyCode = '/verify-code';
+  static const auth = '/auth';
 
   static const coach = '/coach';
   static const stats = '/stats';

@@ -21,6 +21,9 @@ dependencies:
 
   # Platform integration
   path_provider: ^2.1.4
+  # Direct dep so clerk_service can use the http types its HttpService
+  # delegates to. Already a transitive of clerk_auth.
+  http: ^1.1.0
 
   # Routing
   go_router: ^17.2.1

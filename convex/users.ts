@@ -61,7 +61,7 @@ async function _upsert(
 
   const organisationId = await ctx.db.insert("organisations", {
     name: orgName,
-    kind: "personal",
+    kind: "individual",
     createdAt: now,
   });
 
