@@ -39,9 +39,15 @@ class _VerifyCodeScreenState extends ConsumerState<VerifyCodeScreen> {
     }
   }
 
-  void _resend() {
+  Future<void> _resend() async {
+    final ok = await ref.read(clerkAuthProvider.notifier).resendCode();
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('A new code is on the way (pretend).')),
+      SnackBar(
+        content: Text(ok
+            ? 'Fresh code sent — check your email.'
+            : 'Could not resend. Try again in a moment.'),
+      ),
     );
   }
 

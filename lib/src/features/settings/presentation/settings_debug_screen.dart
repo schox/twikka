@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../data/models/coach_persona.dart';
 import '../../../data/models/system_config.dart';
+import '../../../data/models/twikka_user.dart';
 import '../../../data/providers/coach_personas_provider.dart';
+import '../../../data/providers/current_user_provider.dart';
 import '../../../data/providers/system_config_provider.dart';
 import '../../auth/data/auth_state.dart';
 import '../../auth/data/clerk_auth_notifier.dart';
@@ -18,6 +20,7 @@ class SettingsDebugScreen extends ConsumerWidget {
     final onboardingComplete = auth is AuthLoggedIn ? auth.onboardingComplete : false;
     final systemConfig = ref.watch(systemConfigProvider);
     final personas = ref.watch(coachPersonasProvider);
+    final currentUser = ref.watch(currentUserProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Debug')),
@@ -43,6 +46,16 @@ class SettingsDebugScreen extends ConsumerWidget {
             leading: const Icon(Icons.refresh),
             title: const Text('Reset chat'),
             onTap: () => ref.read(chatProvider.notifier).reset(),
+          ),
+          const Divider(height: 32),
+          _sectionHeader(context, 'Current user (live)'),
+          currentUser.when(
+            data: (user) => _CurrentUserPanel(user: user),
+            loading: () => const Padding(
+              padding: EdgeInsets.all(16),
+              child: Center(child: CircularProgressIndicator()),
+            ),
+            error: (err, _) => _errorTile('Current user error: $err'),
           ),
           const Divider(height: 32),
           _sectionHeader(context, 'System config (live)'),
@@ -83,6 +96,52 @@ class SettingsDebugScreen extends ConsumerWidget {
         leading: const Icon(Icons.error_outline),
         title: Text(text),
       );
+}
+
+class _CurrentUserPanel extends StatelessWidget {
+  const _CurrentUserPanel({required this.user});
+  final TwikkaUser? user;
+
+  @override
+  Widget build(BuildContext context) {
+    final u = user;
+    if (u == null) {
+      return const ListTile(title: Text('No users row (unauthenticated or pending)'));
+    }
+    return Column(
+      children: [
+        _kv(context, '_id', u.id),
+        _kv(context, 'clerkId', u.clerkId),
+        _kv(context, 'organisationId', u.organisationId),
+        _kv(context, 'email', u.email),
+        if (u.displayName != null) _kv(context, 'displayName', u.displayName!),
+        _kv(context, 'lifecycleStage', u.lifecycleStage),
+        _kv(context, 'suspended', u.suspended.toString()),
+        if (u.deletionRequestedAt != null)
+          _kv(
+            context,
+            'deletionRequestedAt',
+            DateTime.fromMillisecondsSinceEpoch(u.deletionRequestedAt!)
+                .toLocal()
+                .toIso8601String(),
+          ),
+        _kv(
+          context,
+          'createdAt',
+          DateTime.fromMillisecondsSinceEpoch(u.createdAt)
+              .toLocal()
+              .toIso8601String(),
+        ),
+        _kv(
+          context,
+          'updatedAt',
+          DateTime.fromMillisecondsSinceEpoch(u.updatedAt)
+              .toLocal()
+              .toIso8601String(),
+        ),
+      ],
+    );
+  }
 }
 
 class _SystemConfigPanel extends StatelessWidget {

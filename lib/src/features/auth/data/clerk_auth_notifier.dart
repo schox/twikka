@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:clerk_auth/clerk_auth.dart';
 import 'package:convex_flutter/convex_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -6,11 +8,6 @@ import '../../../core/services/clerk_service.dart';
 import 'auth_state.dart';
 
 part 'clerk_auth_notifier.g.dart';
-
-// Name of the JWT template configured in the Clerk dashboard that mints
-// Convex-compatible tokens (claims.aud === "convex"). Must match
-// convex/auth.config.ts's applicationID.
-const _convexJwtTemplate = 'convex';
 
 @Riverpod(keepAlive: true)
 class ClerkAuth extends _$ClerkAuth {
@@ -67,16 +64,49 @@ class ClerkAuth extends _$ClerkAuth {
 
     if (signedIn && !bound) {
       _convexHandle = await ConvexClient.instance.setAuthWithRefresh(
+        // Clerk's Convex integration injects aud: "convex" into the default
+        // session token — no dedicated JWT template — so we request the
+        // default token (no templateName) and Convex validates the aud
+        // claim against applicationID: "convex" in auth.config.ts.
         fetchToken: () async {
-          final token = await _auth.sessionToken(
-            templateName: _convexJwtTemplate,
-          );
+          final token = await _auth.sessionToken();
           return token.jwt;
         },
       );
+      // setAuthWithRefresh returns before the Convex server has finished
+      // latching the token, so an immediate authenticated mutation races and
+      // gets rejected. Retry with backoff until the token propagates — this
+      // is idempotent, so subsequent successful attempts are no-ops.
+      unawaited(_ensureFromIdentityWithRetry());
     } else if (!signedIn && bound) {
       _convexHandle?.dispose();
       _convexHandle = null;
+    }
+  }
+
+  Future<void> _ensureFromIdentityWithRetry() async {
+    const delays = [
+      Duration(milliseconds: 150),
+      Duration(milliseconds: 300),
+      Duration(milliseconds: 600),
+      Duration(milliseconds: 1200),
+      Duration(milliseconds: 2000),
+    ];
+    for (var attempt = 0; attempt <= delays.length; attempt++) {
+      try {
+        await ConvexClient.instance.mutation(
+          name: 'users:ensureFromIdentity',
+          args: const {},
+        );
+        return;
+      } catch (err) {
+        if (attempt == delays.length) {
+          // ignore: avoid_print
+          print('ensureFromIdentity failed after $attempt retries: $err');
+          return;
+        }
+        await Future<void>.delayed(delays[attempt]);
+      }
     }
   }
 
@@ -92,8 +122,12 @@ class ClerkAuth extends _$ClerkAuth {
         strategy: Strategy.emailCode,
         identifier: email.trim(),
       );
-    } on ClerkError {
-      // Errors flow through Auth.errorStream; UI surface in a later session.
+    } on ClerkError catch (err) {
+      // ignore: avoid_print
+      print(
+        'ClerkError (requestLoginCode): ${err.code} — ${err.message} — '
+        'arg=${err.argument} — errors=${err.errors}',
+      );
     }
     _setState(_computeState());
   }
@@ -108,8 +142,12 @@ class ClerkAuth extends _$ClerkAuth {
         emailAddress: email.trim(),
         firstName: displayName.trim(),
       );
-    } on ClerkError {
-      // See requestLoginCode.
+    } on ClerkError catch (err) {
+      // ignore: avoid_print
+      print(
+        'ClerkError (requestSignupCode): ${err.code} — ${err.message} — '
+        'arg=${err.argument} — errors=${err.errors}',
+      );
     }
     _setState(_computeState());
   }
@@ -130,12 +168,47 @@ class ClerkAuth extends _$ClerkAuth {
           code: trimmed,
         );
       }
-    } on ClerkError {
+    } on ClerkError catch (err) {
+      // ignore: avoid_print
+      print(
+        'ClerkError (verifyCode): ${err.code} — ${err.message} — '
+        'arg=${err.argument} — errors=${err.errors}',
+      );
       _setState(_computeState());
       return false;
     }
     _setState(_computeState());
     return state is AuthLoggedIn;
+  }
+
+  Future<bool> resendCode() async {
+    final current = state;
+    if (current is! AuthAwaitingCode) return false;
+    // clerk_auth 0.0.14-beta has no resendCode(). Re-invoking attemptSignIn /
+    // attemptSignUp without a code triggers prepareSignIn/prepareSignUp again
+    // on the existing SignIn/SignUp object — which re-sends the email.
+    try {
+      if (current.isSignup) {
+        await _auth.attemptSignUp(
+          strategy: Strategy.emailCode,
+          emailAddress: current.email,
+          firstName: current.pendingDisplayName,
+        );
+      } else {
+        await _auth.attemptSignIn(
+          strategy: Strategy.emailCode,
+          identifier: current.email,
+        );
+      }
+      return true;
+    } on ClerkError catch (err) {
+      // ignore: avoid_print
+      print(
+        'ClerkError (resendCode): ${err.code} — ${err.message} — '
+        'arg=${err.argument} — errors=${err.errors}',
+      );
+      return false;
+    }
   }
 
   Future<void> cancelCodeEntry() async {

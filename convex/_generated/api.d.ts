@@ -10,12 +10,14 @@
 
 import type * as audit from "../audit.js";
 import type * as coachPersonas from "../coachPersonas.js";
+import type * as http from "../http.js";
 import type * as lib_recordedCall from "../lib/recordedCall.js";
 import type * as lib_scope from "../lib/scope.js";
 import type * as seed_coachPersonas from "../seed/coachPersonas.js";
 import type * as seed_modelPricing from "../seed/modelPricing.js";
 import type * as seed_systemConfig from "../seed/systemConfig.js";
 import type * as systemConfig from "../systemConfig.js";
+import type * as users from "../users.js";
 
 import type {
   ApiFromModules,
@@ -26,12 +28,14 @@ import type {
 declare const fullApi: ApiFromModules<{
   audit: typeof audit;
   coachPersonas: typeof coachPersonas;
+  http: typeof http;
   "lib/recordedCall": typeof lib_recordedCall;
   "lib/scope": typeof lib_scope;
   "seed/coachPersonas": typeof seed_coachPersonas;
   "seed/modelPricing": typeof seed_modelPricing;
   "seed/systemConfig": typeof seed_systemConfig;
   systemConfig: typeof systemConfig;
+  users: typeof users;
 }>;
 
 /**

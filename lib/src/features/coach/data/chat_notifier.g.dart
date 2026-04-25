@@ -95,7 +95,7 @@ final class ChatProvider extends $NotifierProvider<Chat, List<ChatMessage>> {
   }
 }
 
-String _$chatHash() => r'fd43afd11289d16c849f12652e28d043fefd36ca';
+String _$chatHash() => r'98a179effb4160f130f7132fe3620dcbe077c83c';
 
 /// Fake chat state for the Coach screen. Mirrors the sample mid-conversation
 /// from the design's `buildInitialMessages()`.
