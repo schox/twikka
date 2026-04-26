@@ -10,6 +10,7 @@ import '../../../data/providers/system_config_provider.dart';
 import '../../auth/data/auth_state.dart';
 import '../../auth/data/clerk_auth_notifier.dart';
 import '../../coach/data/chat_notifier.dart';
+import 'activity_kinds_debug_panel.dart';
 
 class SettingsDebugScreen extends ConsumerWidget {
   const SettingsDebugScreen({super.key});
@@ -77,6 +78,9 @@ class SettingsDebugScreen extends ConsumerWidget {
             ),
             error: (err, _) => _errorTile('Personas error: $err'),
           ),
+          const Divider(height: 32),
+          _sectionHeader(context, 'Activity kinds (live)'),
+          const ActivityKindsDebugPanel(),
         ],
       ),
     );

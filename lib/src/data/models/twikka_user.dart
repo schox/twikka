@@ -13,6 +13,7 @@ class TwikkaUser {
     this.cityId,
     this.timezone,
     this.city,
+    this.tester = false,
   });
 
   final String id;
@@ -28,6 +29,7 @@ class TwikkaUser {
   final String? cityId;
   final String? timezone;
   final TwikkaUserCity? city;
+  final bool tester;
 
   factory TwikkaUser.fromJson(Map<String, dynamic> json) => TwikkaUser(
         id: json['_id'] as String,
@@ -45,6 +47,7 @@ class TwikkaUser {
         city: json['city'] == null
             ? null
             : TwikkaUserCity.fromJson(json['city'] as Map<String, dynamic>),
+        tester: (json['tester'] as bool?) ?? false,
       );
 }
 

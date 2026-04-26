@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as activityKinds from "../activityKinds.js";
 import type * as audit from "../audit.js";
 import type * as auth from "../auth.js";
 import type * as cities from "../cities.js";
@@ -28,6 +29,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  activityKinds: typeof activityKinds;
   audit: typeof audit;
   auth: typeof auth;
   cities: typeof cities;

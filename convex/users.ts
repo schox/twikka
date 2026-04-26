@@ -72,6 +72,7 @@ async function _upsert(
     displayName: args.displayName,
     lifecycleStage: "active_trial",
     suspended: false,
+    tester: false,
     createdAt: now,
     updatedAt: now,
   });
@@ -180,6 +181,24 @@ export const ensureFromIdentity = mutation({
       displayName: identity.givenName ?? identity.name,
       actorLabel: "flutter:ensureFromIdentity",
     });
+  },
+});
+
+// Dev-only knob for flipping the tester flag on a specific user.
+// Public so we can flip it via `npx convex run` / MCP without
+// dashboard access. This is acceptable because tester just gates the
+// in-app Debug entry — no privilege escalation. Will be locked behind
+// an admin role once we have one.
+export const setTesterByEmail = mutation({
+  args: { email: v.string(), value: v.boolean() },
+  handler: async (ctx, { email, value }) => {
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_email", (q) => q.eq("email", email))
+      .first();
+    if (!user) throw new Error(`No user with email ${email}`);
+    await ctx.db.patch(user._id, { tester: value, updatedAt: Date.now() });
+    return { ok: true };
   },
 });
 

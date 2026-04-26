@@ -36,6 +36,11 @@ export default defineSchema({
     // standard state machine; until then they're plain optional fields.
     cityId: v.optional(v.id("cities")),
     timezone: v.optional(v.string()),
+    // tester gate. New users default false (set in users.ts upsert).
+    // When true, the Settings hub reveals the Debug entry so we can
+    // browse seed data, flip kill switches, etc. Operator-flippable
+    // from the Convex dashboard.
+    tester: v.optional(v.boolean()),
     createdAt: v.number(),
     updatedAt: v.number(),
   })
@@ -244,6 +249,65 @@ export default defineSchema({
     .index("by_org_time", ["organisationId", "createdAt"])
     .index("by_subject", ["subjectType", "subjectId"])
     .index("by_action_time", ["action", "createdAt"]),
+
+  // CoPA-derived activity taxonomy. Each row is a single activity kind
+  // (e.g. "Running, general"), tagged with classification flags, an
+  // optional set of HealthWorkoutActivityType strings (the unified
+  // Apple HK + Health Connect enum exposed by the `health` Flutter
+  // package), and learned aliases. The classifier in Phase B3 resolves
+  // user phrasings + device-reported workouts to rows here.
+  activity_kinds: defineTable({
+    copaCode: v.optional(v.number()), // null for platform-only synthetics
+    name: v.string(),
+    mets: v.optional(v.number()), // METs as reported by CoPA
+    headingId: v.optional(v.number()), // CoPA heading FK; null for synthetics
+    headingName: v.string(),
+    coaClass: v.union(
+      v.literal("adult"),
+      v.literal("older_adult"),
+      v.literal("wheelchair"),
+    ),
+
+    // Classification flags — derived from heading defaults at seed time;
+    // refined per-row by the curation pass.
+    isCardio: v.boolean(),
+    isStrength: v.boolean(),
+    isMobility: v.boolean(),
+    isBalance: v.boolean(),
+    isMental: v.boolean(),
+
+    // HealthWorkoutActivityType strings from the `health` package
+    // (unified Apple HK + Health Connect enum). Multiple platform types
+    // may map to the same activity kind (e.g. RUNNING + RUNNING_TREADMILL
+    // both point at "Running, general").
+    platformTypes: v.array(v.string()),
+
+    // Free-text aliases the user / coach has used for this activity.
+    // Empty at seed; populated by user_activity_aliases at the user
+    // layer, plus a small global lift list per row.
+    aliases: v.array(v.string()),
+
+    // "copa" — lifted from the CoPA dump
+    // "platform_only" — created from a HealthWorkoutActivityType that
+    //                   has no clean CoPA equivalent
+    // "manual" — created post-seed by the operator
+    source: v.union(
+      v.literal("copa"),
+      v.literal("platform_only"),
+      v.literal("manual"),
+    ),
+    needsReview: v.boolean(),
+
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_copa", ["copaCode"])
+    .index("by_heading", ["headingId"])
+    .index("by_class", ["coaClass"])
+    .searchIndex("by_name", {
+      searchField: "name",
+      filterFields: ["coaClass"],
+    }),
 
   // GeoNames cities export (~140k rows). The full-text search index
   // matches on name + asciiname + alternatenames + country_code so

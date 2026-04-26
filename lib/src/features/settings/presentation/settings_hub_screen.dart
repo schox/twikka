@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/branding/abstract_avatar.dart';
 import '../../../core/theme/theme_constants.dart';
 import '../../../core/widgets/notifications_bell.dart';
+import '../../../data/providers/current_user_provider.dart';
 import '../../../routing/app_routes.dart';
 import '../../auth/data/auth_state.dart';
 import '../../auth/data/clerk_auth_notifier.dart';
@@ -24,14 +25,23 @@ class SettingsHubScreen extends ConsumerWidget {
         label: 'Subscription', subtitle: 'Plan, billing'),
     _SettingsItem(route: AppRoute.settingsAbout, icon: Icons.info_outline,
         label: 'About', subtitle: 'Version, legal, support'),
-    _SettingsItem(route: AppRoute.settingsDebug, icon: Icons.bug_report_outlined,
-        label: 'Debug', subtitle: 'Developer tools'),
   ];
+
+  // Tester-only entry. Operator flips users.tester = true in Convex
+  // dashboard for accounts that should see the Debug panel.
+  static const _testerItem = _SettingsItem(
+    route: AppRoute.settingsDebug,
+    icon: Icons.bug_report_outlined,
+    label: 'Debug',
+    subtitle: 'Tester tools',
+  );
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final auth = ref.watch(clerkAuthProvider);
     final user = auth is AuthLoggedIn ? auth : null;
+    final convexUser = ref.watch(currentUserProvider).asData?.value;
+    final showDebug = convexUser?.tester == true;
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -68,7 +78,7 @@ class SettingsHubScreen extends ConsumerWidget {
               ),
             ),
           const Divider(),
-          for (final item in _items)
+          for (final item in [..._items, if (showDebug) _testerItem])
             ListTile(
               leading: Icon(item.icon),
               title: Text(item.label),
