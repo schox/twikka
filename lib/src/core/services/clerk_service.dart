@@ -46,6 +46,14 @@ class ClerkService {
           getCacheDirectory: getApplicationDocumentsDirectory,
         ),
         httpService: const _StrategyStrippingHttpService(),
+        // Disable the SDK's built-in session-token polling. clerk_auth
+        // 0.0.14-beta has a bug where its refresh call sometimes omits
+        // the `expired_token` parameter and Clerk replies 422, which
+        // bubbles up as a thrown ExternalError every poll cycle and
+        // throws our Convex auth handle into a reconnect loop. We
+        // don't need polling anyway — Convex's setAuthWithRefresh
+        // calls our fetchToken callback ~60s before expiry on demand.
+        sessionTokenPolling: false,
       ),
     );
     await a.initialize();
