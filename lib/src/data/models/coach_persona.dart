@@ -35,7 +35,7 @@ class CoachPersona {
     required this.genderPresentation,
     required this.shortDescriptor,
     required this.introSample,
-    required this.avatarRefs,
+    this.avatarRefs,
     required this.styleDescriptors,
     required this.sampleLines,
     required this.wouldSayExamples,
@@ -57,7 +57,7 @@ class CoachPersona {
   final CoachGender genderPresentation;
   final String shortDescriptor;
   final String introSample;
-  final CoachAvatarRefs avatarRefs;
+  final CoachAvatarRefs? avatarRefs;
   final String? heyGenAvatarId;
   final String? voiceId;
   final List<String> styleDescriptors;
@@ -80,9 +80,11 @@ class CoachPersona {
             _genderFromString(json['genderPresentation'] as String),
         shortDescriptor: json['shortDescriptor'] as String,
         introSample: json['introSample'] as String,
-        avatarRefs: CoachAvatarRefs.fromJson(
-          json['avatarRefs'] as Map<String, dynamic>,
-        ),
+        avatarRefs: json['avatarRefs'] == null
+            ? null
+            : CoachAvatarRefs.fromJson(
+                json['avatarRefs'] as Map<String, dynamic>,
+              ),
         heyGenAvatarId: json['heyGenAvatarId'] as String?,
         voiceId: json['voiceId'] as String?,
         styleDescriptors:

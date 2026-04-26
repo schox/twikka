@@ -126,8 +126,11 @@ class _CoachHeader extends StatelessWidget implements PreferredSizeWidget {
                 children: [
                   Text(coach.name, style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 2),
+                  // AI disclosure surface (one of three). Matches welcome
+                  // subtitle + coach-selection line. Per
+                  // docs/memory/reference_coach_character_system.md.
                   Text(
-                    'Usually replies in the morning',
+                    'AI coach \u00b7 usually replies in the morning',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(color: twMuted),
                   ),
                 ],

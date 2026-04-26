@@ -1,5 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../core/branding/coach_palette.dart';
+import '../../../data/providers/current_coach_provider.dart';
 import '../../auth/data/auth_state.dart';
 import '../../auth/data/clerk_auth_notifier.dart';
 import 'chat_message.dart';
@@ -7,10 +9,25 @@ import 'coach.dart';
 
 part 'chat_notifier.g.dart';
 
-/// The currently-selected coach. For now: always Margaret. Changing coaches
-/// is a future settings flow.
+/// Local presentational coach (palette + monogram + sample) for the chat
+/// widgets. Derived from the Convex-backed `currentCoachPersonaProvider`
+/// — when the user picks a coach in the picker, this provider rebuilds
+/// and the chat re-renders. Falls back to Margaret while the assignment
+/// loads or hasn't been made.
 @Riverpod(keepAlive: true)
-Coach currentCoach(Ref ref) => defaultCoach;
+Coach currentCoach(Ref ref) {
+  final persona = ref.watch(currentCoachPersonaProvider).asData?.value;
+  if (persona == null) return defaultCoach;
+  return Coach(
+    id: persona.slug,
+    name: persona.name,
+    monogram: coachInitial(persona.name),
+    descriptor: persona.shortDescriptor,
+    sample: persona.introSample,
+    palette: paletteForCoachSlug(persona.slug),
+  );
+}
+
 
 /// Fake chat state for the Coach screen. Mirrors the sample mid-conversation
 /// from the design's `buildInitialMessages()`.

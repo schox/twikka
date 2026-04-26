@@ -16,6 +16,8 @@ class SettingsHubScreen extends ConsumerWidget {
   static const _items = <_SettingsItem>[
     _SettingsItem(route: AppRoute.settingsProfile, icon: Icons.person_outline,
         label: 'Profile', subtitle: 'Name, photo, bio'),
+    _SettingsItem(route: AppRoute.settingsCoach, icon: Icons.favorite_outline,
+        label: 'Coach', subtitle: 'Pick or change your coach'),
     _SettingsItem(route: AppRoute.settingsPreferences, icon: Icons.tune,
         label: 'Preferences', subtitle: 'Theme, notifications, units'),
     _SettingsItem(route: AppRoute.settingsSubscription, icon: Icons.workspace_premium_outlined,

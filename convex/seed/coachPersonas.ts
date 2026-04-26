@@ -275,22 +275,25 @@ export const seed = internalMutation({
         .withIndex("by_slug", (q) => q.eq("slug", p.slug))
         .first();
 
+      // avatarRefs / safetyResponses left undefined — Phase D fills the
+      // photos via the Midjourney → HeyGen → R2 pipeline; safety lines
+      // are authored before Phase C ships. UI falls back to AbstractAvatar
+      // (per-coach palette held client-side keyed by slug) and a neutral
+      // Severity-2 safety template until those land.
       const doc = {
         ...p,
-        avatarRefs: {
-          hero: `coaches/${p.slug}/hero.jpg`,
-          profile: `coaches/${p.slug}/profile.jpg`,
-          chat: `coaches/${p.slug}/chat.jpg`,
-          message: `coaches/${p.slug}/message.jpg`,
-          tiny: `coaches/${p.slug}/tiny.jpg`,
-        },
         active: true,
         promptVersion: 1,
         updatedAt: now,
       };
 
       if (existing) {
-        await ctx.db.patch(existing._id, doc);
+        // db.replace clears any old fields (e.g. legacy avatarRefs) that
+        // are no longer in the doc — db.patch would keep them.
+        await ctx.db.replace(existing._id, {
+          ...doc,
+          createdAt: existing.createdAt,
+        });
         updated.push(p.slug);
       } else {
         await ctx.db.insert("coach_personas", { ...doc, createdAt: now });

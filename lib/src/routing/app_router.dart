@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../data/models/coach_persona.dart';
 import '../data/models/system_config.dart';
+import '../data/providers/current_coach_provider.dart' as convex_coach;
 import '../data/providers/system_config_provider.dart';
 import '../features/auth/data/auth_state.dart';
 import '../features/auth/data/clerk_auth_notifier.dart';
@@ -10,6 +12,7 @@ import '../features/auth/presentation/auth_screen.dart';
 import '../features/coach/presentation/coach_screen.dart';
 import '../features/gating/presentation/offline_screen.dart';
 import '../features/gating/presentation/update_required_screen.dart';
+import '../features/onboarding/presentation/coach_picker_screen.dart';
 import '../features/settings/presentation/settings_about_screen.dart';
 import '../features/settings/presentation/settings_debug_screen.dart';
 import '../features/settings/presentation/settings_hub_screen.dart';
@@ -34,6 +37,7 @@ GoRouter appRouter(Ref ref) {
   final refresh = ValueNotifier<int>(0);
   ref.listen(clerkAuthProvider, (_, _) => refresh.value++);
   ref.listen(systemConfigProvider, (_, _) => refresh.value++);
+  ref.listen(convex_coach.currentCoachPersonaProvider, (_, _) => refresh.value++);
   ref.onDispose(refresh.dispose);
 
   return GoRouter(
@@ -44,7 +48,10 @@ GoRouter appRouter(Ref ref) {
     redirect: (context, state) {
       final auth = ref.read(clerkAuthProvider);
       final systemConfig = ref.read(systemConfigProvider).asData?.value;
-      return _redirect(auth, systemConfig, state);
+      // currentCoachPersona loads asynchronously; while it's still in
+      // `loading` we hold the user where they are rather than bouncing.
+      final coachAsync = ref.read(convex_coach.currentCoachPersonaProvider);
+      return _redirect(auth, systemConfig, coachAsync, state);
     },
     routes: [
       GoRoute(
@@ -61,6 +68,13 @@ GoRouter appRouter(Ref ref) {
         path: AppPaths.auth,
         name: AppRoute.auth.name,
         builder: (_, _) => const AuthScreen(),
+      ),
+      GoRoute(
+        path: AppPaths.onboardingCoach,
+        name: AppRoute.onboardingCoach.name,
+        builder: (context, _) => CoachPickerScreen(
+          onPicked: (_) => context.goNamed(AppRoute.coach.name),
+        ),
       ),
       ShellRoute(
         navigatorKey: _shellKey,
@@ -102,6 +116,11 @@ GoRouter appRouter(Ref ref) {
                 builder: (_, _) => const SettingsSubscriptionScreen(),
               ),
               GoRoute(
+                path: AppPaths.settingsCoach,
+                name: AppRoute.settingsCoach.name,
+                builder: (_, _) => const CoachPickerScreen(),
+              ),
+              GoRoute(
                 path: AppPaths.settingsAbout,
                 name: AppRoute.settingsAbout.name,
                 builder: (_, _) => const SettingsAboutScreen(),
@@ -122,6 +141,7 @@ GoRouter appRouter(Ref ref) {
 String? _redirect(
   AuthState auth,
   SystemConfig? systemConfig,
+  AsyncValue<CoachPersona?> coachAsync,
   GoRouterState state,
 ) {
   final loc = state.matchedLocation;
@@ -131,13 +151,24 @@ String? _redirect(
   }
 
   final onAuthScreen = loc == AppPaths.auth;
+  final onOnboardingCoach = loc == AppPaths.onboardingCoach;
 
   switch (auth) {
     case AuthLoggedOut():
     case AuthAwaitingCode():
       return onAuthScreen ? null : AppPaths.auth;
     case AuthLoggedIn():
+      // Hold position while currentCoach is still loading — don't bounce.
+      if (coachAsync is! AsyncData<CoachPersona?>) return null;
+      final coach = coachAsync.value;
+      if (coach == null) {
+        // Logged in but no coach assignment yet → onboarding.
+        return onOnboardingCoach ? null : AppPaths.onboardingCoach;
+      }
+      // Has a coach: keep auth/onboarding/offline/update-required from
+      // sticking around.
       if (onAuthScreen ||
+          onOnboardingCoach ||
           loc == AppPaths.offline ||
           loc == AppPaths.updateRequired) {
         return AppPaths.coach;

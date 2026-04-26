@@ -1,5 +1,6 @@
 enum AppRoute {
   auth,
+  onboardingCoach,
   coach,
   stats,
   social,
@@ -7,6 +8,7 @@ enum AppRoute {
   settingsProfile,
   settingsPreferences,
   settingsSubscription,
+  settingsCoach,
   settingsAbout,
   settingsDebug,
   offline,
@@ -17,6 +19,7 @@ class AppPaths {
   AppPaths._();
 
   static const auth = '/auth';
+  static const onboardingCoach = '/onboarding/coach';
 
   static const coach = '/coach';
   static const stats = '/stats';
@@ -26,6 +29,7 @@ class AppPaths {
   static const settingsProfile = 'profile';
   static const settingsPreferences = 'preferences';
   static const settingsSubscription = 'subscription';
+  static const settingsCoach = 'coach';
   static const settingsAbout = 'about';
   static const settingsDebug = 'debug';
 

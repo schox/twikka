@@ -65,13 +65,18 @@ export default defineSchema({
     shortDescriptor: v.string(),
     introSample: v.string(),
 
-    avatarRefs: v.object({
-      hero: v.string(),
-      profile: v.string(),
-      chat: v.string(),
-      message: v.string(),
-      tiny: v.string(),
-    }),
+    // null until Phase D fills these via the Midjourney → HeyGen → R2
+    // pipeline. UI falls back to AbstractAvatar (monogram + per-coach
+    // palette) while null.
+    avatarRefs: v.optional(
+      v.object({
+        hero: v.string(),
+        profile: v.string(),
+        chat: v.string(),
+        message: v.string(),
+        tiny: v.string(),
+      }),
+    ),
     heyGenAvatarId: v.optional(v.string()),
     voiceId: v.optional(v.string()),
 
@@ -82,6 +87,20 @@ export default defineSchema({
     aiDisclosureLine: v.string(),
     affiliateSuggestionLine: v.string(),
     disclosureLine: v.optional(v.string()),
+
+    // Per-category calibrated safety responses, authored before Phase C.
+    // Categories per docs/05-coach-interaction-design.md § Safety guardrails.
+    // Severity-1 (acute physical, emotional acute) is identical across
+    // coaches and lives in code; this map carries Severity-2 calibration
+    // (clinical-edge, emotional chronic, disordered patterns). null until
+    // authored — assembly logic falls back to a neutral template.
+    safetyResponses: v.optional(
+      v.object({
+        clinicalEdge: v.string(),
+        emotionalChronic: v.string(),
+        disorderedPatterns: v.string(),
+      }),
+    ),
 
     modelOverride: v.optional(v.string()),
     active: v.boolean(),
