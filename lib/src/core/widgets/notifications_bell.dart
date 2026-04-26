@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/theme_constants.dart';
+import '../theme/twikka_icons.dart';
 
 /// Bell icon shown in every shell tab's header. Tapping it currently shows a
 /// stub snackbar — wire to a real notifications surface later.
@@ -26,7 +27,7 @@ class NotificationsBell extends StatelessWidget {
         icon: Stack(
           clipBehavior: Clip.none,
           children: [
-            const Icon(Icons.notifications_none),
+            const Icon(TwikkaIcons.notifications),
             if (hasUnread)
               Positioned(
                 right: -1,

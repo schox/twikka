@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/branding/abstract_avatar.dart';
 import '../../../core/branding/coach_palette.dart';
 import '../../../core/theme/theme_constants.dart';
+import '../../../core/theme/twikka_icons.dart';
 import '../../../data/models/coach_persona.dart';
 import '../../../data/providers/coach_personas_provider.dart';
 import '../../../data/providers/current_coach_provider.dart' as convex_coach;
@@ -249,7 +250,7 @@ class _CoachCard extends StatelessWidget {
               if (selected)
                 Padding(
                   padding: const EdgeInsets.only(left: gap2),
-                  child: Icon(Icons.check_circle, color: twAccent, size: 22),
+                  child: Icon(TwikkaIcons.checkCircle, color: twAccent, size: 22),
                 ),
             ],
           ),

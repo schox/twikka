@@ -5,6 +5,7 @@ import 'package:convex_flutter/convex_flutter.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/theme_constants.dart';
+import '../../../core/theme/twikka_icons.dart';
 
 /// Tester-only browser over the activity_kinds table. Surfaces enough
 /// information to redline the CoPA seed + platform mapping live.
@@ -119,7 +120,7 @@ class _ActivityKindsDebugPanelState extends State<ActivityKindsDebugPanel> {
             controller: _controller,
             decoration: const InputDecoration(
               hintText: 'Search activity name…',
-              prefixIcon: Icon(Icons.search),
+              prefixIcon: Icon(TwikkaIcons.search),
               isDense: true,
             ),
             onChanged: _onQueryChanged,
@@ -236,7 +237,7 @@ class _ActivityKindTile extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(left: 6),
                   child: Icon(
-                    Icons.flag_outlined,
+                    TwikkaIcons.flag,
                     size: 14,
                     color: theme.colorScheme.error,
                   ),

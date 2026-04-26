@@ -124,7 +124,7 @@ class _CoachHeader extends StatelessWidget implements PreferredSizeWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(coach.name, style: Theme.of(context).textTheme.titleMedium),
+                  Text(coach.name, style: Theme.of(context).textTheme.titleLarge),
                   const SizedBox(height: 2),
                   // AI disclosure surface (one of three). Matches welcome
                   // subtitle + coach-selection line. Per

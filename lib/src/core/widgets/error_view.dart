@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/theme_constants.dart';
+import '../theme/twikka_icons.dart';
 
 class ErrorView extends StatelessWidget {
   const ErrorView({super.key, required this.message, this.onRetry});
@@ -16,7 +17,7 @@ class ErrorView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.error_outline, size: 36, color: twError),
+            Icon(TwikkaIcons.errorCircle, size: 36, color: twError),
             const SizedBox(height: gap4),
             Text(
               message,

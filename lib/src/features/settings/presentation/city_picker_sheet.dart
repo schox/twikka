@@ -5,6 +5,7 @@ import 'package:convex_flutter/convex_flutter.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/theme_constants.dart';
+import '../../../core/theme/twikka_icons.dart';
 
 /// Result row from `cities:search` — kept lean (we don't need lat/long
 /// in the picker).
@@ -128,7 +129,7 @@ class _CityPickerSheetState extends State<_CityPickerSheet> {
                 onChanged: _onChanged,
                 decoration: const InputDecoration(
                   hintText: 'City, town, country code…',
-                  prefixIcon: Icon(Icons.search),
+                  prefixIcon: Icon(TwikkaIcons.search),
                 ),
               ),
             ),

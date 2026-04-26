@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/branding/abstract_avatar.dart';
 import '../../../core/theme/theme_constants.dart';
+import '../../../core/theme/twikka_icons.dart';
 import '../../../data/providers/current_user_provider.dart';
 import '../../auth/data/auth_state.dart';
 import '../../auth/data/clerk_auth_notifier.dart';
@@ -35,28 +36,28 @@ class SettingsProfileScreen extends ConsumerWidget {
           ),
           const SizedBox(height: gap4),
           ListTile(
-            leading: const Icon(Icons.badge_outlined),
+            leading: const Icon(TwikkaIcons.displayName),
             title: const Text('Display name'),
             subtitle: Text(authUser?.displayName ?? '\u2014'),
           ),
           ListTile(
-            leading: const Icon(Icons.email_outlined),
+            leading: const Icon(TwikkaIcons.email),
             title: const Text('Email'),
             subtitle: Text(authUser?.email ?? '\u2014'),
           ),
           ListTile(
-            leading: const Icon(Icons.location_city_outlined),
+            leading: const Icon(TwikkaIcons.city),
             title: const Text('City'),
             subtitle: Text(
               city == null
                   ? 'Not set yet'
                   : '${city.name} \u00b7 ${city.countryCode}',
             ),
-            trailing: const Icon(Icons.chevron_right),
+            trailing: const Icon(TwikkaIcons.chevronRight),
             onTap: () => _pickCity(context),
           ),
           ListTile(
-            leading: const Icon(Icons.schedule_outlined),
+            leading: const Icon(TwikkaIcons.timezone),
             title: const Text('Time zone'),
             subtitle: Text(timezone ?? 'Set when you pick a city'),
           ),

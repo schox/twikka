@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/theme/twikka_icons.dart';
 import '../../../data/models/coach_persona.dart';
 import '../../../data/models/system_config.dart';
 import '../../../data/models/twikka_user.dart';
@@ -44,7 +45,7 @@ class SettingsDebugScreen extends ConsumerWidget {
             ),
           ),
           ListTile(
-            leading: const Icon(Icons.refresh),
+            leading: const Icon(TwikkaIcons.refresh),
             title: const Text('Reset chat'),
             onTap: () => ref.read(chatProvider.notifier).reset(),
           ),
@@ -97,7 +98,7 @@ class SettingsDebugScreen extends ConsumerWidget {
       );
 
   Widget _errorTile(String text) => ListTile(
-        leading: const Icon(Icons.error_outline),
+        leading: const Icon(TwikkaIcons.errorCircle),
         title: Text(text),
       );
 }

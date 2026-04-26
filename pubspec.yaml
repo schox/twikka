@@ -45,6 +45,10 @@ dependencies:
   intl: ^0.20.1
   cupertino_icons: ^1.0.8
 
+  # Iconography — Phosphor across the app, never Material's Icons.*.
+  # Weight defaults are wired in lib/src/core/theme/twikka_icons.dart.
+  phosphor_flutter: ^2.1.0
+
 dependency_overrides:
   # convex_flutter 3.0.1 ships codegen for flutter_rust_bridge 2.11.1;
   # pub otherwise resolves 2.12.0, which fails the runtime/codegen version check at startup.

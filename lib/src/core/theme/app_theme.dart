@@ -238,28 +238,39 @@ ThemeData _buildTheme(ColorScheme scheme) {
       scrolledUnderElevation: 0,
       surfaceTintColor: Colors.transparent,
       centerTitle: false,
-      titleSpacing: 0,
-      titleTextStyle: textTheme.titleMedium,
+      // gap4 (18) leading inset matches the body content padding on
+      // every screen — keeps the title aligned with the list/heading
+      // beneath it. Per-screen overrides should be rare.
+      titleSpacing: gap4,
+      titleTextStyle: textTheme.titleLarge,
       iconTheme: IconThemeData(color: scheme.onSurfaceVariant, size: 22),
       shape: Border(
         bottom: BorderSide(color: scheme.outline, width: 0.5),
       ),
     ),
 
-    // Bottom + rail navigation — paper background, terracotta accent
+    // Bottom + rail navigation — paper background, terracotta accent.
+    // Selection is communicated by the icon swap (Phosphor Regular →
+    // Fill) plus a colour shift to twAccent. The Material indicator
+    // pill is suppressed (transparent) so we don't shade-tint behind
+    // the icon.
     navigationBarTheme: NavigationBarThemeData(
       backgroundColor: isLight ? twPaper : scheme.surfaceContainer,
-      indicatorColor: scheme.primaryContainer,
+      indicatorColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
-      labelTextStyle: WidgetStatePropertyAll(
-        textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w600),
-      ),
+      labelTextStyle: WidgetStateProperty.resolveWith((states) {
+        final selected = states.contains(WidgetState.selected);
+        return textTheme.labelMedium?.copyWith(
+          fontWeight: FontWeight.w600,
+          color: selected ? twAccent : scheme.onSurfaceVariant,
+        );
+      }),
       iconTheme: WidgetStateProperty.resolveWith((states) {
         final selected = states.contains(WidgetState.selected);
         return IconThemeData(
-          color: selected ? scheme.onPrimaryContainer : scheme.onSurfaceVariant,
-          size: 24,
+          color: selected ? twAccent : scheme.onSurfaceVariant,
+          size: 26,
         );
       }),
       height: 72,

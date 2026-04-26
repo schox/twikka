@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/branding/abstract_avatar.dart';
 import '../../../core/theme/theme_constants.dart';
+import '../../../core/theme/twikka_icons.dart';
 import '../../../core/widgets/notifications_bell.dart';
 import '../../../data/providers/current_user_provider.dart';
 import '../../../routing/app_routes.dart';
@@ -15,15 +16,15 @@ class SettingsHubScreen extends ConsumerWidget {
   const SettingsHubScreen({super.key});
 
   static const _items = <_SettingsItem>[
-    _SettingsItem(route: AppRoute.settingsProfile, icon: Icons.person_outline,
+    _SettingsItem(route: AppRoute.settingsProfile, icon: TwikkaIcons.profile,
         label: 'Profile', subtitle: 'Name, photo, bio'),
-    _SettingsItem(route: AppRoute.settingsCoach, icon: Icons.favorite_outline,
+    _SettingsItem(route: AppRoute.settingsCoach, icon: TwikkaIcons.coach,
         label: 'Coach', subtitle: 'Pick or change your coach'),
-    _SettingsItem(route: AppRoute.settingsPreferences, icon: Icons.tune,
+    _SettingsItem(route: AppRoute.settingsPreferences, icon: TwikkaIcons.preferences,
         label: 'Preferences', subtitle: 'Theme, notifications, units'),
-    _SettingsItem(route: AppRoute.settingsSubscription, icon: Icons.workspace_premium_outlined,
+    _SettingsItem(route: AppRoute.settingsSubscription, icon: TwikkaIcons.subscription,
         label: 'Subscription', subtitle: 'Plan, billing'),
-    _SettingsItem(route: AppRoute.settingsAbout, icon: Icons.info_outline,
+    _SettingsItem(route: AppRoute.settingsAbout, icon: TwikkaIcons.about,
         label: 'About', subtitle: 'Version, legal, support'),
   ];
 
@@ -31,7 +32,7 @@ class SettingsHubScreen extends ConsumerWidget {
   // dashboard for accounts that should see the Debug panel.
   static const _testerItem = _SettingsItem(
     route: AppRoute.settingsDebug,
-    icon: Icons.bug_report_outlined,
+    icon: TwikkaIcons.debug,
     label: 'Debug',
     subtitle: 'Tester tools',
   );
@@ -83,12 +84,12 @@ class SettingsHubScreen extends ConsumerWidget {
               leading: Icon(item.icon),
               title: Text(item.label),
               subtitle: Text(item.subtitle),
-              trailing: const Icon(Icons.chevron_right, color: twMuted2),
+              trailing: const Icon(TwikkaIcons.chevronRight, color: twMuted2),
               onTap: () => context.goNamed(item.route.name),
             ),
           const Divider(),
           ListTile(
-            leading: const Icon(Icons.logout, color: twError),
+            leading: const Icon(TwikkaIcons.signOut, color: twError),
             title: const Text('Sign out', style: TextStyle(color: twError)),
             onTap: () => ref.read(clerkAuthProvider.notifier).signOut(),
           ),

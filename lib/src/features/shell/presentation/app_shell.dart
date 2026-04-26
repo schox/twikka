@@ -3,58 +3,59 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/extensions/responsive.dart';
 import '../../../core/theme/theme_constants.dart';
+import '../../../core/theme/twikka_icons.dart';
 import '../../../routing/app_routes.dart';
 
+/// Bottom-nav / rail wrapper around the four StatefulShellRoute
+/// branches. The shell itself just renders the navigationShell — the
+/// directional slide animation lives in DirectionalShellStack which
+/// go_router calls via navigatorContainerBuilder.
 class AppShell extends StatelessWidget {
-  const AppShell({super.key, required this.child});
+  const AppShell({super.key, required this.navigationShell});
 
-  final Widget child;
+  final StatefulNavigationShell navigationShell;
 
   static const _destinations = <_NavDestination>[
     _NavDestination(
       route: AppRoute.coach,
-      path: AppPaths.coach,
       label: 'Coach',
-      icon: Icons.chat_bubble_outline,
-      selectedIcon: Icons.chat_bubble,
+      icon: TwikkaIcons.chatOutline,
+      selectedIcon: TwikkaIcons.chatSelected,
     ),
     _NavDestination(
       route: AppRoute.stats,
-      path: AppPaths.stats,
       label: 'Progress',
-      icon: Icons.show_chart_outlined,
-      selectedIcon: Icons.show_chart,
+      icon: TwikkaIcons.chartOutline,
+      selectedIcon: TwikkaIcons.chartSelected,
     ),
     _NavDestination(
       route: AppRoute.social,
-      path: AppPaths.social,
       label: 'Social',
-      icon: Icons.people_outline,
-      selectedIcon: Icons.people,
+      icon: TwikkaIcons.peopleOutline,
+      selectedIcon: TwikkaIcons.peopleSelected,
     ),
     _NavDestination(
       route: AppRoute.settings,
-      path: AppPaths.settings,
       label: 'Settings',
-      icon: Icons.settings_outlined,
-      selectedIcon: Icons.settings,
+      icon: TwikkaIcons.settingsOutline,
+      selectedIcon: TwikkaIcons.settingsSelected,
     ),
   ];
 
-  int _selectedIndex(BuildContext context) {
-    final loc = GoRouterState.of(context).uri.path;
-    final idx = _destinations.indexWhere((d) => loc.startsWith(d.path));
-    return idx == -1 ? 0 : idx;
-  }
-
-  void _onSelect(BuildContext context, int index) {
-    context.goNamed(_destinations[index].route.name);
+  void _onSelect(int index) {
+    // initialLocation: true on a re-tap pops the branch's stack back to
+    // its root (e.g. tapping Settings while you're inside Settings →
+    // Debug returns to the hub). Standard tab UX.
+    navigationShell.goBranch(
+      index,
+      initialLocation: index == navigationShell.currentIndex,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final isExpanded = context.isExpanded;
-    final selected = _selectedIndex(context);
+    final selected = navigationShell.currentIndex;
 
     if (isExpanded) {
       return Scaffold(
@@ -62,7 +63,7 @@ class AppShell extends StatelessWidget {
           children: [
             NavigationRail(
               selectedIndex: selected,
-              onDestinationSelected: (i) => _onSelect(context, i),
+              onDestinationSelected: _onSelect,
               labelType: NavigationRailLabelType.all,
               destinations: [
                 for (final d in _destinations)
@@ -86,17 +87,17 @@ class AppShell extends StatelessWidget {
               ),
             ),
             const VerticalDivider(width: 0.5, color: twHairline),
-            Expanded(child: child),
+            Expanded(child: navigationShell),
           ],
         ),
       );
     }
 
     return Scaffold(
-      body: child,
+      body: navigationShell,
       bottomNavigationBar: NavigationBar(
         selectedIndex: selected,
-        onDestinationSelected: (i) => _onSelect(context, i),
+        onDestinationSelected: _onSelect,
         destinations: [
           for (final d in _destinations)
             NavigationDestination(
@@ -113,14 +114,12 @@ class AppShell extends StatelessWidget {
 class _NavDestination {
   const _NavDestination({
     required this.route,
-    required this.path,
     required this.label,
     required this.icon,
     required this.selectedIcon,
   });
 
   final AppRoute route;
-  final String path;
   final String label;
   final IconData icon;
   final IconData selectedIcon;

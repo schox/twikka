@@ -15,8 +15,7 @@ class StatsScreen extends StatelessWidget {
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        titleSpacing: gap4,
-        title: Text('Progress', style: theme.textTheme.titleLarge),
+        title: const Text('Progress'),
         actions: const [NotificationsBell()],
       ),
       body: ListView(

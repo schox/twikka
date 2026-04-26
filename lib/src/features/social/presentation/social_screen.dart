@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/theme_constants.dart';
+import '../../../core/theme/twikka_icons.dart';
 import '../../../core/widgets/notifications_bell.dart';
 import '../data/social_models.dart';
 import 'member_avatar.dart';
@@ -31,13 +32,12 @@ class _SocialScreenState extends State<SocialScreen> {
     return Scaffold(
       backgroundColor: twPaper,
       appBar: AppBar(
-        titleSpacing: gap4,
-        title: Text('Social', style: Theme.of(context).textTheme.titleLarge),
+        title: const Text('Social'),
         actions: [
           IconButton(
             tooltip: 'New message',
             onPressed: _showStub,
-            icon: const Icon(Icons.edit_outlined),
+            icon: const Icon(TwikkaIcons.edit),
           ),
           const NotificationsBell(),
         ],
@@ -126,7 +126,7 @@ class _Search extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(Icons.search, size: 16, color: twMuted2),
+            Icon(TwikkaIcons.search, size: 16, color: twMuted2),
             const SizedBox(width: gap1),
             Expanded(
               child: TextField(

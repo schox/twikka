@@ -20,6 +20,7 @@ import '../features/settings/presentation/settings_preferences_screen.dart';
 import '../features/settings/presentation/settings_profile_screen.dart';
 import '../features/settings/presentation/settings_subscription_screen.dart';
 import '../features/shell/presentation/app_shell.dart';
+import '../features/shell/presentation/directional_shell_stack.dart';
 import '../features/social/presentation/social_screen.dart';
 import '../features/stats/presentation/stats_screen.dart';
 import 'app_routes.dart';
@@ -27,13 +28,18 @@ import 'app_routes.dart';
 part 'app_router.g.dart';
 
 final _rootKey = GlobalKey<NavigatorState>(debugLabel: 'root');
-final _shellKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
+final _coachBranchKey = GlobalKey<NavigatorState>(debugLabel: 'coach-branch');
+final _statsBranchKey = GlobalKey<NavigatorState>(debugLabel: 'stats-branch');
+final _socialBranchKey = GlobalKey<NavigatorState>(debugLabel: 'social-branch');
+final _settingsBranchKey =
+    GlobalKey<NavigatorState>(debugLabel: 'settings-branch');
 
 @Riverpod(keepAlive: true)
 GoRouter appRouter(Ref ref) {
   // Build the router exactly once. Changes to auth / system_config poke
-  // refreshListenable so go_router re-runs redirect against freshly read state
-  // — rebuilding the GoRouter itself would collide on _rootKey/_shellKey.
+  // refreshListenable so go_router re-runs redirect against freshly
+  // read state — rebuilding the GoRouter itself would collide on the
+  // top-level navigator keys.
   final refresh = ValueNotifier<int>(0);
   ref.listen(clerkAuthProvider, (_, _) => refresh.value++);
   ref.listen(systemConfigProvider, (_, _) => refresh.value++);
@@ -76,59 +82,88 @@ GoRouter appRouter(Ref ref) {
           onPicked: (_) => context.goNamed(AppRoute.coach.name),
         ),
       ),
-      ShellRoute(
-        navigatorKey: _shellKey,
-        builder: (_, _, child) => AppShell(child: child),
-        routes: [
-          GoRoute(
-            path: AppPaths.coach,
-            name: AppRoute.coach.name,
-            builder: (_, _) => const CoachScreen(),
-          ),
-          GoRoute(
-            path: AppPaths.stats,
-            name: AppRoute.stats.name,
-            builder: (_, _) => const StatsScreen(),
-          ),
-          GoRoute(
-            path: AppPaths.social,
-            name: AppRoute.social.name,
-            builder: (_, _) => const SocialScreen(),
-          ),
-          GoRoute(
-            path: AppPaths.settings,
-            name: AppRoute.settings.name,
-            builder: (_, _) => const SettingsHubScreen(),
+      // Each tab is its own branch with its own Navigator. State (e.g.
+      // a deep link into Settings → Debug) survives tab switches; tab
+      // transitions can render both branches at once because they share
+      // no widget keys.
+      StatefulShellRoute(
+        builder: (_, _, navigationShell) =>
+            AppShell(navigationShell: navigationShell),
+        navigatorContainerBuilder: (_, navigationShell, children) =>
+            DirectionalShellStack(
+          currentIndex: navigationShell.currentIndex,
+          children: children,
+        ),
+        branches: [
+          StatefulShellBranch(
+            navigatorKey: _coachBranchKey,
             routes: [
               GoRoute(
-                path: AppPaths.settingsProfile,
-                name: AppRoute.settingsProfile.name,
-                builder: (_, _) => const SettingsProfileScreen(),
+                path: AppPaths.coach,
+                name: AppRoute.coach.name,
+                builder: (_, _) => const CoachScreen(),
               ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: _statsBranchKey,
+            routes: [
               GoRoute(
-                path: AppPaths.settingsPreferences,
-                name: AppRoute.settingsPreferences.name,
-                builder: (_, _) => const SettingsPreferencesScreen(),
+                path: AppPaths.stats,
+                name: AppRoute.stats.name,
+                builder: (_, _) => const StatsScreen(),
               ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: _socialBranchKey,
+            routes: [
               GoRoute(
-                path: AppPaths.settingsSubscription,
-                name: AppRoute.settingsSubscription.name,
-                builder: (_, _) => const SettingsSubscriptionScreen(),
+                path: AppPaths.social,
+                name: AppRoute.social.name,
+                builder: (_, _) => const SocialScreen(),
               ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: _settingsBranchKey,
+            routes: [
               GoRoute(
-                path: AppPaths.settingsCoach,
-                name: AppRoute.settingsCoach.name,
-                builder: (_, _) => const CoachPickerScreen(),
-              ),
-              GoRoute(
-                path: AppPaths.settingsAbout,
-                name: AppRoute.settingsAbout.name,
-                builder: (_, _) => const SettingsAboutScreen(),
-              ),
-              GoRoute(
-                path: AppPaths.settingsDebug,
-                name: AppRoute.settingsDebug.name,
-                builder: (_, _) => const SettingsDebugScreen(),
+                path: AppPaths.settings,
+                name: AppRoute.settings.name,
+                builder: (_, _) => const SettingsHubScreen(),
+                routes: [
+                  GoRoute(
+                    path: AppPaths.settingsProfile,
+                    name: AppRoute.settingsProfile.name,
+                    builder: (_, _) => const SettingsProfileScreen(),
+                  ),
+                  GoRoute(
+                    path: AppPaths.settingsPreferences,
+                    name: AppRoute.settingsPreferences.name,
+                    builder: (_, _) => const SettingsPreferencesScreen(),
+                  ),
+                  GoRoute(
+                    path: AppPaths.settingsSubscription,
+                    name: AppRoute.settingsSubscription.name,
+                    builder: (_, _) => const SettingsSubscriptionScreen(),
+                  ),
+                  GoRoute(
+                    path: AppPaths.settingsCoach,
+                    name: AppRoute.settingsCoach.name,
+                    builder: (_, _) => const CoachPickerScreen(),
+                  ),
+                  GoRoute(
+                    path: AppPaths.settingsAbout,
+                    name: AppRoute.settingsAbout.name,
+                    builder: (_, _) => const SettingsAboutScreen(),
+                  ),
+                  GoRoute(
+                    path: AppPaths.settingsDebug,
+                    name: AppRoute.settingsDebug.name,
+                    builder: (_, _) => const SettingsDebugScreen(),
+                  ),
+                ],
               ),
             ],
           ),

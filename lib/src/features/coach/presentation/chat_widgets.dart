@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/theme_constants.dart';
+import '../../../core/theme/twikka_icons.dart';
 import '../data/chat_message.dart';
 import '../data/coach.dart';
 import 'coach_avatar.dart';
@@ -333,7 +334,7 @@ class ResponseFooter extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.check, size: 14, color: twMuted),
+          Icon(TwikkaIcons.check, size: 14, color: twMuted),
           const SizedBox(width: gap1),
           Expanded(
             child: Text(label, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: twMuted)),
@@ -378,7 +379,7 @@ class ActivityAckCardWidget extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.circle_outlined, size: 12, color: twMuted),
+                      Icon(TwikkaIcons.circleOutline, size: 12, color: twMuted),
                       const SizedBox(width: 6),
                       Text('FROM ${message.source.toUpperCase()}',
                           style: theme.textTheme.labelSmall?.copyWith(color: twMuted)),
@@ -748,7 +749,7 @@ class ChatComposer extends StatelessWidget {
                         color: hasText ? twAccent : twHairline,
                       ),
                       child: Icon(
-                        Icons.arrow_upward_rounded,
+                        TwikkaIcons.send,
                         size: 18,
                         color: hasText ? twPaper : twMuted,
                       ),

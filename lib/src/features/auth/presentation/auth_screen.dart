@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/theme_constants.dart';
+import '../../../core/theme/twikka_icons.dart';
 import '../data/auth_state.dart';
 import '../data/clerk_auth_notifier.dart';
 
@@ -431,7 +432,7 @@ class _LockedEmailRow extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(Icons.email_outlined, size: 18, color: twMuted),
+          const Icon(TwikkaIcons.email, size: 18, color: twMuted),
           const SizedBox(width: gap2),
           Expanded(
             child: Text(
