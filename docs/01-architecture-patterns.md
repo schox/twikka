@@ -19,7 +19,8 @@ Twikka is a **ground-up rebuild** of an older Supabase-backed Flutter app of the
 | Auth | **Clerk** | replaces Supabase auth |
 | Push | OneSignal | |
 | Error tracking | Sentry (`sentry_flutter`) | |
-| Subscriptions | RevenueCat | |
+| Subscriptions (mobile B2C) | RevenueCat over Apple IAP + Google Play Billing | App Store and Play Store are merchants of record |
+| Subscriptions (web / B2B) | Paddle | Merchant of record; v3 affiliate + v4 enterprise + any future consumer web |
 | Transactional email | Postmark | server-side only, called from Convex |
 | File storage | Cloudflare R2 | server-side only, called from Convex |
 | Convex components | use wherever applicable | prefer components over custom server code |
@@ -219,7 +220,7 @@ Open question for scaffolding: does Clerk's Flutter SDK give us hosted UI or do 
 Convex is the system of record. All persistent state and business logic should live server-side. Specifically:
 
 - Data model + queries + mutations in `convex/` directory (TypeScript)
-- Scheduled jobs via Convex cron
+- Scheduled jobs via Convex cron and per-user `ctx.scheduler.runAfter / runAt` (the proactive coach pipeline relies on the latter — see `docs/05-coach-interaction-design.md`)
 - File uploads proxied through Convex → Cloudflare R2 (Convex gives us signed-URL flow)
 - Email sends via Postmark triggered from Convex actions
 - Prefer **Convex components** over hand-rolled server code wherever one fits (auth helpers, rate limiting, feature flags, etc.). Reference: <https://www.convex.dev/components>
@@ -227,6 +228,24 @@ Convex is the system of record. All persistent state and business logic should l
 The Flutter client should be a thin consumer: react to Convex query streams, call mutations, render. Business rules do not live in Dart.
 
 Old Twikka followed "maximize server-side logic" as a principle with Supabase (edge functions, cron, etc.). That principle carries over verbatim to Convex.
+
+### Cross-cutting Convex patterns
+
+A small set of patterns are load-bearing across the product. Each has its own reference doc; this section lists them so a new contributor knows what to read.
+
+**Live-global reactivity** (`docs/memory/reference_live_globals.md`). Every state the UI must react to instantly — `system_config`, `currentUser` (lifecycle stage, subscription tier, profile slots, current coach), the active thread, unread counts — is exposed as a Riverpod stream provider backed by a Convex live query. The router watches these. Discipline: never `read` a global where you should `watch` it.
+
+**System config singleton** (`docs/memory/reference_system_config.md`). The `system_config` table holds a single row with operational state: kill switch (`available`, `unavailableReason`, `estimatedBackOnline`), `minAppVersion` + `updateLinks.{ios,android}`, `models.{classifier, general, deep, extractor, embedding}` (operator-editable, no code deploy needed), operational flags, soft cost budgets. Read everywhere via the live-global pattern; never cached in client state.
+
+**External call audit** (`docs/memory/reference_external_call_audit.md`). Every outbound call to a paid or measurable third party — LLM via OpenRouter, embeddings, Postmark email, OneSignal push, R2 storage, RevenueCat/Paddle webhooks emitted from us, anything else — writes an `external_call` row synchronously after the call returns. Lets us slice spend by user / persona / cohort / time period without retroactive plumbing. Helpers (`recordedCall(...)`) live in `convex/lib/`.
+
+**Coach character system** (`docs/memory/reference_coach_character_system.md`). Index to the character work spread across `docs/twikka_coach_personas.md`, `docs/twikka_coach_image_prompts.md`, plus the AI disclosure rules, avatar strategy across phases, and the v3 W-22 affiliate cross-sell tone discipline.
+
+**Locale roadmap and elasticity** (`docs/memory/reference_locales.md`). v1 ships en-AU only, but the layout discipline (locale-elastic widths for buttons, chips, headers) is enforced from day one. Future locale priority list lives here.
+
+### LLM gateway — OpenRouter
+
+All LLM calls are routed through OpenRouter as a single gateway, keyed per environment. Model selection comes from `system_config.models` (the operator can change models without a code deploy). Per-persona overrides allowed via `coach_personas.modelOverride` for personas where a specific model matters. Every LLM call is wrapped with `recordedCall(...)` per the audit pattern above.
 
 ---
 
@@ -245,19 +264,40 @@ The presigning and bucket access live server-side.
 
 ---
 
-## Subscriptions — RevenueCat
+## Subscriptions — RevenueCat (mobile B2C) and Paddle (web/B2B)
+
+Two billing systems, chosen by channel. Convex is the single source of truth for entitlement state regardless of source.
+
+### Mobile B2C — RevenueCat over Apple IAP and Google Play
 
 Couple-tools reference: `lib/core/services/revenuecat_service.dart:1-265`.
 
 - Singleton service with `initialize()`, `ensureIdentified(userId, email)`, `logOut()`
 - Init in Phase 2 of bootstrap
 - Call `ensureIdentified` on Clerk sign-in success
-- **Entitlement state lives in Convex, not RevenueCat.** RevenueCat webhooks fire into a Convex HTTP action that updates the user's subscription row. The Flutter app reads subscription state from a Convex query provider, not directly from RevenueCat.
+- The store (Apple App Store, Google Play) is the merchant of record on mobile. RevenueCat sits on top of both as a cross-platform abstraction (receipt validation, restore purchases, introductory offers, subscription identity across iOS and Android).
+- **Entitlement state lives in Convex, not RevenueCat.** RevenueCat webhooks fire into a Convex HTTP action that updates the user's `subscriptions` row (with `provider: "apple_iap"` or `"google_play"`). The Flutter app reads subscription state from a Convex query provider, not directly from RevenueCat.
 - Optimistic post-purchase update: after `purchasePackage()` succeeds, extract entitlements from the returned `CustomerInfo` and seed the Convex query cache — avoids the webhook-latency window where the UI would show "not subscribed."
 
-Platform-specific API keys (`REVENUECAT_IOS_API_KEY`, `REVENUECAT_ANDROID_API_KEY`) are separate envied fields.
+Platform-specific API keys (`REVENUECAT_IOS_API_KEY`, `REVENUECAT_ANDROID_API_KEY`) are separate envied fields. The RevenueCat secret API key only ever lives on the Convex deployment (set via `npx convex env set`).
 
 Paywall: use `RevenueCatUI.presentPaywall()` from `purchases_ui_flutter` rather than hand-rolling the UI initially. Revisit if design needs outgrow it.
+
+Cancellation deep-links to the platform's subscription management screen (Apple's rules require this; Android's are similar). The app does not attempt to handle cancellation in-process.
+
+### Web / B2B — Paddle (v3 affiliate, v4 enterprise, possibly later consumer web)
+
+Not a Flutter dependency — Paddle is server-side and web-side only.
+
+- Paddle is the merchant of record for the practitioner web app (v3) and the enterprise web app (v4), and for any future consumer-web subscription channel.
+- Paddle webhooks fire into a Convex HTTP action that updates the same `subscriptions` table with `provider: "paddle"` and the relevant org context.
+- The Flutter mobile app never offers a Paddle checkout (Apple's rules forbid it for in-app digital subscriptions outside the IAP flow). Paddle subscriptions originate outside the iOS shell — marketing site, email links, the practitioner web app, the enterprise admin app — and the mobile app reads the resulting entitlement from Convex.
+
+Paddle environment variables (`PADDLE_API_KEY`, `PADDLE_WEBHOOK_SECRET`) live on the Convex deployment only; the Flutter client never holds them.
+
+### Cross-platform analytics
+
+RevenueCat's dashboard is the cross-platform analytics surface for mobile (MRR, churn, trial conversion across iOS and Android, cohort analysis). Paddle's dashboard handles the web/B2B equivalent. The Convex `subscriptions` table is the queryable source of truth for in-product behaviour.
 
 ---
 

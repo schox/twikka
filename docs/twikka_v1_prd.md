@@ -59,7 +59,7 @@ Key design commitments:
 - **Paid only, with a long free trial**: no ads, no bots, no data brokers.
 - **Build complete UI, stage deployment**: the full product is built from the start, with later features feature-flagged until their release wave.
 
-The stack: Flutter (mobile), Convex (reactive backend, agent orchestration, multi-tenancy), Clerk (auth), Cloudflare R2 (object storage), OneSignal (push), Postmark (transactional email), GoHighLevel (marketing lifecycle), Paddle (subscription billing).
+The stack: Flutter (mobile), Convex (reactive backend, agent orchestration, multi-tenancy), Clerk (auth), Cloudflare R2 (object storage), OneSignal (push), Postmark (transactional email), GoHighLevel (marketing lifecycle), RevenueCat (mobile B2C subscriptions, wrapping Apple App Store and Google Play as merchants of record), Paddle (web subscriptions and B2B billing for v3 affiliates and v4 enterprise, as merchant of record).
 
 ---
 
@@ -167,15 +167,15 @@ The minimum viable Twikka, executed to high standard.
 
 - Flutter mobile app with dramatically updated UI
 - Chat-first interface with adaptive AI coach
-- Six selectable coaches (male/female × 30s/45s/60s age bands)
+- Six selectable coaches across roughly 30s, mid-40s, and 60s+ age bands (see §8.3)
 - Conversational onboarding: coach selection is the only required step
 - Age and gender captured conversationally through widgets early in the first chat
-- Apple Health and Google Fit integration for automatic activity capture
+- Apple Health and Health Connect (Android) integration for automatic activity capture
 - Complete v1 widget catalogue rendered in the chat
 - Secondary progress/journal surface
 - Settings, account management, data export, account deletion
 - Clerk-based signup (name + email + verification code) and login (email magic link)
-- Paddle-based subscription with long free trial
+- RevenueCat-managed mobile subscription via Apple App Store and Google Play, with introductory free trial
 - OneSignal for notifications; Postmark for transactional email; GoHighLevel sync for marketing
 - Multi-tenant data model, role model, audit logging — all operational from v1 even though only B2C is live
 
@@ -185,7 +185,7 @@ Expanding the product once the core loop is proven.
 
 - Full social layer: DMs, groups, accountability pairs, invites, member profiles, safety surfaces
 - Voice coaching as a premium tier feature
-- Occasional video moments (Tavus or equivalent) at meaningful milestones
+- Occasional video moments (HeyGen, with the same avatar pipeline used for live streaming avatars in a later premium tier) at meaningful milestones
 - Richer gamification mechanics drawn from v1 usage patterns
 - Tiered pricing introduced (standard vs premium)
 
@@ -300,7 +300,7 @@ Standard settings tree.
 **Top-level sections:**
 - Account (name, email, subscription, delete account)
 - Coach (change coach, notification preferences for coach messages)
-- Health (Apple Health / Google Fit connection, what data is read)
+- Health (Apple Health / Health Connect connection, what data is read)
 - Notifications (push, email, frequency, quiet hours)
 - Privacy (what's shared with whom, data export, data deletion, consent history)
 - Theme (theme picker, light/dark/system, text size)
@@ -438,8 +438,8 @@ Factual, non-conversational event marker.
 
 The coach noticed an activity via device data and reflects it back.
 
-- Visual: labelled sub-bubble ("FROM APPLE HEALTH" or "FROM GOOGLE FIT" tag above), then coach message.
-- Payload: `{ source: "apple_health" | "google_fit", activity: string, durationMin: number, distanceKm?: number, timeOfDay: string, coachComment: string }`
+- Visual: labelled sub-bubble ("FROM APPLE HEALTH" or "FROM HEALTH CONNECT" tag above), then coach message.
+- Payload: `{ source: "apple_health" | "health_connect", activity: string, durationMin: number, distanceKm?: number, timeOfDay: string, coachComment: string }`
 - Interactions: tap activity detail to see more; can respond conversationally ("it was lovely actually").
 - Notes: coach never makes the detail the point; the coach comment is the point.
 
@@ -580,10 +580,10 @@ Coach-posted widget to capture gender.
 
 **W-17 · Health connection widget**
 
-Prompts the user to connect Apple Health or Google Fit.
+Prompts the user to connect Apple Health or Health Connect.
 
 - Visual: offer-style card with platform icon, plain-language explanation, and primary action ("Connect Apple Health").
-- Payload: `{ platform: "apple_health" | "google_fit", permissionsRequested: string[], rationale: string }`
+- Payload: `{ platform: "apple_health" | "health_connect", permissionsRequested: string[], rationale: string }`
 - Interactions: primary action triggers OS permission sheet. Returns to chat with acknowledgement widget (W-04 precursor) or system notice.
 - Notes: plain-language explanation of what Twikka reads and does not read.
 
@@ -656,7 +656,7 @@ User-sent voice input.
 
 **W-32 · Video moment** [v2]
 
-Short coach video (Tavus or equivalent) for milestone or welcome moments.
+Short coach video (HeyGen) for milestone or welcome moments.
 
 - Visual: video player card, portrait aspect.
 - Payload: `{ videoRef: string, duration: number, transcriptText: string, context: string }`
@@ -900,7 +900,7 @@ Accessible from Settings → Privacy.
 ### 7.7 Free trial mechanics
 
 - Default trial: **60 days**. Long enough to experience real consistency before payment.
-- No credit card required upfront in v1 — reduces acquisition friction for this audience. Paddle flow kicks in near trial end.
+- The store's introductory offer is used so the trial appears as "free for 60 days" with no separate card-capture step. The user's Apple/Google payment method is on file (the store requires it for IAP enrolment) but the user is never charged during the trial. The flow feels card-free even though technically a payment method is registered with the store.
 - Trial countdown is not displayed prominently. Users don't need to watch a clock.
 - Soft reminder at 14 days before end, at 7 days, at 2 days. Blocking prompt at trial end if no payment method present.
 - Users who cancel during trial retain access until the trial naturally ends.
@@ -927,19 +927,23 @@ The agent is built on the Convex Agent component, which handles threading, messa
 
 **Memory model:**
 
-Memory is stored in structured form, not as raw conversation history (though conversation history is retained separately). Structured memory fields include:
+The coach's memory has two primary stores, plus a separate goals / signals / coach-state layer specified in detail in `docs/05-coach-interaction-design.md`. Raw conversation history is retained forever in `messages` but almost never injected into a prompt; the structured layers below are what the coach actually works from.
 
-- `profile`: age (if given), gender (if given), location (if volunteered), family context (if mentioned)
-- `activity_context`: what activities the user has tried, baseline capacity, known constraints (injuries, conditions mentioned)
-- `emotional_context`: recurring themes, sensitive topics to avoid, things the user responds well to
-- `preferences`: time of day preferences, notification preferences, coach style preferences
-- `relationships`: mentioned partners, family members, friends, pets (for natural reference)
-- `milestones`: significant moments, breakthroughs, setbacks, returns after lapses
-- `constraints`: practitioner-set constraints (v3), user-set constraints ("don't suggest running")
+**`knowledge_fact`** is a vector-indexed table of discrete things the coach has learned. Each row is one fact, preference, barrier, opinion, or relationship, with `category`, `key`, `value`, `confidence`, `status` (active / superseded / resolved), `source_message_ids`, `last_used_at`, and an embedding for semantic retrieval. Three scopes:
+
+- `agent` — coach-internal calibration content
+- `platform` — shared knowledge (wiki articles indexed for retrieval)
+- `user` — this user's facts
+
+Per-fact rows make extraction, provenance, recency tracking, and supersession natural. The same primitive holds the platform RAG corpus and the per-user store, so retrieval is one query.
+
+**`user_profile_slots`** is the small structured table for the things the coach needs deterministic answers on. Each slot has a state machine (`unknown` / `asked_pending` / `declined` / `provided` / `inferred`) so a decline is permanently respected and a provided answer is editable from Settings → Profile. Slots: `dateOfBirth`, `gender`, `cityId`, `timeZone`, `primaryMotivation`, `healthConnection`, `pushPermission`, `preferredCheckInTime`.
 
 Memory is written in third-person factual form so it remains neutral across persona switches:
 - ✓ "User mentioned knee stiffness in mornings (Week 2)."
 - ✗ "I talked to her about her knee stiffness."
+
+The schema, extraction pipeline, and retrieval discipline are specified in `docs/05-coach-interaction-design.md`.
 
 ### 8.2 Persona layer
 
@@ -949,7 +953,7 @@ A persona is a set of attributes that shape how the agent expresses itself in a 
 
 - `name`
 - `visualRef` (illustrated portrait)
-- `ageBand`: "30s" | "45s" | "60s"
+- `ageBand`: "30s" | "45s" | "60s" | "70s"
 - `genderPresentation`: "male" | "female"
 - `voiceSample` (v2)
 - `voiceRef` (v2, TTS voice identifier)
@@ -964,14 +968,14 @@ Launch set:
 
 | ID | Name | Age band | Gender | Style |
 |---|---|---|---|---|
-| `coach_margaret` | Margaret | 60s | Female | Patient and reflective. Retired GP. |
-| `coach_dave` | Dave | 60s | Male | Dry-humoured and steady. Former tradesman. |
-| `coach_priya` | Priya | 30s | Female | Gentle and curious. Yoga teacher. |
-| `coach_tom` | Tom | 60s | Male | Quiet and unhurried. Retired. |
-| `coach_ben` | Ben | 30s | Male | Warm and practical. Personal trainer turned health coach. |
-| `coach_fiona` | Fiona | 45s | Female | Kind and direct. GP. |
+| `coach_priya` | Priya | 30s | Female | Gentle and curious. |
+| `coach_ben` | Ben | 30s | Male | Warm and practical. |
+| `coach_fiona` | Fiona | 45s | Female | Kind and direct. |
+| `coach_rob` | Rob | 45s | Male | Dry-humoured and steady. |
+| `coach_margaret` | Margaret | 60s | Female | Patient and reflective. |
+| `coach_tom` | Tom | 70s | Male | Quiet and unhurried. |
 
-(Names, ages, and styles are provisional and can be tuned during content development. The matrix of 6 = 2 genders × 3 age bands is the commitment.)
+The commitment is six personas chosen to span the demographic range we serve: two of each gender across roughly 30s, mid-40s, and 60s+. The full character spec, voice rules, sample lines, "would / wouldn't say" lists, and the per-persona "are you AI?" disclosure responses live in `docs/twikka_coach_personas.md` (the operative source for all persona content).
 
 Each coach ships with:
 
@@ -982,33 +986,31 @@ Each coach ships with:
 
 ### 8.4 Adaptive coach mode
 
-The coach's behaviour adapts to the user's current state, inferred from recent activity, engagement patterns, and conversational signals. Three modes:
+The coach's behaviour adapts to the user's current state, inferred from recent activity, engagement patterns, and conversational signals. Four modes:
 
-**Recovery mode**: early days with a new user, or after a lapse of 7+ days. Low pressure, warm, proactive but gentle. Proactive messages are rare and simple ("Hey, just saying hi"). Never asks for commitments the user hasn't offered. Never references missed activity.
+**Flow mode**: user is clearly self-directed, engaged at or near daily without coach prompting (14+ day streak, consistent frequency). Coach becomes more responsive, less proactive. Steps back. Shorter messages. More silence. Can nudge slightly bigger challenges when the moment is right.
 
-**Momentum mode**: user is engaging consistently, trajectory is positive. More engaged, can suggest stretches, can celebrate more visibly, can introduce social features (W-11), can gently propose small progressions.
+**Momentum mode**: user is engaging consistently, active in the last 7 days but no long streak yet. Encouragement; keep the consistency going. Coach is warm and engaged; can suggest stretches, can celebrate visibly, can introduce social features (W-11), can gently propose small progressions.
 
-**Flow mode**: user is clearly self-directed, engaged daily or near-daily without coach prompting. Coach becomes more responsive, less proactive. Steps back. Shorter messages. More silence.
+**Recovery mode**: 3 to 7 days inactive after being active. Not a lapse — a pause. Low pressure, low bar, warm and open. Proactive messages are rare and simple ("Hey, just saying hi"). Never asks for commitments the user hasn't offered. Never references the gap.
 
-**Mode transitions:**
+**Returning mode**: 7+ days inactive. The user has been away. Warmth first, fitness second; don't audit the gap. Open a door without standing in it. Proactive messages are rarer still and explicitly meet-the-person-not-the-situation. The coach reintroduces gently rather than picking up where things left off.
 
-Inferred from signals, not user-selected. Signals:
+**Mode computation and transitions:**
 
-- Days since last session
-- Days with any captured activity in the last 7/14/28 days
-- Conversation engagement (length, tone, responsiveness)
-- Widget response rates
-- Recent life events mentioned (illness, travel, difficult times)
+Mode is recomputed after every activity record creation and every extraction job run. Rules evaluated in order:
 
-Mode changes should be invisible to the user. The coach's behaviour shifts; no "you're now in Recovery mode" notification.
+- streak ≥ 14 days AND activities in last 7 ≥ 3 → `flow`
+- days since last activity ≤ 7 AND activities in last 7 ≥ 2 → `momentum`
+- days since last activity is 3 to 7 → `recovery`
+- days since last activity > 7 → `returning`
+- default → `momentum`
 
-**Escalation and de-escalation:**
+Other signals inform context-assembly nuance but not mode transitions: conversation engagement (length, tone, responsiveness), widget response rates, recent life events mentioned (illness, travel, difficult times). The full mode-computation rules and the proactive cadence per mode are canon in `docs/05-coach-interaction-design.md` (§Mode Computation and §Proactive pipeline).
 
-- Recovery → Momentum: only after sustained positive engagement (at least 10+ days in the mode, recent activity, responsive conversation).
-- Momentum → Flow: after ~30 days of user-driven engagement.
-- Any mode → Recovery: triggered immediately by signals of struggle (disengagement, negative emotional content, gap).
+Mode changes are invisible to the user. The coach's behaviour shifts; no "you're now in Recovery mode" notification.
 
-Mode is stored in the user's profile and visible to the agent on every turn.
+Mode is stored on `user_coach_state` and visible to the agent on every turn.
 
 ### 8.5 Coach switching
 
@@ -1058,7 +1060,8 @@ The coach has access to a set of tools it can invoke on each turn. The tool sche
 - `request_notifications_permission` — shows W-18
 - `get_recent_activity` — reads device-sourced activity
 - `get_user_profile` — reads structured memory
-- `write_user_memory` — updates structured memory
+- `write_knowledge_fact` — upserts a row to `knowledge_fact` (scope=user)
+- `update_profile_slot` — transitions a slot in `user_profile_slots`
 - `search_content_library` — finds educational content
 - `schedule_proactive_checkin` — arranges a future check-in
 - `flag_for_human_review` — rare, for safety escalation
@@ -1067,7 +1070,7 @@ The coach has access to a set of tools it can invoke on each turn. The tool sche
 
 - `suggest_accountability_partner` — matches users (W-11 follow-up)
 - `send_voice_response` — returns audio (W-30)
-- `render_video_moment` — Tavus video (W-32)
+- `render_video_moment` — HeyGen video (W-32)
 - `respect_practitioner_constraint` (v3) — reads constraints set by affiliate
 
 ### 8.8 Safety and escalation
@@ -1097,75 +1100,146 @@ When asked things outside its scope, the coach suggests a human practitioner and
 
 **v1:**
 - Apple Health (iOS) via HealthKit
-- Google Fit / Health Connect (Android)
+- Health Connect (Android) — Google Fit is not targeted
 
 **v2+:**
 - Potential integrations with Garmin Connect, Fitbit, Samsung Health for users whose data lives there. Decided based on request volume.
 
-### 9.2 Canonical activity taxonomy
+### 9.2 Activity taxonomy
 
-Twikka's internal taxonomy is small, opinionated, and behavioural rather than athletic.
+Twikka does not use a small, fixed list of activity types. The user can record anything; the coach validates anything; the system reconciles platform-sourced enums and free-text user input against a rich underlying catalogue.
 
-**v1 canonical activities:**
+The catalogue is the **Compendium of Physical Activities (CoPA)** — approximately 1,300 entries with associated MET values, organised by major heading and class. It is seeded on day one from the existing CoPA tables (activity, class, heading) carried over from the old Twikka database.
 
-| ID | Label | Notes |
-|---|---|---|
-| `walk` | Walk | Includes leisurely, brisk, and treadmill |
-| `hike` | Hike | Outdoor walking on trails |
-| `run` | Run | Any running or jogging |
-| `cycle` | Cycle | Outdoor or indoor bike |
-| `swim` | Swim | Pool or open water |
-| `strength` | Strength training | Weights, resistance |
-| `yoga` | Yoga | Includes stretching, pilates |
-| `dance` | Dance | Any dance activity |
-| `garden` | Gardening | Counted as activity |
-| `household` | Active housework | Vigorous cleaning, DIY |
-| `sport` | Sport | Racquet sports, team sports |
-| `water` | Water sports | Paddling, surfing, kayaking |
-| `other` | Other activity | Fallback category |
+The unit table is `activity_kinds`. Each row represents one activity (e.g. "brisk walking", "gardening, general", "tai chi"). The schema:
 
-The taxonomy explicitly includes gardening and housework because, for the target user, these are meaningful. Most fitness apps exclude them. Twikka validates them.
+```typescript
+activity_kinds {
+  _id
+  slug                  // "walking_brisk"
+  displayName           // "Brisk walking"
 
-### 9.3 Mapping tables
+  // CoPA backbone
+  copaCode?             // 17190
+  copaMets?             // 5.0 (used internally for energy proxy; never user-surfaced)
+  copaMajorHeading?     // "walking"
+  copaClass?
 
-Each platform's activity enum is mapped to the Twikka taxonomy.
+  // Classification — all that apply
+  isCardio: bool
+  isStrength: bool
+  isMobility: bool
+  isBalance: bool
+  isMental: bool
 
-**Apple Health (HKWorkoutActivityType):**
+  // Platform mappings
+  appleHkTypes: string[]         // ["walking"]
+  healthConnectTypes: string[]   // ["WALKING"]
 
-- `.walking` → `walk`
-- `.hiking` → `hike`
-- `.running` → `run`
-- `.cycling` → `cycle`
-- `.swimming` → `swim`
-- `.traditionalStrengthTraining`, `.functionalStrengthTraining` → `strength`
-- `.yoga`, `.pilates`, `.flexibility` → `yoga`
-- `.dance`, `.socialDance` → `dance`
-- (Many more mapped; full table in appendix)
-- Unknown types → `other` with a note for the coach to ask
+  // Aliases (en-AU for v1; will become per-locale)
+  aliases: string[]
 
-**Google Fit / Health Connect:**
+  // Provenance and review
+  source: "copa_seed" | "apple_seed" | "health_connect_seed" | "classifier_inferred"
+  needsReview: bool
+  reviewedAt?
+  reviewedBy?
 
-- Similar mapping table.
-- "Walking" → `walk`, "Aerobics" → `other` (coach asks), etc.
+  createdAt, updatedAt
+}
+```
 
-When the platform returns `other`, the coach may follow up conversationally: "You did something active for 25 minutes around 3pm. What were you up to?"
+**Five classification axes — all that apply, not pick-one:**
 
-### 9.4 Data captured per activity
+- `isCardio` — sustained heart-rate-elevating effort
+- `isStrength` — muscle-loading work
+- `isMobility` — stretching, yoga, flexibility
+- `isBalance` — balance and proprioception (tai chi, certain yoga, board sports)
+- `isMental` — meditation, breathwork
+
+Compound activities carry multiple flags. HIIT is `{cardio, strength}`. Yoga is `{mobility, mental}` and sometimes `{balance}`. Gardening is `{cardio, strength}` because it actually is. Meditation is `{mental}` only. The coach reasons about variety using these flags ("you've done a lot of cardio this month, no strength").
+
+The product's primary interest is cardio and strength, but the user is free to record anything; balance and mental work are first-class.
+
+**Aliases — two tiers:**
+
+Global aliases live on `activity_kinds.aliases`. They hold confirmed locale variants ("gardening", "yard work") and common phrasings that map cleanly. Admin-editable; grown by the classifier when a phrase is confirmed across multiple users.
+
+Per-user aliases live on a separate `user_activity_aliases` table. They hold the personal phrasings the coach has learned for *this* user (Margaret might call mowing "the lawn" forever). Schema:
+
+```typescript
+user_activity_aliases {
+  _id, userId
+  activityKindId
+  alias                  // user's exact phrasing, lowercased
+  capturedAt
+  sourceMessageId?
+  confirmedByUser: bool  // true if coach asked and user said yes
+}
+```
+
+**Resolution flow** when classifying user free-text in chat:
+
+1. Exact match on `user_activity_aliases.alias` for this user → resolved silently.
+2. Exact match on `activity_kinds.aliases` or `displayName` (case-insensitive) → resolved silently.
+3. Embedding search against `displayName + aliases` across `activity_kinds`. If top candidate's similarity is above a confidence threshold (≈0.85), use it silently and write a `user_activity_aliases` row with `confirmedByUser: false`.
+4. Ambiguous middle band (≈0.65–0.85): coach asks, e.g. "Sounds like that might be gardening — does that fit?" On confirmation, write `user_activity_aliases` with `confirmedByUser: true`.
+5. Nothing resolves: classifier creates a new `activity_kinds` row with `needsReview: true`, classifications inferred, and writes a `user_activity_aliases` mapping.
+
+The coach only asks at step 4. Steps 1, 2, 3, and 5 are silent. The needsReview admin queue is where new kinds get curated, locale-aliased, and CoPA-mapped if missed by the classifier. Activities are usable immediately regardless of review status.
+
+### 9.3 Platform mapping (Apple Health and Health Connect)
+
+Twikka's Flutter integration uses the [`health` package](https://pub.dev/packages/health) which wraps Apple HealthKit on iOS and Google Health Connect on Android.
+
+Each `activity_kinds` row carries `appleHkTypes: string[]` and `healthConnectTypes: string[]`. When a platform sync arrives:
+
+1. Look up `activity_kinds` where the relevant array contains the platform enum value. If found, write the `activities` row.
+2. If the platform enum has no mapping (e.g. Apple ships a new value, or a value not yet in our seed), the classifier creates a new `activity_kinds` row with `source: apple_seed` or `health_connect_seed`, classifications inferred, `needsReview: true`. The activity is written immediately with the new mapping.
+
+Apple's `HKWorkoutActivityType` (≈80 values) and Health Connect's `ExerciseType` (≈70 values) overlap heavily but are not identical. Both have an "OTHER" bucket. Both are non-exhaustive against CoPA's ≈1,300. The seed reconciles the union.
+
+When the platform returns "other", the coach may follow up conversationally: "You did something active for 25 minutes around 3pm. What were you up to?" — and the user's answer feeds the resolution flow in §9.2.
+
+### 9.4 Activity instance schema and data captured
+
+The instance log is the `activities` table. One row per activity (whether device-sourced or reported in conversation):
+
+```typescript
+activities {
+  _id, organisationId, userId
+  source: "apple_health" | "health_connect" | "reported" | "coach_inferred"
+  externalId?           // platform dedupe ID
+  activityKindId        // ref to activity_kinds
+  startedAt, endedAt, durationMin
+  metadata: {
+    distance_km?, steps?, avg_hr?, perceived_effort?,
+    notes?, calories?, elevation_m?
+  }
+  metsEstimate?         // copaMets × (durationMin/60); internal only
+  acknowledgedByCoach: bool
+  acknowledgementMessageId?
+  createdAt
+}
+```
 
 From the platforms:
-- Activity type (mapped)
+- Activity type (resolved to `activityKindId` per §9.3)
 - Start time, end time
 - Duration (minutes)
 - Distance (km) if applicable
-- Energy burned (if available; not surfaced prominently)
+- Energy burned (if available; never surfaced)
 - Source device / app name
 
-**Not captured:**
+**Not captured / never surfaced:**
 - Heart rate detail (available if needed for context, never surfaced)
 - GPS traces (not needed for the product)
 - Step counts as a primary metric (available; used only as a supplementary signal)
 - Weight, BMI, blood pressure
 - Menstrual cycle, reproductive health, nutrition data
+- Calorie counts in any form (calories may be stored in metadata for completeness; never surfaced)
+
+`metsEstimate` is computed from `copaMets` and used internally for trajectory weighting and "did the user push themselves" reasoning. It is never shown to the user.
 
 ### 9.5 Sync strategy
 
@@ -1348,7 +1422,7 @@ The coach uses this to:
 - **Wholesale tier** for larger practices: flat monthly rate that includes N clients with bundle discount.
 - **White-label premium** (v3.5): a light white-label variant for bigger affiliates, additional monthly fee.
 
-Paddle handles billing. Rev share paid monthly or quarterly.
+Practitioner billing (per-active-client fee paid by the practice) is handled by Paddle as merchant of record. Affiliate-sourced clients still subscribe via the mobile stores in v1; revenue share is computed against the store-reported subscription state surfaced through RevenueCat. Rev share paid monthly or quarterly.
 
 ### 11.7 Co-branding surface
 
@@ -1470,7 +1544,7 @@ This is the feature that turns Twikka from a wellbeing benefit into a measurable
 
 ### 13.3 Video moments
 
-- Tavus-style avatar video of the selected coach, used sparingly:
+- HeyGen-rendered avatar video of the selected coach, used sparingly:
   - Onboarding welcome (first time a Premium user meets their coach)
   - Meaningful milestones (e.g. 6-month anniversary)
   - Weekly reflections (premium-only, opt-in)
@@ -1480,7 +1554,7 @@ This is the feature that turns Twikka from a wellbeing benefit into a measurable
 
 ### 13.4 Premium pricing
 
-Pricing to be set near v2 launch. Target a moderate premium over standard (e.g. 1.5-2x standard). Paddle handles tiering.
+Pricing to be set near v2 launch. Target a moderate premium over standard (e.g. 1.5–2x standard). Tiering is configured in App Store Connect and Play Console as separate IAP products, surfaced via RevenueCat offerings on mobile; future web/B2B Premium pricing lives in Paddle.
 
 ---
 
@@ -1561,13 +1635,14 @@ All categories individually controllable in Settings → Notifications.
 
 ### 15.3 Frequency adaptation
 
-The coach's proactive check-in frequency adapts to user mode:
+The coach's proactive check-in frequency adapts to user mode (see §8.4):
 
-- **Recovery mode**: rare (every few days to weekly), very gentle tone
-- **Momentum mode**: moderate (every 2-3 days), warm and engaged
 - **Flow mode**: minimal (weekly or less), responsive rather than proactive
+- **Momentum mode**: moderate (every 2-3 days), warm and engaged
+- **Recovery mode**: rare (every few days), gentle tone, low bar
+- **Returning mode**: rarer still, warmth-first; meets the person before any reference to activity
 
-Users can override with their own frequency preferences.
+Inactivity check-in thresholds per mode are specified in `docs/05-coach-interaction-design.md` (§Proactive pipeline). Users can override with their own frequency preferences.
 
 ### 15.4 Quiet hours
 
@@ -1629,10 +1704,9 @@ users
   email
   name
   organisationId
-  primaryCoachId       // active persona
   createdAt
   lifecycleStage       // from account lifecycle table (§7.5)
-  currentMode          // "recovery" | "momentum" | "flow"
+  // mode lives on user_coach_state, not here
 
 memberships
   _id
@@ -1642,17 +1716,84 @@ memberships
   createdAt
   revokedAt?
 
-user_memory
+coachAssignment        // user's active persona; one row per user
   _id
   userId
-  profile: { ageBand?, gender?, ... }
-  activityContext: object
-  emotionalContext: object
-  preferences: object
-  relationships: array
-  milestones: array
-  constraints: array
+  organisationId
+  coachPersonaId
+  assignedAt
+
+knowledge_fact         // vector-indexed; per-fact rows; three scopes
+  _id
+  scope                // "agent" | "platform" | "user"
+  organisationId?      // null for agent/platform
+  userId?              // null for agent/platform; set for user-scope rows
+  category             // "fact" | "preference" | "barrier" | "opinion" | "relationship"
+  key                  // short slug, unique per (userId, key) for user-scope rows
+  value                // natural-language statement
+  confidence           // "high" | "medium" | "low"
+  status               // "active" | "superseded" | "resolved"
+  embedding            // vector for semantic retrieval
+  source_message_ids?  // provenance for user-scope rows
+  last_used_at?        // recency-decay reranker input
+  accessCount          // ditto
+  createdAt, updatedAt
+
+user_profile_slots     // one row per user per slot
+  _id
+  userId
+  slot                 // "dateOfBirth" | "gender" | "cityId" | "timeZone" |
+                       // "primaryMotivation" | "healthConnection" |
+                       // "pushPermission" | "preferredCheckInTime"
+  state                // "unknown" | "asked_pending" | "declined" | "provided" | "inferred"
+  value?               // type depends on slot
+  askedAt?, providedAt?, declinedAt?
   updatedAt
+
+user_goals
+  _id
+  organisationId, userId
+  type                 // "frequency" | "event" | "general"
+  description          // natural language
+  target?              // structured where parseable; null for general goals
+  status               // "active" | "achieved" | "abandoned" | "paused"
+  source_message_ids
+  coach_last_referenced_at?
+  createdAt, updatedAt
+
+user_signals           // time-series, low-filter capture
+  _id
+  organisationId, userId
+  signal_type          // "energy" | "mood" | "stress" | "sleep_quality" |
+                       // "motivation" | "soreness" | "general_wellbeing"
+  value_numeric?       // 1–5
+  value_label?         // "low" | "medium" | "high"
+  value_raw?           // exact phrase
+  source               // "reported" | "apple_health" | "explicit_checkin"
+  source_message_id?
+  recorded_at          // when the signal applies
+  created_at
+  context_note?
+
+user_coach_state       // one row per user; continuously updated
+  _id
+  organisationId, userId
+  mode                 // "flow" | "momentum" | "recovery" | "returning"
+  mode_since, mode_computed_at
+  streak_days, days_since_last_activity, activities_last_7_days, activities_last_28_days
+  typical_activity_days, app_tenure_days, total_sessions, lapse_count, last_lapse_at
+  last_signal_elicitation_at, signal_data_sparse
+  last_coach_outreach_at, recent_suggestions
+  computed_at
+
+coach_triggers         // every proactive outreach; rate-limit + analytics
+  _id
+  organisationId, userId
+  trigger_type
+  trigger_source_id?, message_id?
+  notification_sent, user_responded, responded_at?
+  suppressed, suppression_reason?
+  created_at
 
 threads
   _id
@@ -1673,23 +1814,37 @@ messages                       // includes all widgets
   createdAt
   editedAt?
 
-activities
+activity_kinds         // see §9.2 for full schema
   _id
-  userId
-  source                       // "apple_health", "google_fit", "manual"
-  platformActivityId?          // for idempotency
-  canonicalType                // from taxonomy
-  startTime
-  endTime
-  durationMin
-  distanceKm?
-  rawData                      // original platform record
-  capturedAt
+  slug, displayName
+  copaCode?, copaMets?, copaMajorHeading?, copaClass?
+  isCardio, isStrength, isMobility, isBalance, isMental
+  appleHkTypes, healthConnectTypes, aliases
+  source, needsReview
+  createdAt, updatedAt
+
+user_activity_aliases  // per-user phrasings the coach has learned
+  _id, userId
+  activityKindId, alias
+  capturedAt, sourceMessageId?
+  confirmedByUser
+
+activities
+  _id, organisationId, userId
+  source                       // "apple_health" | "health_connect" | "reported" | "coach_inferred"
+  externalId?                  // platform dedupe
+  activityKindId
+  startedAt, endedAt, durationMin
+  metadata                     // { distance_km?, steps?, avg_hr?, perceived_effort?, notes?, calories?, elevation_m? }
+  metsEstimate?                // internal energy proxy; never surfaced
+  acknowledgedByCoach
+  acknowledgementMessageId?
+  createdAt
 
 device_connections
   _id
   userId
-  platform                     // "apple_health", "google_fit"
+  platform                     // "apple_health" | "health_connect"
   connectedAt
   lastSyncAt
   permissions                  // granted data types
@@ -1698,12 +1853,19 @@ subscriptions
   _id
   userId
   organisationId
-  paddleSubscriptionId
+  provider                     // "apple_iap" | "google_play" | "paddle"
+  externalSubscriptionId       // RevenueCat-known ID for IAP, Paddle subscription ID for Paddle
+  externalCustomerId?          // RevenueCat app user ID, or Paddle customer ID
   tier                         // "standard", "premium"
-  status
+  status                       // "active_trial" | "active" | "in_grace" | "cancelled" | "lapsed"
   trialEndsAt?
   currentPeriodEnd
   cancelledAt?
+  lapsedReason?                // "cancelled" | "payment_failed" | "trial_ended" — set when status moves to "lapsed"; for analytics
+  // mobile B2C subscriptions write here from the RevenueCat webhook;
+  // web/B2B subscriptions write here from the Paddle webhook;
+  // RevenueCat is the cross-platform analytics surface but the entitlement
+  // source of truth for the app is this Convex table
 
 audit_log
   _id
@@ -1845,52 +2007,68 @@ Clerk organisation roles map to Twikka's membership roles:
 
 ## 18. Subscription and billing
 
-Paddle handles all subscription billing as merchant of record.
+Twikka uses two billing systems chosen by channel:
+
+- **Mobile B2C (iOS + Android)**: subscriptions purchased via Apple App Store IAP and Google Play Billing. The store is the merchant of record. **RevenueCat** sits on top of both, abstracts platform differences (receipt validation, restore purchases, introductory offer handling, cross-platform subscription identity), and emits webhooks Convex consumes.
+- **Web subscriptions and B2B (v3 affiliate, v4 enterprise, possibly later consumer web)**: handled by **Paddle**. Paddle is the merchant of record for these. Paddle webhooks fire into the same Convex entitlement layer.
+
+Canonical entitlement state lives in Convex (`subscriptions` table per §16.2) regardless of source. The Flutter app reads subscription state from a Convex query provider; it never reads directly from RevenueCat or Paddle. RevenueCat's dashboard is used as the cross-platform analytics surface (MRR, churn, trial conversion across iOS and Android).
 
 ### 18.1 v1 tier structure
 
-- **Free trial**: 60 days. No card required at signup.
-- **Standard**: $AUD X/month or $AUD Y/year (pricing TBD near launch; target ~$10-15/month).
+- **Free trial**: introductory offer of approximately 60 days, configured via Apple Introductory Offer and Google Play introductory pricing. The user's payment method is on file with the store but is not charged until trial end. RevenueCat surfaces "trial active" entitlement throughout.
+- **Standard**: $AUD X/month or $AUD Y/year (pricing TBD near launch; target ~$10–15/month). Same nominal price across iOS and Android; Apple/Google take their cut from the gross.
 
 ### 18.2 v2+ tier structure
 
 - **Standard**: unchanged.
 - **Premium**: adds voice + video moments, richer analytics.
 
+Tiered pricing is configured in App Store Connect and Play Console as separate IAP products and surfaced via RevenueCat offerings. Pricing for the future practitioner-web (v3) and enterprise-web (v4) channels is set in Paddle.
+
 ### 18.3 Trial mechanics
 
-- User signs up → `lifecycleStage = active_trial`.
-- Trial end date computed at signup.
+- User signs up → entitlement begins via store introductory offer → `users.lifecycleStage = active_trial`.
+- Trial end date is the introductory-offer end as reported by the store via RevenueCat.
 - At 14 days before end: soft W-19 reminder.
 - At 7 days before end: second W-19 reminder.
-- At 2 days before end: third W-19 reminder, now prompting card capture.
-- At trial end with no card: blocking W-19 takeover. User cannot dismiss but can cancel gracefully.
-- If user cancels: retains access until trial end; `lifecycleStage = cancelled_trial`.
+- At 2 days before end: third W-19 reminder.
+- At trial end the store charges automatically unless the user cancelled. There is no separate "card capture" step — the payment method has been on file since purchase.
+- If the user cancels during trial: retains access until trial end; `lifecycleStage = cancelled_trial`. Cancellation is performed via the store's subscription management UI; the app links out to it.
 
 ### 18.4 Payment failure
 
-- Paddle handles retries according to its standard cadence.
-- During grace period: `lifecycleStage = payment_failed`. App access continues, gentle in-app reminder.
-- After grace exhausted: `lifecycleStage = lapsed`. Read-only access for 30 days. Account preserved; user can reactivate.
+- Apple and Google handle retries according to their own cadences. RevenueCat surfaces a `BILLING_ISSUE` state via webhook.
+- During grace period (Apple's billing retry window, Google's account hold): `lifecycleStage = payment_failed`. App access continues, gentle in-app reminder.
+- After grace exhausted: `lifecycleStage = lapsed`. Read-only access for 30 days. Account preserved; user can reactivate by re-subscribing via the store.
+- For Paddle (web/B2B), Paddle's retry schedule applies and webhooks drive the same lifecycle transitions.
 
 ### 18.5 Cancellation
 
 - Always available in Settings → Account → Subscription.
 - Equally prominent to continuation actions.
 - No dark patterns, no "are you really sure" chains.
+- On mobile, the in-app cancel action deep-links to Apple's or Google's subscription management screen (Apple App Store rules require this; we don't try to intercept).
 - On cancellation: retains access until period end; `lifecycleStage = cancelled_paying`.
 
 ### 18.6 Enterprise billing (v4)
 
-- Annual contracts, invoicing.
-- Paddle handles alongside consumer flows.
+- Annual contracts, invoicing, via Paddle as merchant of record.
+- Paddle Subscription Manager handles renewal cadence and dunning.
 - Multi-year options with discounting.
+- Webhooks update Convex `subscriptions` rows with `provider: "paddle"` and the enterprise org context.
 
 ### 18.7 Affiliate billing (v3)
 
-- Per-active-client monthly billing to practice (via Paddle).
+- Per-active-client monthly billing to practice via Paddle.
 - Revenue share paid out monthly or quarterly, depending on affiliate preference.
 - Transparent reporting in the practitioner web app.
+
+### 18.8 Cross-channel discipline
+
+- A user who subscribes on iOS and later opens an Android device sees the same subscription via RevenueCat's cross-platform identity.
+- A user who at some point in the future subscribes via a web flow (Paddle) and then uses the mobile app sees that subscription via the Convex entitlement layer; the mobile app does not require its own IAP.
+- Apple's rules forbid promoting a cheaper price elsewhere from inside the iOS app. Pricing parity across channels keeps this clean. The web flow is reachable from outside the app (marketing site, email, links from the practitioner web app); it is not promoted from inside the iOS shell.
 
 ---
 
@@ -2080,12 +2258,14 @@ Disclosed at all times:
 - OneSignal (push notifications)
 - Postmark (transactional email)
 - GoHighLevel (marketing email)
-- Paddle (payment processing)
+- Apple App Store / Google Play (mobile B2C subscription billing; merchant of record)
+- RevenueCat (cross-platform subscription abstraction over Apple and Google; webhook source of subscription state)
+- Paddle (web subscription billing for v3 affiliates and v4 enterprise; merchant of record)
 - Apple (HealthKit data access, in-app)
-- Google (Fit / Health Connect data access, in-app)
-- LLM provider (for coach inference; vendor current)
+- Google (Health Connect data access, in-app)
+- OpenRouter (LLM gateway for coach inference)
 - Sentry or equivalent (error monitoring)
-- Tavus (video moments, v2+ Premium only)
+- HeyGen (video moments / avatar pipeline, v2+ Premium only)
 
 ### 22.5 SOC 2 readiness (v4 prerequisite, foundational from v1)
 
@@ -2228,7 +2408,7 @@ A 60-day history of mixed device-sourced activities for each sample user, includ
 - Enterprise channel
 - Native tablet layout (responsive is acceptable v1; dedicated tablet layouts v2+)
 - Smartwatch companion apps
-- Third-party integrations beyond Apple Health / Google Fit
+- Third-party integrations beyond Apple Health / Health Connect
 - Food / nutrition tracking, at any tier, any version
 - Sleep tracking as a primary metric (signal may be used quietly for coach context)
 - Weight tracking
@@ -2245,7 +2425,7 @@ A 60-day history of mixed device-sourced activities for each sample user, includ
 - **Illustration style for coach portraits**: to be developed as a brand exercise. Should be cohesive, warm, unmistakably not AI-generated-photoreal.
 - **LLM provider**: model-agnostic architecture; specific provider chosen near launch based on quality/cost/privacy terms.
 - **Voice provider (v2)**: to be selected; must support distinct Australian voices.
-- **Video provider (v2)**: Tavus is the working assumption, but alternatives assessed at implementation time.
+- **Video provider (v2)**: HeyGen, chosen so the same avatar pipeline supports rendered moments now and live-streaming avatars in a later premium tier.
 
 ### 25.3 Open questions
 
@@ -2390,7 +2570,7 @@ A suggested order for implementation, given the "build all" commitment:
 7. Journal surface
 8. Settings and privacy controls
 9. Notifications (OneSignal integration, frequency adaptation)
-10. Subscription flows (Paddle, trial mechanics, W-19)
+10. Subscription flows (RevenueCat + Apple/Google IAP for v1 B2C; trial mechanics; W-19)
 11. Marketing sync (GoHighLevel)
 12. Coach switching (W-21)
 13. Safety and escalation logic

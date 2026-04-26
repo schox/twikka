@@ -329,7 +329,7 @@ Spent his working years doing things with his hands. Back's not what it was, kne
 
 ---
 
-## 6. Tom (60s, Male)
+## 6. Tom (70s, Male)
 
 ### Core identity
 
@@ -477,7 +477,7 @@ When building the system prompt for a given user's chat, the persona layer injec
 1. **Identity block**: name, age, gender, one-sentence personality summary
 2. **Voice rules**: the "would / wouldn't say" lists compressed into directives
 3. **Sample lines**: 6-10 canonical lines as calibration examples
-4. **Behaviour notes**: mode-specific (recovery / momentum / flow) adjustments
+4. **Behaviour notes**: mode-specific (flow / momentum / recovery / returning) adjustments
 5. **Don't-lists**: the shared universal don'ts + persona-specific ones
 6. **Context from user memory**: profile, recent activity, current mode
 

@@ -1,28 +1,71 @@
 # Twikka — Build Plan
 
 **Status:** Active. The plan we work to. Updated as decisions evolve.
-**Origin:** Distilled from `Twikka_v1_prd.md` + design discussion 2026-04-18, revised after the architectural decisions on memory, audit, system config, live globals, and gating states.
+**Origin:** Distilled from `docs/twikka_v1_prd.md` + design discussion 2026-04-18; revised through the architectural decisions on memory / audit / system config / live globals / gating states; updated 2026-04-26 with audit-driven decisions on avatars (monogram-now / HeyGen-Phase-D), `/docs/memory/` governance, safety calibration deferred to pre-Phase-C, Phase E pricing kickoff, and W-22 trigger spec.
 **How to use:** Each phase below is a self-contained, demoable chunk. We complete one, ship-or-show, then move on. Decisions deferred *into* a phase are listed at the start of that phase so we don't pre-litigate them.
 
 > **Working principle:** every phase ends in a state the user can run on the iOS simulator and click through. No "scaffolding completed but nothing visibly different" milestones. If a phase's only output is back-end, we add a debug screen that proves it works.
 
 ---
 
-## Where we are now (Stage 0 — already shipped)
+## Schema status (vs docs)
 
-`67c36dd` on `main`. The app shell:
+The PRD §16 and the coach interaction design §Data Structures describe the full data model across v1 to v4. The actual `convex/schema.ts` lands those tables phase by phase. This table tracks the gap so a reader can see what is real vs what is doc-only at any moment.
 
-- Welcome / Login / Signup / OTP screens (fake auth, `shared_preferences`-backed)
-- Adaptive shell — `NavigationBar` <600px, `NavigationRail` ≥600px
-- Four tabs: **Coach / Progress / Social / Settings** with bell on each header
-- Coach screen: Margaret avatar header, cream/terracotta bubbles, fake initial messages, ActivityAck card, Suggestion + CheckIn + Milestone widgets, typing indicator, calm composer with terracotta send
-- Progress screen: hero "47 days", soft area chart, milestone cards, "What you've tried" list
-- Social screen: inbox shell with invite, coach pinned, DMs, groups (no thread navigation)
-- Settings hub + 5 subroutes (Profile, Preferences, Subscription, About, Debug)
-- Theme: Warm Light only, Fraunces + Plus Jakarta Sans via `google_fonts`
-- Reference docs (architecture, old DB schema, old app, this plan)
+| Table | Doc | Schema | Lands in |
+|---|---|---|---|
+| `organisations` | PRD §16.2 | ✓ | Phase A |
+| `users` | PRD §16.2 | ✓ | Phase A |
+| `memberships` | PRD §16.2 | ✓ | Phase A |
+| `coach_personas` | PRD §16.2 | ✓ | Phase A |
+| `coachAssignment` | PRD §16.2 | ✓ | Phase A |
+| `system_config` | `docs/memory/reference_system_config.md` | ✓ | Phase A |
+| `external_call` | `docs/memory/reference_external_call_audit.md` | ✓ | Phase A |
+| `model_pricing` | `docs/memory/reference_external_call_audit.md` | ✓ | Phase A |
+| `audit_log` | PRD §16.2 | ✓ | Phase A |
+| `activity_kinds` | PRD §9.2 | — | Phase B |
+| `user_activity_aliases` | PRD §9.2 | — | Phase B |
+| `activities` | PRD §9.4 | — | Phase B |
+| `cities` | PRD §16.2 (implied) | — | Phase B |
+| `knowledge_fact` | Interaction design §2 | — | Phase C |
+| `user_profile_slots` | Interaction design §6 (also PRD §8.1) | — | Phase C |
+| `user_goals` | Interaction design §3 | — | Phase C |
+| `user_signals` | Interaction design §5 | — | Phase C |
+| `user_coach_state` | Interaction design §6 | — | Phase C |
+| `coach_triggers` | Interaction design §7 | — | Phase C |
+| `threads` | PRD §16.2, interaction design § Thread model | — | Phase C |
+| `messages` | PRD §16.2 | — | Phase C |
+| `device_connections` | PRD §16.2 | — | Phase B (created with health integration) |
+| `subscriptions` | PRD §16.2 | — | Phase E |
+| `wiki_*` (5 tables) | `docs/twikka-wiki-design.md` | — | Phase C (basic) / wiki sprint (full) |
+| `connections` | PRD §16.3 | — | Phase G (built, flagged off) |
+| `groups` | PRD §16.3 | — | Phase G |
+| `invites` | PRD §16.3 | — | Phase G |
+| `practitioners` | PRD §16.4 | — | Phase H (stub) |
+| `client_affiliations` | PRD §16.4 | — | Phase H (stub) |
+| `enterprise_integrations` | PRD §16.5 | — | Phase H (stub) |
+| `enterprise_cohorts` | PRD §16.5 | — | Phase H (stub) |
+| `feature_flags` | PRD §23 | — | Phase F |
 
-**What it ISN'T:** no real auth, no Convex, no real activity capture, no real coach, no real notifications, no payments, no dark mode wired to a switcher, no v2 social, single coach (Margaret), single screen of fake chat. Those are everything below.
+Update this table as phases ship. The intent is that "✓" matches what's in `convex/schema.ts` at the head of `main`. If the table is out of date, fix it in the same commit as the schema change.
+
+---
+
+## Where we are now
+
+Head: `57a6ffd` on `main`. Stage 0 (the `67c36dd` shell) plus four Phase A slices have shipped.
+
+- **Stage 0** — Adaptive shell (`NavigationBar` <600px / `NavigationRail` ≥600px), four tabs (Coach / Progress / Social / Settings), Margaret-flavoured fake chat, Settings hub + 5 subroutes, Warm Light theme, Fraunces + Plus Jakarta Sans.
+- **A1** — Convex spine: schema for `organisations` / `users` / `memberships` / `coach_personas` / `coachAssignment` / `system_config` / `external_call` / `model_pricing` / `audit_log`. Audit + `recordedCall` helpers, `system_config` and `model_pricing` seeds.
+- **A2** — Live-globals plumbing: `convex_flutter` client, `systemConfigProvider`, router watches → kill-switch flips redirect to `/offline` within ~100ms. `system_config.setAvailability` mutation tested end-to-end.
+- **A3.1** — Real Clerk auth via `clerk_auth 0.0.14-beta`. `ClerkService` (DefaultPersistor + path_provider), `ClerkAuth` Riverpod notifier replacing FakeAuth. Convex token binding via `setAuthWithRefresh`.
+- **A3.2** — Clerk webhook → Convex provisioning. `convex/http.ts` with svix-verified `/clerk-webhook` endpoint dispatching `user.created` / `user.updated` / `user.deleted` to internal `users` mutations. `ensureFromIdentity` self-upsert as a webhook-race / pre-existing-user fallback. `currentUserProvider` live query rendered in Settings → Debug.
+- **A3.3** — Single morphing auth screen (email → probe → name-if-new → code → in). `convex/auth.ts` `probeEmail` action wraps Clerk Backend API. HttpService shim strips `strategy` from POST `/v1/client/sign_ups` so Clerk's auto-prepare is suppressed and signup sends one email instead of two. Inline error surfacing via `AuthResult` records.
+
+**Still ahead in Phase A:**
+- **A3.4** — Six coach personas seeded into `coach_personas`. Coach picker shown after first OTP for new users; Settings → Coach for repeat use. Avatars are placeholder monograms (per `AbstractAvatar`) since HeyGen photos are deferred to Phase D — `coach_personas.avatarRefs` is `v.optional(...)` and seeds with `null`. AI disclosure copy lands in welcome subtitle, coach-selection screen, chat header.
+
+**What's still fake or unbuilt:** the chat seed under Margaret is fake (no real LLM, no memory); no activity capture; no real notifications; no payments; no dark-mode switcher; no v2 social. Everything below.
 
 ---
 
@@ -36,22 +79,22 @@
 - Real Clerk-backed sign-up and sign-in (email + 6-digit code, no passwords)
 - Single morphing auth screen replaces the current 4-screen flow: email entry → backend probe → adds name field if new → code field → in
 - Coach picker shown after the first OTP for first-time users; reachable from Settings → Coach for repeat use
-- Six coach personas added in seed per `docs/twikka_coach_personas.md` (operative lineup: **Priya / Fiona / Margaret / Ben / Rob / Tom** — supplants the PRD's "Dave 60s M" with "Rob 45s M" for a cleaner 1F+1M-per-age-band matrix)
-- **Explicit AI disclosure copy** lands in three surfaces: welcome screen subtitle ("Coaches are AI personas trained by our expert team"), coach-selection screen line above the cards, small "AI coach" text under the coach name in the chat header. Settings → About gets the longer plain-language explanation in Phase D. See `memory/reference_coach_character_system.md`.
+- Six coach personas added in seed per `docs/twikka_coach_personas.md`: **Priya / Ben / Fiona / Rob / Margaret / Tom** (matches PRD §8.3). HeyGen portraits are deferred to Phase D — Phase A seeds with `coach_personas.avatarRefs: null` and the picker / chat header / Settings render via `AbstractAvatar` (initials + per-coach palette). Schema makes `avatarRefs` optional so Phase D's swap-in is a pure data fill, not a schema migration.
+- **Explicit AI disclosure copy** lands in three surfaces: welcome screen subtitle ("Coaches are AI personas trained by our expert team"), coach-selection screen line above the cards, small "AI coach" text under the coach name in the chat header. Settings → About gets the longer plain-language explanation in Phase D. See `docs/memory/reference_coach_character_system.md`.
 
 **Convex tables (the spine):**
 - `organisations`, `users`, `memberships` — multi-tenant from day one. Every queryable entity scoped by `organisationId`. Personal users get a single-person org.
 - `coach_personas`, `coachAssignment` — six personas seeded; `coachAssignment` records the user's current pick
 - `threads`, `messages` — Convex Agent component tables (real chat in Phase C)
-- `system_config` — singleton: kill switch, `unavailableReason`, `estimatedBackOnline`, `minAppVersion`, `updateLinks.{ios,android}`, `models.{classifier,general,deep,extractor,embedding}`, operational flags, soft cost budgets. Schema in `memory/reference_system_config.md`.
-- `external_call` — every paid/measurable third-party call writes a row synchronously. Schema in `memory/reference_external_call_audit.md`. Helpers (`recordedCall(...)`) ready for Phases B/C/E to wrap their integrations as one-liners.
+- `system_config` — singleton: kill switch, `unavailableReason`, `estimatedBackOnline`, `minAppVersion`, `updateLinks.{ios,android}`, `models.{classifier,general,deep,extractor,embedding}`, operational flags, soft cost budgets. Schema in `docs/memory/reference_system_config.md`.
+- `external_call` — every paid/measurable third-party call writes a row synchronously. Schema in `docs/memory/reference_external_call_audit.md`. Helpers (`recordedCall(...)`) ready for Phases B/C/E to wrap their integrations as one-liners.
 - `model_pricing` — history-tracked `(modelSlug, effectiveFrom)` price table the audit helper consults for cost computation
 - `audit_log` — sensitive-action log (consent changes, profile edits, deletion request); helpers wired in this phase, used continuously thereafter
 
 **Live-global providers (the runtime spine):**
 - `convex_flutter` (or `flutter_convex`) for live queries
 - Riverpod providers backed by Convex live queries: `systemConfigProvider`, `currentUserProvider`, `currentCoachProvider`, `subscriptionStateProvider` (placeholder until E)
-- `appRouterProvider` watches all of the above so server-driven state changes flow to the UI without polling. See `memory/reference_live_globals.md` for the discipline.
+- `appRouterProvider` watches all of the above so server-driven state changes flow to the UI without polling. See `docs/memory/reference_live_globals.md` for the discipline.
 
 **Safety gates (router-watched):**
 - **`/offline` takeover** — shown when `system_config.available = false`. Warm copy, "back online at X" if `estimatedBackOnline` is set, polling-free (live query reverts the redirect when the operator flips it).
@@ -68,13 +111,15 @@ A new user signs up with Clerk for real, gets an email code (Clerk default sende
 
 ### Open decisions during phase
 
-- Clerk Flutter integration approach — official SDK if it exists, otherwise wrap their REST + WebView for OAuth callbacks
-- Whether to use Clerk's default email verification or hand off to Postmark from day one (recommend Clerk's for Phase A simplicity; switch in E for branding consistency)
-- Convex deployment workflow — we have a dev project; do we set up staging now or later?
+- ~~Clerk Flutter integration approach~~ → resolved A3.1: `clerk_auth 0.0.14-beta` (official, dart-only).
+- ~~Email verification provider~~ → resolved: Clerk's default through Phase A; Postmark in Phase E.
+- ~~Doubled-email signup quirk~~ → resolved A3.3: HttpService shim strips `strategy` from create-signup so Clerk doesn't auto-prepare. One email per signup.
+- ~~Coach avatars block A3.4~~ → resolved: monogram placeholders ship in A3.4; HeyGen photos slot in during Phase D as a data-only swap.
+- Convex deployment workflow — we have a dev project; do we set up staging now or later? **Still open.**
 
 ### Effort
 
-Medium-large. Multi-day. The Clerk integration and the live-globals plumbing are the two surprises to budget for.
+Medium-large. Multi-day. **Status:** A1 / A2 / A3.1 / A3.2 / A3.3 shipped. A3.4 (persona seed + coach picker + AI disclosure copy) remaining.
 
 ---
 
@@ -84,11 +129,12 @@ Medium-large. Multi-day. The Clerk integration and the live-globals plumbing are
 
 ### Sub-goals
 
-- `activity_types` taxonomy seeded with the 13 canonical types from PRD §9.2 + cardio/strength/mobility flags + Apple/Google identifier mappings
-- `activities` table for instance log (source, canonicalType, durationMin, startTime, etc.) with `platformActivityId` for dedupe
-- `activity_aliases` per-user table for the learning classifier
-- Two-level classifier as a Convex action: dictionary lookup → LLM fallback → cache result as alias. LLM fallback wrapped with `recordedCall(...)` so cost shows up in `external_call` from day one.
-- Apple Health (HealthKit) + Android Health Connect integration via the `health` Flutter package
+- `activity_kinds` table per PRD §9.2 — seeded from the existing CoPA tables (activity / class / heading) carried over from the old DB. Each row carries CoPA code + METs, five classification flags (`isCardio`, `isStrength`, `isMobility`, `isBalance`, `isMental`), `appleHkTypes[]`, `healthConnectTypes[]`, `aliases[]`, `source`, `needsReview`
+- Seed reconciliation: union the CoPA seed with Apple `HKWorkoutActivityType` and Health Connect `ExerciseType` enums; populate platform-mapping arrays where they overlap; create new entries with `source: apple_seed` / `health_connect_seed` for platform values not in CoPA
+- `user_activity_aliases` per-user table for personal phrasings the coach has learned (see PRD §9.2 resolution flow)
+- `activities` instance table per PRD §9.4 — `source`, `externalId`, `activityKindId`, timing, metadata, `metsEstimate`, acknowledgement state
+- Activity classifier as a Convex action implementing the 5-step resolution flow in PRD §9.2: user-alias → global-alias → embedding → ambiguous-coach-asks → new-kind-with-needs-review. LLM and embedding calls wrapped with `recordedCall(...)` so cost shows up in `external_call`
+- Apple Health (HealthKit) + Android Health Connect integration via the [`health`](https://pub.dev/packages/health) Flutter package. Health Connect is the Android path; Google Fit is not targeted
 - `cities` table seeded with full ~140k GeoNames dump (one-shot seed script). Includes `alternatenames` (synonyms) so the search index matches "NYC" to "New York" and so on.
 - Convex search index on city `name`, `asciiname`, `alternatenames`, `country_code`
 - Settings → Profile → City type-ahead picker
@@ -96,23 +142,24 @@ Medium-large. Multi-day. The Clerk integration and the live-globals plumbing are
 
 ### What gets built
 
-- Convex schema additions: `activity_types`, `activities`, `activity_aliases`, `cities`
+- Convex schema additions: `activity_kinds`, `user_activity_aliases`, `activities`, `cities`
 - `convex/seed/cities.ts` — pulls GeoNames dump, transforms, ingests in batched mutations
-- `convex/seed/activityTypes.ts` — the canonical taxonomy
-- `convex/agents/classifyActivity.ts` — two-level classifier action; reads `system_config.models.classifier` for which model to use
+- `convex/seed/activityKinds.ts` — CoPA import + Apple/Health Connect reconciliation
+- `convex/agents/classifyActivity.ts` — five-step resolver action; reads `system_config.models.classifier` for the LLM model and `system_config.models.embedding` for the alias embedding model
 - Flutter: `lib/src/features/health/` with `HealthService` wrapping the `health` package
 - Flutter: city picker widget + provider
-- Debug screen showing recent captured activities (proves Health is wired)
+- Debug screen showing recent captured activities + their resolved `activity_kinds` row + classification flags (proves Health and the classifier are wired)
 
 ### Demoable state
 
-User connects Apple Health from Settings → Health, walks around (or nudges activity in the simulator's debug menu), opens Twikka, sees their activities show up in a debug list. User picks "Glasgow, Southside" from the city search. Coach can call `classifyActivity("did the lawn this arvo")` → returns `{ canonicalType: 'garden', cardio: false, strength: false, durationMin: null, timeOfDay: 'afternoon' }`, and the LLM call shows up in the audit log with cost.
+User connects Apple Health from Settings → Health, walks around (or nudges activity in the simulator's debug menu), opens Twikka, sees their activities show up in a debug list correctly mapped to `activity_kinds` rows. User picks "Glasgow, Southside" from the city search. Coach can call `classifyActivity("did the lawn this arvo")` → returns `{ activityKindId, displayName: "Gardening (general)", isCardio: true, isStrength: true, isMobility: false, isBalance: false, isMental: false, copaMets: 4.0, durationMin: null, timeOfDay: 'afternoon' }`, writes a `user_activity_aliases` row mapping "the lawn" to the gardening kind, and the LLM/embedding calls show up in the audit log with cost. A platform sync arriving with an unfamiliar HK enum value creates a new `activity_kinds` row with `needsReview: true` and is usable immediately.
 
 ### Open decisions during phase
 
 - Which classifier model — small/fast (Haiku-tier) makes the most sense; pin in `system_config.models.classifier`
+- Embedding model for alias matching — Voyage 3 vs OpenAI text-embedding-3-small; pin in `system_config.models.embedding`
 - iOS Health permissions copy — needs explicit, plain-language framing
-- Health Connect (Android) vs Google Fit — Health Connect is the going-forward path; commit and don't dual-target
+- Confidence thresholds for the resolver's silent / ambiguous / new-kind branches (PRD §9.2 suggests ≈0.85 and ≈0.65; calibrate during build)
 
 ### Effort
 
@@ -133,6 +180,12 @@ Medium. The 140k city ingest is mostly a script; Health plugin has surface area 
 - `user_profile_slots` table with state machine per slot (`unknown` / `asked_pending` / `declined` / `provided` / `inferred`). Slots: `dateOfBirth`, `gender`, `cityId`, `timeZone`, `primaryMotivation`, `healthConnection`, `pushPermission`, `preferredCheckInTime`. All editable from Settings → Profile.
 - Transcripts (existing `messages`) retained forever — the coach doesn't load them wholesale, but the user can.
 
+**Audit-table split (canon):**
+- `external_call` — cost / latency / tokens per third-party call. **No PII, no transcript content.** One row per call via `recordedCall(...)`.
+- `coach_interactions` — per-turn analytics: query, response, classification, mode, signals extracted. Used for tuning, never billed-by-volume. Sits alongside `messages` (raw chat) — `messages` is what the user sees, `coach_interactions` is what we analyse.
+- `messages` — Convex Agent's chat history surface; user-readable transcript.
+- `audit_log` — sensitive-action provenance only (consent changes, profile edits, deletion request, role changes). Not chat-related.
+
 **Agent:**
 - Convex Agent component integrated; persona layer separated from agent (per PRD §8.1–8.2)
 - All LLM calls routed through OpenRouter as a single gateway. Model selection comes from `system_config.models` (operator-editable, no code deploy needed). Per-persona overrides allowed via `coach_personas.modelOverride` for personas where a specific model matters.
@@ -141,10 +194,12 @@ Medium. The 140k city ingest is mostly a script; Health plugin has surface area 
   - The persona's would / wouldn't say lists (compressed to directives)
   - 6–10 canonical sample lines as calibration
   - The "are you AI?" sample response in their voice (hard guardrail — never deflect or deny)
-  - Mode-specific (recovery / momentum / flow) overlays
+  - Mode-specific (flow / momentum / recovery / returning) overlays
   - User-memory injection
-- Adaptive coach mode (recovery / momentum / flow), inferred and stored on user
-- Coach tools: `write_user_memory`, `log_activity`, `classify_activity`, `get_recent_activity`, `get_user_profile`, `render_*` for each widget type, `schedule_proactive_checkin`, `flag_for_human_review`
+- **Safety responses (calibrated before C ships):** five hard-guardrail categories per `docs/05-coach-interaction-design.md` § Safety guardrails — acute physical, emotional acute, clinical-edge, emotional chronic, disordered patterns. Severity-1 (acute physical, emotional acute) is **identical across all six coaches** — directive over warmth, no persona-flavoured tags ("call 000 right now", not "I'd ring 000, love"). Severity-2 (clinical-edge, emotional chronic, disordered patterns) per-coach calibrated within a shared structural template. Lines authored in `docs/twikka_coach_personas.md` § Safety responses; assembly logic falls back to a neutral template when a persona's `safetyResponses[category]` is null. **Phase A seeds with `safetyResponses: null`** — visible gap until Phase C.
+- **W-22 (affiliate cross-sell, v3+) trigger spec:** the agent surfaces W-22 on **either** signal — (a) it just declined a clinical-edge question, **or** (b) the user explicitly asked for deeper accountability or for someone in person. A small classifier action against the recent turn picks the trigger; both paths are valid. Frequency-capped to ≤1 surface per user per ~3 weeks. Built and seeded in Phase D, flagged off until v3 (Phase H reveal).
+- Adaptive coach mode (flow / momentum / recovery / returning), inferred from activity recency/frequency and stored on `user_coach_state`. Mode-computation rules canon in `docs/05-coach-interaction-design.md` (§Mode Computation)
+- Coach tools: `write_knowledge_fact`, `update_profile_slot`, `log_activity`, `classify_activity`, `get_recent_activity`, `get_user_profile`, `render_*` for each widget type, `schedule_proactive_checkin`, `flag_for_human_review`
 - RAG retrieval per turn: vector search across applicable scopes, top-N injected into system prompt
 - Background fact extractor: scheduled Convex action that processes recent transcript chunks and proposes lower-confidence facts
 - Profile-slot reading in agent prompt so coach knows what to ask (and what to never ask again)
@@ -170,6 +225,18 @@ User chats with Margaret. Margaret remembers things across sessions ("how did th
 - Embedding model (Voyage 3 vs OpenAI text-embedding-3-small — small + cheap is fine for v1 corpus size)
 - Mode-transition tuning — start with simple time + activity heuristics, adjust with usage
 
+### Phase C tuning items (refinements, not blockers)
+
+These are documented as "gaps" / "outstanding" in `docs/05-coach-interaction-design.md`. They sharpen behaviour but do not block the C scaffold from shipping. Tune with real usage data after C lands; do not pre-litigate.
+
+- Knowledge / persona synthesis style guide (§GAP 3)
+- Long-term relationship arc (week-1 → month-1 → year-1 voice + context shifts) (§GAP 4)
+- Coach switching rules — when allowed, what carries over, what resets (§GAP 5)
+- Activity-suggestion logic — what cues a suggestion, what blocks one (§GAP 6)
+- Mode-boundary heuristics for users in irregular schedules (shift workers, frequent travellers)
+- Re-engagement tone after long absence (>30 days)
+- Coach-led reflection cadence calibration
+
 ### Effort
 
 Large. The biggest single phase.
@@ -182,10 +249,11 @@ Large. The biggest single phase.
 
 ### Sub-goals
 
+- **Avatar swap-in (data fill, no schema change):** generate Midjourney portraits per `docs/twikka_coach_image_prompts.md`, run through HeyGen Photo Avatar pipeline, upload size variants to R2, populate `coach_personas.avatarRefs.{hero,profile,chat,message,tiny}` per coach + `heyGenAvatarId` + `voiceId`. Coach picker / chat header / Settings → Coach automatically use the photos in place of monograms (the `AbstractAvatar` widget already falls back gracefully).
 - All 21 v1 widgets implemented + visually polished:
   - Already done: W-01 (coach text), W-02 (user text), W-03 (system notice), W-04 (activity ack), W-05 (suggestion), W-06 (check-in), W-08 (milestone), W-37 (typing)
   - Add: W-07 (trajectory snapshot inline), W-09 (educational tile), W-10 (group/event suggestion), W-11 (accountability prompt — v1 stub), W-12 (plan/goal card), W-13 (reflection card), W-14 (summary card), W-15 (age capture), W-16 (gender capture), W-17 (health connection), W-18 (notifications permission), W-19 (subscription prompt), W-20 (data export), W-21 (coach handover)
-  - Build but flag off (revealed in v3): W-22 (affiliate suggestion — coach-surfaced cross-sell to a real human practitioner; built into the catalogue now so v3 reveal is a flag flip, not new development. Per-persona sample lines already in the persona doc. See `memory/reference_coach_character_system.md` for tone discipline + frequency cap.)
+  - Build but flag off (revealed in v3): W-22 (affiliate suggestion — coach-surfaced cross-sell to a real human practitioner; built into the catalogue now so v3 reveal is a flag flip, not new development. Per-persona sample lines already in the persona doc. See `docs/memory/reference_coach_character_system.md` for tone discipline + frequency cap.)
 - Every interactive widget watches `subscriptionStateProvider` and disables write actions when in read-only mode (Phase E delivers the actual lapse → read-only transition; widgets are wired to respect it from this phase so no second pass is needed)
 - Widget gallery screen (debug only) showing every widget in every state
 - Full settings tree per PRD §5.5:
@@ -229,7 +297,7 @@ Medium-large. Mostly mechanical Flutter work but a lot of surface area.
 
 **Why next:** the app is functionally complete after Phase D for a single ungated user. To ship, we need notifications, transactional email, marketing email, payment, file storage for exports, and the actual subscription-state enforcement that Phase D's widgets are already prepared for.
 
-> **Optional split if velocity demands.** E1 = notifications + email (OneSignal + Postmark + GoHighLevel). E2 = payments + storage + read-only enforcement (Paddle + R2 + subscription lifecycle).
+> **Optional split if velocity demands.** E1 = notifications + email (OneSignal + Postmark + GoHighLevel). E2 = payments + storage + read-only enforcement (RevenueCat + Apple/Google IAP + R2 + subscription lifecycle). Paddle scaffolding is part of E2 too but only exercised by v3/v4.
 
 ### Sub-goals
 
@@ -241,17 +309,19 @@ Medium-large. Mostly mechanical Flutter work but a lot of surface area.
 - GoHighLevel marketing sync: webhook on user lifecycle events (signup, mode change, lapse, return). Each sync audited. Pauseable via `system_config.flags.pauseGoHighLevelSync`.
 
 **Payments:**
-- Paddle subscription: 60-day trial (no card upfront), tier structure (standard only in v1)
-- W-19 reminders at 14 / 7 / 2 days before trial end (soft); blocking takeover at trial end if no card
-- In-app cancellation, equally prominent to continuation
-- Lifecycle state transitions written to `users.lifecycleStage` via Paddle webhooks
+- Mobile B2C subscription via RevenueCat over Apple App Store IAP and Google Play Billing (the stores are merchants of record). RevenueCat handles cross-platform identity, receipt validation, restore purchases, introductory-offer trial mechanics.
+- Approximately 60-day introductory-offer trial configured in App Store Connect and Play Console; payment method is registered with the store but not charged until trial end.
+- W-19 reminders at 14 / 7 / 2 days before trial end (soft). At trial end the store charges automatically unless cancelled — no separate "card capture" step.
+- In-app cancellation deep-links to the platform's subscription management screen (Apple's rules require this). The cancel CTA is equally prominent to continuation.
+- Subscription state transitions written to the Convex `subscriptions` table via RevenueCat webhook into a Convex HTTP action. `users.lifecycleStage` is derived from the active subscription row.
+- Paddle scaffolding for v3 (affiliate per-active-client billing) and v4 (enterprise annual contracts) added as part of E2 but not exercised by the v1 mobile app. Paddle webhook handlers fire into the same Convex `subscriptions` table with `provider: "paddle"`.
 
 **Storage:**
 - Cloudflare R2 via Convex `@convex-dev/r2` component
 - v1 use: signed URLs for data exports (W-20). Photo attachments deferred to v2.
 
 **Subscription enforcement (the soft gating):**
-- `subscriptionStateProvider` is now backed by real `users.lifecycleStage` from Paddle webhooks
+- `subscriptionStateProvider` is now backed by the real Convex `subscriptions` table populated by RevenueCat (mobile) and Paddle (web/B2B) webhooks
 - When `lifecycleStage` transitions to `lapsed` (or `payment_failed` past grace), the app does **not** redirect — it shows a persistent banner and disables write actions:
   - Banner across all screens: "Your subscription has lapsed. Resubscribe to keep chatting with [Coach]." with a single "Resubscribe" CTA → Settings → Subscription
   - Composer disabled with greyed placeholder ("Resubscribe to send messages")
@@ -259,29 +329,34 @@ Medium-large. Mostly mechanical Flutter work but a lot of surface area.
   - All read paths still work — past chat, journal, settings, profile editing, data export, account deletion
   - Coach turns paused (no new LLM calls)
 - This is a **soft state**, distinct from the hard takeovers of `/offline` and `/update-required`. The user can still use the app, just can't write new things.
-- When user resubscribes, banner clears and write actions resume — instantly, via the live-globals pattern.
+- When the user resubscribes (re-purchase via the store), banner clears and write actions resume — instantly, via the live-globals pattern.
 
 ### What gets built
 
 - `convex/notifications/onesignal.ts` — send, preferences, segmentation
 - `convex/email/postmark.ts` — templated send for each transactional type
 - `convex/email/highlevel.ts` — webhook sync
-- `convex/billing/paddle.ts` — webhook handlers, subscription state machine, lifecycle transitions
+- `convex/billing/revenuecat.ts` — webhook handler for RevenueCat events; writes to `subscriptions` with `provider: "apple_iap"` or `"google_play"`; derives `users.lifecycleStage`
+- `convex/billing/paddle.ts` — webhook handler for Paddle events (v3/v4 use); writes to `subscriptions` with `provider: "paddle"`
+- `convex/billing/lifecycle.ts` — shared lifecycle-state machine consumed by both providers
 - `convex/storage/r2.ts` — using the official Convex R2 component
+- Flutter: `lib/src/core/services/revenuecat_service.dart` (singleton, init in Phase 2 of bootstrap, `ensureIdentified` on Clerk sign-in success — pattern from couple-tools)
+- Flutter: paywall via `RevenueCatUI.presentPaywall()` from `purchases_ui_flutter`
 - Flutter: notification permission flow, settings UI for preferences
-- Flutter: subscription screen with Paddle's mobile checkout (web view OR native IAP — open decision)
 - Flutter: persistent `SubscriptionLapseBanner` widget mounted in `AppShell` body, visible whenever `subscriptionStateProvider` reports a write-blocking state
-- iOS / Android: app capabilities for push, notification service extension for rich notifications
+- Flutter: Settings → Subscription screen that deep-links to the platform's subscription management for cancellation
+- iOS / Android: app capabilities for push, notification service extension for rich notifications, IAP entitlements
 
 ### Demoable state
 
-New user signs up, gets a Postmark email with their code. Tries the app for a few days, gets push notifications honouring quiet hours. Lifecycle event syncs to GoHighLevel. Trial countdown tracked silently. At day 50, soft W-19 reminder. At day 60 with no card, blocking W-19. User adds card via Paddle, subscribed. Cancels in app, retains access until period end. After period end, banner appears + composer disabled + writes blocked but the app stays usable. User taps banner, resubscribes, banner vanishes, writes resume — all live.
+New user signs up, gets a Postmark email with their code. Tries the app for a few days, gets push notifications honouring quiet hours. Lifecycle event syncs to GoHighLevel. Trial countdown tracked silently against RevenueCat's introductory-offer state. At day 50, soft W-19 reminder. At day 60, the store charges automatically; subscription transitions to `active_paying`. User cancels via Settings → Subscription which deep-links to the App Store / Play subscription management screen, retains access until period end. After period end, lapse banner appears + composer disabled + writes blocked but the app stays usable. User re-subscribes via the store, RevenueCat webhook fires, banner vanishes, writes resume — all live.
 
 ### Open decisions during phase
 
-- v1 pricing (PRD §25.2 says "set near launch"; we need a number for the demo even if it changes)
-- Paddle checkout in-app web view vs Apple/Google IAP wrapped — Apple's 30% vs Paddle's lower fee + the IAP-mandated rules for digital goods
+- **v1 pricing — set at Phase E kickoff, not mid-phase.** PRD §25.2 defers the final number to "near launch", but a concrete placeholder (e.g. one IAP product per platform) is required *before* the IAP plumbing is built so paywall + receipt validation + restore can be exercised end-to-end. First task of Phase E: agree placeholder, register the IAP products, surface via RevenueCat offerings.
+- Whether to wire Paddle scaffolding now (recommended: yes, even though v1 doesn't exercise it, so Phase H stub work is just data-table additions)
 - OneSignal app IDs per environment (dev / prod)
+- RevenueCat project / API key strategy across dev and prod environments
 
 ### Effort
 
@@ -439,13 +514,13 @@ These aren't phases — they apply to every phase:
 - **Never-rescinded** — no streaks, no red/green, no missed-X language anywhere; vet every screen against PRD §2.3
 
 ### Layout + i18n
-- **Locale-elastic layouts** — every control with text (button, chip, list tile, header, tab label, snackbar) must tolerate string-length variance from day one. Concrete rules: (1) no fixed-width buttons that fit only the English label, (2) headers + titles must wrap or auto-shrink rather than truncate, (3) bottom nav labels need room for ~1.5× the English length (German, French) and conversely cope with very short ideographic labels (Japanese, Chinese), (4) form-field labels never sit *inside* the field if they could overflow — float labels above. We're shipping en-AU only in v1, but every UI decision should be reviewable later under a German + Japanese smoke test. Full roadmap in `memory/reference_locales.md`.
+- **Locale-elastic layouts** — every control with text (button, chip, list tile, header, tab label, snackbar) must tolerate string-length variance from day one. Concrete rules: (1) no fixed-width buttons that fit only the English label, (2) headers + titles must wrap or auto-shrink rather than truncate, (3) bottom nav labels need room for ~1.5× the English length (German, French) and conversely cope with very short ideographic labels (Japanese, Chinese), (4) form-field labels never sit *inside* the field if they could overflow — float labels above. We're shipping en-AU only in v1, but every UI decision should be reviewable later under a German + Japanese smoke test. Full roadmap in `docs/memory/reference_locales.md`.
 
 ### Audit + observability
-- **External call audit** — every outbound call to a paid or measurable third party (LLM via OpenRouter, embedding generation, Postmark email, OneSignal push, R2 storage, anything else we add) writes an `external_call` row synchronously after the call returns. Lets us slice spend by user / agent / persona / cohort / time period without retroactive plumbing. Schema lands in Phase A so the helpers exist before any real call fires — every integration is a one-liner wrap (`recordedCall(ctx, {kind, provider, ...}, async () => …)`). Never log full prompts or response bodies (those live in `messages` for LLM, or are unsensitive for service calls). Schema + rules in `memory/reference_external_call_audit.md`.
+- **External call audit** — every outbound call to a paid or measurable third party (LLM via OpenRouter, embedding generation, Postmark email, OneSignal push, R2 storage, anything else we add) writes an `external_call` row synchronously after the call returns. Lets us slice spend by user / agent / persona / cohort / time period without retroactive plumbing. Schema lands in Phase A so the helpers exist before any real call fires — every integration is a one-liner wrap (`recordedCall(ctx, {kind, provider, ...}, async () => …)`). Never log full prompts or response bodies (those live in `messages` for LLM, or are unsensitive for service calls). Schema + rules in `docs/memory/reference_external_call_audit.md`.
 
 ### Reactivity + gating states
-- **Live-global reactivity** — Convex's reactive queries pair with Riverpod stream providers to give the app push-based, always-current globals. Every state the UI must react to instantly — `system_config`, `currentUser` (lifecycle stage, subscription tier, profile slots, current coach), the active thread, unread counts — is exposed as a Riverpod provider backed by a Convex live query. The router itself watches these. Discipline: never `read` a global where you should `watch` it. Schema for the globals + the discipline rules in `memory/reference_live_globals.md`.
+- **Live-global reactivity** — Convex's reactive queries pair with Riverpod stream providers to give the app push-based, always-current globals. Every state the UI must react to instantly — `system_config`, `currentUser` (lifecycle stage, subscription tier, profile slots, current coach), the active thread, unread counts — is exposed as a Riverpod provider backed by a Convex live query. The router itself watches these. Discipline: never `read` a global where you should `watch` it. Schema for the globals + the discipline rules in `docs/memory/reference_live_globals.md`.
 
 - **Three categories of gating state.** Be deliberate about which a given condition is:
   1. **Hard takeover (route-level redirect)** — the user can't use the app at all in this state. Examples: kill switch (`/offline`), version too old (`/update-required`), account deletion in progress (`/account-pending-deletion`), signed out (`/welcome`). Implemented as router redirects driven by live-watched globals.
@@ -459,6 +534,7 @@ These aren't phases — they apply to every phase:
 - **Generated `.g.dart` committed** — per Flutter convention
 - **No Claude attribution** in commits, per user prefs
 - **Pedantic docs** — when something non-obvious lands, add or update a doc rather than relying on memory
+- **Operational reference patterns live in `/docs/memory/`** (in git, reviewable in PRs). Five files today: `system_config`, `external_call` audit, `live_globals`, `locales`, `coach_character_system`. Claude's auto-memory mirrors these as thin pointers; in-tree files win on divergence. New operational patterns go in `/docs/memory/` first, with a one-line pointer added to auto-memory afterwards.
 - **Tests** — start with: integration tests for the auth flow + coach turn (Phase A/C), unit tests for the activity classifier (Phase B), schema migration sanity checks. Don't aim for 100% — aim for the load-bearing seams.
 - **Git hygiene** — small commits within each phase; phase boundaries get a tag (`v0.A`, `v0.B`, …) for easy rollback
 
@@ -482,7 +558,7 @@ A → B → C → D → E → F → G → H → I.
 ## What's deliberately **not** in this plan (deferred to later)
 
 - **Voice coaching** (v2 Premium feature; PRD §13.2)
-- **Video coach moments** (v2 Premium; **HeyGen** is the working assumption now, not Tavus — chosen so the same avatar pipeline supports rendered moments today and live streaming avatars in a future tier; PRD §13.3 to be updated)
+- **Video coach moments** (v2 Premium; **HeyGen** is the chosen provider, with the same avatar pipeline supporting rendered moments today and live streaming avatars in a future tier; aligned with PRD §13.3)
 - **Personalised videos** (v2/v3 Premium — HeyGen API → R2 → push, "Margaret's weekly reflection just for you")
 - **Live video calls with the user's coach** (v3+, very premium — HeyGen Streaming Avatars or equivalent)
 - **Practitioner web app** (v3 build phase)
@@ -499,8 +575,8 @@ A → B → C → D → E → F → G → H → I.
 
 | Phase | Scope | Est. | Demoable end state |
 |---|---|---|---|
-| **0** | Shell, theme, fake auth | done | What we have |
-| **A** | Real auth + Convex spine + safety gates + onboarding | medium-large | Sign up for real, pick coach, kill-switch & update-required gates work live |
+| **0** | Shell, theme, fake auth | done | The pre-Phase-A scaffold |
+| **A** | Real auth + Convex spine + safety gates + onboarding | medium-large; **A1–A3.3 done, A3.4 remaining** | Sign up for real, pick coach, kill-switch & update-required gates work live |
 | **B** | Activities + cities + Health plugin | medium | Activities flow in, city pickable |
 | **C** | Memory + agent (Margaret comes alive) | large | Coach is real, remembers you, every turn cost-audited |
 | **D** | Widget catalogue + settings expansion | medium-large | Full v1 UI surface, widgets respect simulated read-only state |
@@ -521,9 +597,13 @@ The plan composes against these — read them per phase:
 - `01-architecture-patterns.md` — overall stack, layout conventions
 - `02-old-database-schema.md` — old Supabase Twikka schema, lifted patterns + lessons
 - `03-old-app-reference.md` — old Flutter app, lifted icons + theme + structure
-- `Twikka_v1_prd.md` — the full v1–v4 PRD (source of truth)
-- `memory/reference_external_call_audit.md` — `external_call` schema + helper pattern
-- `memory/reference_system_config.md` — `system_config` singleton schema + read/write pattern
-- `memory/reference_live_globals.md` — Convex+Riverpod live-globals discipline + provider list
-- `memory/reference_locales.md` — locale roadmap + locale-elastic layout rules
-- `memory/reference_coach_character_system.md` — index to `docs/twikka_coach_personas.md` + `docs/twikka_coach_image_prompts.md`, plus AI disclosure rules, avatar strategy across phases, v3 affiliate cross-sell W-22
+- `05-coach-interaction-design.md` — Phase C spec: data structures, reactive + proactive pipelines, mode computation, signal extraction, safety guardrails
+- `docs/twikka_v1_prd.md` — the full v1–v4 PRD (source of truth)
+- `docs/twikka_coach_personas.md` — six personas with voice + sample lines + safety responses
+- `docs/twikka_coach_image_prompts.md` — Midjourney v7 prompt library + HeyGen workflow
+- `docs/twikka-wiki-design.md` — knowledge wiki + RAG schema + audit process
+- `docs/memory/reference_external_call_audit.md` — `external_call` schema + helper pattern
+- `docs/memory/reference_system_config.md` — `system_config` singleton schema + read/write pattern
+- `docs/memory/reference_live_globals.md` — Convex+Riverpod live-globals discipline + provider list
+- `docs/memory/reference_locales.md` — locale roadmap + locale-elastic layout rules
+- `docs/memory/reference_coach_character_system.md` — index to `docs/twikka_coach_personas.md` + `docs/twikka_coach_image_prompts.md`, plus AI disclosure rules, avatar strategy across phases, v3 affiliate cross-sell W-22
