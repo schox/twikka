@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/theme_constants.dart';
+import '../../../core/widgets/centered.dart';
 
 class SettingsSubscriptionScreen extends StatelessWidget {
   const SettingsSubscriptionScreen({super.key});
@@ -10,7 +11,8 @@ class SettingsSubscriptionScreen extends StatelessWidget {
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(title: const Text('Subscription')),
-      body: Padding(
+      body: Centered.content(
+        child: Padding(
         padding: const EdgeInsets.all(gap4),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -39,6 +41,7 @@ class SettingsSubscriptionScreen extends StatelessWidget {
               child: const Text('Manage subscription'),
             ),
           ],
+        ),
         ),
       ),
     );

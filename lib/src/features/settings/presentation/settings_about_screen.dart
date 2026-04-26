@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/twikka_icons.dart';
+import '../../../core/widgets/centered.dart';
 
 class SettingsAboutScreen extends StatelessWidget {
   const SettingsAboutScreen({super.key});
@@ -9,7 +10,8 @@ class SettingsAboutScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('About')),
-      body: ListView(
+      body: Centered.content(
+        child: ListView(
         children: const [
           ListTile(
             leading: Icon(TwikkaIcons.appVersion),
@@ -30,6 +32,7 @@ class SettingsAboutScreen extends StatelessWidget {
             subtitle: Text('hello@twikka.com'),
           ),
         ],
+        ),
       ),
     );
   }

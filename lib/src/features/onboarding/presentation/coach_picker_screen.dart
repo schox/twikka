@@ -6,6 +6,7 @@ import '../../../core/branding/abstract_avatar.dart';
 import '../../../core/branding/coach_palette.dart';
 import '../../../core/theme/theme_constants.dart';
 import '../../../core/theme/twikka_icons.dart';
+import '../../../core/widgets/centered.dart';
 import '../../../data/models/coach_persona.dart';
 import '../../../data/providers/coach_personas_provider.dart';
 import '../../../data/providers/current_coach_provider.dart' as convex_coach;
@@ -84,7 +85,7 @@ class _CoachPickerScreenState extends ConsumerState<CoachPickerScreen> {
         title: const Text('Choose your coach'),
         automaticallyImplyLeading: widget.onPicked == null,
       ),
-      body: personasAsync.when(
+      body: Centered.content(child: personasAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, _) => Center(child: Text('Couldn\u2019t load coaches: $err')),
         data: (personas) {
@@ -165,7 +166,7 @@ class _CoachPickerScreenState extends ConsumerState<CoachPickerScreen> {
             ],
           );
         },
-      ),
+      )),
     );
   }
 }

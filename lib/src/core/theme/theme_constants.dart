@@ -66,6 +66,12 @@ const double gap6 = 32;
 const double pageHorizontalPadding = 16;
 const double pageVerticalPadding = gap2;
 
+// Responsive content caps. Forms (auth, profile edit) read best when
+// the line length stays close to a single column on tablet. Lists and
+// cards can breathe a little wider.
+const double kFormMaxWidth = 520;
+const double kContentMaxWidth = 720;
+
 // Component
 const double iconSizeSmall = 16;
 const double iconSizeMedium = 18;

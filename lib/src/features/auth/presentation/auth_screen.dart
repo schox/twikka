@@ -175,34 +175,40 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: gap5, vertical: gap4),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (_step == _Step.email)
-                const Spacer()
-              else
-                const SizedBox(height: gap4),
-              Center(child: _BrandMark(theme: theme)),
-              const SizedBox(height: gap4),
-              Expanded(
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 220),
-                  switchInCurve: Curves.easeOut,
-                  switchOutCurve: Curves.easeIn,
-                  child: KeyedSubtree(
-                    key: ValueKey<_Step>(_step),
-                    child: switch (_step) {
-                      _Step.email => _buildEmail(theme),
-                      _Step.name => _buildName(theme),
-                      _Step.code => _buildCode(theme),
-                    },
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: kFormMaxWidth),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: gap5, vertical: gap4),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (_step == _Step.email)
+                    const Spacer()
+                  else
+                    const SizedBox(height: gap4),
+                  Center(child: _BrandMark(theme: theme)),
+                  const SizedBox(height: gap4),
+                  Expanded(
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 220),
+                      switchInCurve: Curves.easeOut,
+                      switchOutCurve: Curves.easeIn,
+                      child: KeyedSubtree(
+                        key: ValueKey<_Step>(_step),
+                        child: switch (_step) {
+                          _Step.email => _buildEmail(theme),
+                          _Step.name => _buildName(theme),
+                          _Step.code => _buildCode(theme),
+                        },
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(height: gap5),
+                ],
               ),
-              const SizedBox(height: gap5),
-            ],
+            ),
           ),
         ),
       ),

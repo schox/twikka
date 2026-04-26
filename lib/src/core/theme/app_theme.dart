@@ -277,12 +277,18 @@ ThemeData _buildTheme(ColorScheme scheme) {
     ),
     navigationRailTheme: NavigationRailThemeData(
       backgroundColor: isLight ? twPaper : scheme.surfaceContainer,
-      indicatorColor: scheme.primaryContainer,
-      selectedIconTheme: IconThemeData(color: scheme.onPrimaryContainer),
-      unselectedIconTheme: IconThemeData(color: scheme.onSurfaceVariant),
+      // Match the bottom NavigationBar: selection is the icon swap +
+      // accent-coloured glyph, no pill behind it.
+      indicatorColor: Colors.transparent,
+      useIndicator: true,
+      selectedIconTheme: const IconThemeData(color: twAccent, size: 26),
+      unselectedIconTheme: IconThemeData(
+        color: scheme.onSurfaceVariant,
+        size: 26,
+      ),
       selectedLabelTextStyle: textTheme.labelMedium?.copyWith(
         fontWeight: FontWeight.w600,
-        color: scheme.onPrimaryContainer,
+        color: twAccent,
       ),
       unselectedLabelTextStyle: textTheme.labelMedium?.copyWith(
         color: scheme.onSurfaceVariant,

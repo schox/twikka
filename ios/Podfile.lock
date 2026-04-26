@@ -1,8 +1,12 @@
 PODS:
   - convex_flutter (0.0.1):
     - Flutter
+  - device_info_plus (0.0.1):
+    - Flutter
   - Flutter (1.0.0)
   - flutter_native_splash (2.4.3):
+    - Flutter
+  - health (13.3.1):
     - Flutter
   - shared_preferences_foundation (0.0.1):
     - Flutter
@@ -10,26 +14,34 @@ PODS:
 
 DEPENDENCIES:
   - convex_flutter (from `.symlinks/plugins/convex_flutter/ios`)
+  - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - Flutter (from `Flutter`)
   - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
+  - health (from `.symlinks/plugins/health/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
 
 EXTERNAL SOURCES:
   convex_flutter:
     :path: ".symlinks/plugins/convex_flutter/ios"
+  device_info_plus:
+    :path: ".symlinks/plugins/device_info_plus/ios"
   Flutter:
     :path: Flutter
   flutter_native_splash:
     :path: ".symlinks/plugins/flutter_native_splash/ios"
+  health:
+    :path: ".symlinks/plugins/health/ios"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
 
 SPEC CHECKSUMS:
   convex_flutter: be634cd14a7c2c194cc0b2b88600069d61e67b9d
+  device_info_plus: bf2e3232933866d73fe290f2942f2156cdd10342
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
   flutter_native_splash: df59bb2e1421aa0282cb2e95618af4dcb0c56c29
+  health: c1dfe8bc28ccd5998a32bdd0963943bfe9ac8320
   shared_preferences_foundation: 5086985c1d43c5ba4d5e69a4e8083a389e2909e6
 
-PODFILE CHECKSUM: 3c63482e143d1b91d2d2560aee9fb04ecc74ac7e
+PODFILE CHECKSUM: a90144c8e457bd8a4eb3ab55ce0223788ccab880
 
 COCOAPODS: 1.16.2

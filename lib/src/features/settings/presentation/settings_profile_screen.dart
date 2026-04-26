@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/branding/abstract_avatar.dart';
 import '../../../core/theme/theme_constants.dart';
 import '../../../core/theme/twikka_icons.dart';
+import '../../../core/widgets/centered.dart';
 import '../../../data/providers/current_user_provider.dart';
 import '../../auth/data/auth_state.dart';
 import '../../auth/data/clerk_auth_notifier.dart';
@@ -24,7 +25,8 @@ class SettingsProfileScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Profile')),
-      body: ListView(
+      body: Centered.content(
+        child: ListView(
         padding: const EdgeInsets.all(gap4),
         children: [
           Center(
@@ -62,6 +64,7 @@ class SettingsProfileScreen extends ConsumerWidget {
             subtitle: Text(timezone ?? 'Set when you pick a city'),
           ),
         ],
+        ),
       ),
     );
   }

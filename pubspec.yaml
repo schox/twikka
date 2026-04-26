@@ -49,6 +49,12 @@ dependencies:
   # Weight defaults are wired in lib/src/core/theme/twikka_icons.dart.
   phosphor_flutter: ^2.1.0
 
+  # HealthKit / Health Connect — workout backfill + foreground sync.
+  # Permissions wired through HealthService; iOS Info.plist needs
+  # NSHealthShareUsageDescription and the HealthKit capability before
+  # running on a real device.
+  health: ^13.3.1
+
 dependency_overrides:
   # convex_flutter 3.0.1 ships codegen for flutter_rust_bridge 2.11.1;
   # pub otherwise resolves 2.12.0, which fails the runtime/codegen version check at startup.

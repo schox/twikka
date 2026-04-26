@@ -41,6 +41,14 @@ export default defineSchema({
     // browse seed data, flip kill switches, etc. Operator-flippable
     // from the Convex dashboard.
     tester: v.optional(v.boolean()),
+    // Health source the user is currently syncing from. null = not
+    // connected; backfill runs once on first connect.
+    healthSource: v.optional(
+      v.union(v.literal("apple_hk"), v.literal("health_connect")),
+    ),
+    // Latest workout endTime we've ingested for this user. The next
+    // foreground sync starts from here + 1ms.
+    lastHealthSyncAt: v.optional(v.number()),
     createdAt: v.number(),
     updatedAt: v.number(),
   })
@@ -321,6 +329,74 @@ export default defineSchema({
       dimensions: 1536,
       filterFields: ["coaClass"],
     }),
+
+  // Workout instances reported by Apple Health, Android Health
+  // Connect, or the user themselves via chat. Dedupe is per
+  // (userId, source, externalId) — re-syncing an overlapping time
+  // window is a no-op. activityKindId resolves at write-time via
+  // activity_kinds.platformTypes; rows whose platformType isn't yet
+  // mapped land with activityKindId:null + needsReview true so the
+  // tester debug screen surfaces them for curation.
+  activities: defineTable({
+    userId: v.id("users"),
+    organisationId: v.id("organisations"),
+    source: v.union(
+      v.literal("apple_hk"),
+      v.literal("health_connect"),
+      v.literal("manual"),
+    ),
+    // HKWorkout UUID, Health Connect record ID, or null for manual.
+    externalId: v.optional(v.string()),
+    // Resolved activity_kinds row; null until classified.
+    activityKindId: v.optional(v.id("activity_kinds")),
+    // Raw HealthWorkoutActivityType string from the `health` package
+    // (RUNNING / WALKING / BIKING / …). Held even after resolution so
+    // we can re-classify if the platform mapping changes.
+    platformType: v.optional(v.string()),
+    startTime: v.number(),
+    endTime: v.number(),
+    durationMin: v.number(),
+    metsEstimate: v.optional(v.number()),
+    distanceMeters: v.optional(v.number()),
+    caloriesKcal: v.optional(v.number()),
+    // Coach behaviour knobs — Phase C surfaces ack widgets and writes
+    // here. acknowledged stays false on import.
+    acknowledged: v.boolean(),
+    acknowledgedAt: v.optional(v.number()),
+    // Free-text the user typed (manual entries from chat).
+    userNote: v.optional(v.string()),
+    needsReview: v.boolean(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_user_time", ["userId", "startTime"])
+    .index("by_user_source_external", ["userId", "source", "externalId"])
+    .index("by_user_source", ["userId", "source"])
+    .index("by_org_time", ["organisationId", "startTime"]),
+
+  // One row per (user, source, date) — daily step total. Phase C uses
+  // these as ambient activity context: how much the user has been
+  // moving on days they didn't log a workout. Other daily summaries
+  // (active calories, etc.) are deferred — the PRD's v1 scope keeps
+  // health reads narrow.
+  daily_summaries: defineTable({
+    userId: v.id("users"),
+    organisationId: v.id("organisations"),
+    // YYYY-MM-DD in the device's local timezone at write time. Phase
+    // C can re-key to the user's saved timezone if the difference
+    // matters in practice.
+    date: v.string(),
+    source: v.union(
+      v.literal("apple_hk"),
+      v.literal("health_connect"),
+      v.literal("manual"),
+    ),
+    stepCount: v.number(),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_user_source_date", ["userId", "source", "date"])
+    .index("by_user_date", ["userId", "date"]),
 
   // Per-user phrasings learned from chat. "the lawn" → mowing,
   // "morning loop" → walking, etc. Resolved at the alias step before

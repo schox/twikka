@@ -1,4 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Health Connect (Android). READ_EXERCISE lets us pull workout
+         sessions; the package query is needed to check whether the
+         user has Health Connect installed. -->
+    <uses-permission android:name="android.permission.health.READ_EXERCISE" />
     <application
         android:label="twikka"
         android:name="${applicationName}"
@@ -41,5 +45,7 @@
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
         </intent>
+        <!-- Health Connect package visibility -->
+        <package android:name="com.google.android.apps.healthdata" />
     </queries>
 </manifest>

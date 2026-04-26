@@ -14,6 +14,8 @@ class TwikkaUser {
     this.timezone,
     this.city,
     this.tester = false,
+    this.healthSource,
+    this.lastHealthSyncAt,
   });
 
   final String id;
@@ -30,6 +32,8 @@ class TwikkaUser {
   final String? timezone;
   final TwikkaUserCity? city;
   final bool tester;
+  final String? healthSource;
+  final int? lastHealthSyncAt;
 
   factory TwikkaUser.fromJson(Map<String, dynamic> json) => TwikkaUser(
         id: json['_id'] as String,
@@ -48,6 +52,8 @@ class TwikkaUser {
             ? null
             : TwikkaUserCity.fromJson(json['city'] as Map<String, dynamic>),
         tester: (json['tester'] as bool?) ?? false,
+        healthSource: json['healthSource'] as String?,
+        lastHealthSyncAt: (json['lastHealthSyncAt'] as num?)?.toInt(),
       );
 }
 

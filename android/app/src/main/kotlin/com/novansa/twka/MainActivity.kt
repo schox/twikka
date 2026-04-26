@@ -1,4 +1,4 @@
-package com.novansa.twikka
+package com.novansa.twka
 
 import io.flutter.embedding.android.FlutterActivity
 

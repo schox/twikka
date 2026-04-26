@@ -9,6 +9,7 @@ enum AppRoute {
   settingsPreferences,
   settingsSubscription,
   settingsCoach,
+  settingsHealth,
   settingsAbout,
   settingsDebug,
   offline,
@@ -30,6 +31,7 @@ class AppPaths {
   static const settingsPreferences = 'preferences';
   static const settingsSubscription = 'subscription';
   static const settingsCoach = 'coach';
+  static const settingsHealth = 'health';
   static const settingsAbout = 'about';
   static const settingsDebug = 'debug';
 

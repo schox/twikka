@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/twikka_icons.dart';
+import '../../../core/widgets/centered.dart';
 import '../../../data/models/coach_persona.dart';
 import '../../../data/models/system_config.dart';
 import '../../../data/models/twikka_user.dart';
@@ -13,6 +14,7 @@ import '../../auth/data/clerk_auth_notifier.dart';
 import '../../coach/data/chat_notifier.dart';
 import 'activity_classify_debug_panel.dart';
 import 'activity_kinds_debug_panel.dart';
+import 'recent_activities_debug_panel.dart';
 
 class SettingsDebugScreen extends ConsumerWidget {
   const SettingsDebugScreen({super.key});
@@ -27,7 +29,8 @@ class SettingsDebugScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Debug')),
-      body: ListView(
+      body: Centered.content(
+        child: ListView(
         children: [
           SwitchListTile(
             value: onboardingComplete,
@@ -81,12 +84,16 @@ class SettingsDebugScreen extends ConsumerWidget {
             error: (err, _) => _errorTile('Personas error: $err'),
           ),
           const Divider(height: 32),
+          _sectionHeader(context, 'Recent activities'),
+          const RecentActivitiesDebugPanel(),
+          const Divider(height: 32),
           _sectionHeader(context, 'Activity classifier (test)'),
           const ActivityClassifyDebugPanel(),
           const Divider(height: 32),
           _sectionHeader(context, 'Activity kinds (live)'),
           const ActivityKindsDebugPanel(),
         ],
+        ),
       ),
     );
   }

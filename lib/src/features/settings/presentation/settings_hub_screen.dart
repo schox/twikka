@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/branding/abstract_avatar.dart';
 import '../../../core/theme/theme_constants.dart';
 import '../../../core/theme/twikka_icons.dart';
+import '../../../core/widgets/centered.dart';
 import '../../../core/widgets/notifications_bell.dart';
 import '../../../data/providers/current_user_provider.dart';
 import '../../../routing/app_routes.dart';
@@ -20,6 +21,8 @@ class SettingsHubScreen extends ConsumerWidget {
         label: 'Profile', subtitle: 'Name, photo, bio'),
     _SettingsItem(route: AppRoute.settingsCoach, icon: TwikkaIcons.coach,
         label: 'Coach', subtitle: 'Pick or change your coach'),
+    _SettingsItem(route: AppRoute.settingsHealth, icon: TwikkaIcons.timezone,
+        label: 'Health', subtitle: 'Connect Apple Health / Health Connect'),
     _SettingsItem(route: AppRoute.settingsPreferences, icon: TwikkaIcons.preferences,
         label: 'Preferences', subtitle: 'Theme, notifications, units'),
     _SettingsItem(route: AppRoute.settingsSubscription, icon: TwikkaIcons.subscription,
@@ -50,7 +53,8 @@ class SettingsHubScreen extends ConsumerWidget {
         title: const Text('Settings'),
         actions: const [NotificationsBell()],
       ),
-      body: ListView(
+      body: Centered.content(
+        child: ListView(
         padding: const EdgeInsets.symmetric(vertical: gap2),
         children: [
           if (user != null)
@@ -94,6 +98,7 @@ class SettingsHubScreen extends ConsumerWidget {
             onTap: () => ref.read(clerkAuthProvider.notifier).signOut(),
           ),
         ],
+        ),
       ),
     );
   }

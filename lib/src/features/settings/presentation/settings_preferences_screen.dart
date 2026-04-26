@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/theme_constants.dart';
 import '../../../core/theme/theme_notifier.dart';
+import '../../../core/widgets/centered.dart';
 
 class SettingsPreferencesScreen extends ConsumerWidget {
   const SettingsPreferencesScreen({super.key});
@@ -12,7 +13,8 @@ class SettingsPreferencesScreen extends ConsumerWidget {
     final appearance = ref.watch(themeProvider);
     return Scaffold(
       appBar: AppBar(title: const Text('Preferences')),
-      body: ListView(
+      body: Centered.content(
+        child: ListView(
         padding: const EdgeInsets.symmetric(vertical: gap2),
         children: [
           const _Section('Appearance'),
@@ -46,6 +48,7 @@ class SettingsPreferencesScreen extends ConsumerWidget {
             subtitle: const Text('A recap of your week, every Monday'),
           ),
         ],
+        ),
       ),
     );
   }

@@ -15,6 +15,7 @@ import '../features/gating/presentation/update_required_screen.dart';
 import '../features/onboarding/presentation/coach_picker_screen.dart';
 import '../features/settings/presentation/settings_about_screen.dart';
 import '../features/settings/presentation/settings_debug_screen.dart';
+import '../features/settings/presentation/settings_health_screen.dart';
 import '../features/settings/presentation/settings_hub_screen.dart';
 import '../features/settings/presentation/settings_preferences_screen.dart';
 import '../features/settings/presentation/settings_profile_screen.dart';
@@ -152,6 +153,11 @@ GoRouter appRouter(Ref ref) {
                     path: AppPaths.settingsCoach,
                     name: AppRoute.settingsCoach.name,
                     builder: (_, _) => const CoachPickerScreen(),
+                  ),
+                  GoRoute(
+                    path: AppPaths.settingsHealth,
+                    name: AppRoute.settingsHealth.name,
+                    builder: (_, _) => const SettingsHealthScreen(),
                   ),
                   GoRoute(
                     path: AppPaths.settingsAbout,
