@@ -44,8 +44,10 @@ class _ActivityKindsDebugPanelState extends State<ActivityKindsDebugPanel> {
 
   Future<void> _refreshStats() async {
     try {
-      final raw = await ConvexClient.instance
-          .query('activityKinds:debugStats', const {});
+      final raw = await ConvexClient.instance.action(
+        name: 'activityKinds:debugStats',
+        args: const {},
+      );
       if (!mounted) return;
       setState(() => _stats = jsonDecode(raw) as Map<String, dynamic>);
     } catch (_) {

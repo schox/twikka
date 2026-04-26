@@ -298,6 +298,14 @@ export default defineSchema({
     ),
     needsReview: v.boolean(),
 
+    // Embedding of "name + headingName + aliases joined", produced by
+    // the embedding model named in system_config.models.embedding (1536
+    // dims for text-embedding-3-small). Phase B3's classifier hits
+    // `by_embedding` for the similarity step (cosine over the activity
+    // taxonomy). Optional because the backfill is async and brand-new
+    // synthetic rows may not have an embedding yet.
+    embedding: v.optional(v.array(v.float64())),
+
     createdAt: v.number(),
     updatedAt: v.number(),
   })
@@ -307,7 +315,27 @@ export default defineSchema({
     .searchIndex("by_name", {
       searchField: "name",
       filterFields: ["coaClass"],
+    })
+    .vectorIndex("by_embedding", {
+      vectorField: "embedding",
+      dimensions: 1536,
+      filterFields: ["coaClass"],
     }),
+
+  // Per-user phrasings learned from chat. "the lawn" → mowing,
+  // "morning loop" → walking, etc. Resolved at the alias step before
+  // we touch embeddings or LLMs.
+  user_activity_aliases: defineTable({
+    userId: v.id("users"),
+    organisationId: v.id("organisations"),
+    phrase: v.string(), // exact lowercase phrase as the user said it
+    activityKindId: v.id("activity_kinds"),
+    learnedFromMessageId: v.optional(v.string()),
+    createdAt: v.number(),
+  })
+    .index("by_user_phrase", ["userId", "phrase"])
+    .index("by_user", ["userId"])
+    .index("by_kind", ["activityKindId"]),
 
   // GeoNames cities export (~140k rows). The full-text search index
   // matches on name + asciiname + alternatenames + country_code so

@@ -8,14 +8,17 @@
  * @module
  */
 
+import type * as activityClassifier from "../activityClassifier.js";
 import type * as activityKinds from "../activityKinds.js";
 import type * as audit from "../audit.js";
 import type * as auth from "../auth.js";
 import type * as cities from "../cities.js";
 import type * as coachPersonas from "../coachPersonas.js";
 import type * as http from "../http.js";
+import type * as lib_openrouter from "../lib/openrouter.js";
 import type * as lib_recordedCall from "../lib/recordedCall.js";
 import type * as lib_scope from "../lib/scope.js";
+import type * as seed_activityKindEmbeddings from "../seed/activityKindEmbeddings.js";
 import type * as seed_coachPersonas from "../seed/coachPersonas.js";
 import type * as seed_modelPricing from "../seed/modelPricing.js";
 import type * as seed_systemConfig from "../seed/systemConfig.js";
@@ -29,14 +32,17 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  activityClassifier: typeof activityClassifier;
   activityKinds: typeof activityKinds;
   audit: typeof audit;
   auth: typeof auth;
   cities: typeof cities;
   coachPersonas: typeof coachPersonas;
   http: typeof http;
+  "lib/openrouter": typeof lib_openrouter;
   "lib/recordedCall": typeof lib_recordedCall;
   "lib/scope": typeof lib_scope;
+  "seed/activityKindEmbeddings": typeof seed_activityKindEmbeddings;
   "seed/coachPersonas": typeof seed_coachPersonas;
   "seed/modelPricing": typeof seed_modelPricing;
   "seed/systemConfig": typeof seed_systemConfig;
