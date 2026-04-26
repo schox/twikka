@@ -31,6 +31,11 @@ export default defineSchema({
     ),
     suspended: v.boolean(),
     deletionRequestedAt: v.optional(v.number()),
+    // B1: city + timezone parked here pending Phase C's user_profile_slots
+    // table. When that lands these get migrated into slot rows with the
+    // standard state machine; until then they're plain optional fields.
+    cityId: v.optional(v.id("cities")),
+    timezone: v.optional(v.string()),
     createdAt: v.number(),
     updatedAt: v.number(),
   })
@@ -239,4 +244,29 @@ export default defineSchema({
     .index("by_org_time", ["organisationId", "createdAt"])
     .index("by_subject", ["subjectType", "subjectId"])
     .index("by_action_time", ["action", "createdAt"]),
+
+  // GeoNames cities export (~140k rows). The full-text search index
+  // matches on name + asciiname + alternatenames + country_code so
+  // common synonyms ("NYC" → "New York") and accented variants resolve.
+  // alternatenames is an array of strings (we split the GeoNames
+  // comma-delimited field at ingest time).
+  cities: defineTable({
+    geonameid: v.number(),
+    name: v.string(),
+    asciiname: v.string(),
+    alternatenames: v.array(v.string()),
+    latitude: v.number(),
+    longitude: v.number(),
+    countryCode: v.string(),
+    timezone: v.string(),
+    // searchHaystack concatenates the human-resolvable strings into a
+    // single field that the search index targets — keeps the index
+    // simple at 140k rows and avoids array-search semantics.
+    searchHaystack: v.string(),
+  })
+    .index("by_geonameid", ["geonameid"])
+    .searchIndex("by_haystack", {
+      searchField: "searchHaystack",
+      filterFields: ["countryCode"],
+    }),
 });

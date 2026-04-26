@@ -10,6 +10,9 @@ class TwikkaUser {
     required this.updatedAt,
     this.displayName,
     this.deletionRequestedAt,
+    this.cityId,
+    this.timezone,
+    this.city,
   });
 
   final String id;
@@ -22,6 +25,9 @@ class TwikkaUser {
   final int? deletionRequestedAt;
   final int createdAt;
   final int updatedAt;
+  final String? cityId;
+  final String? timezone;
+  final TwikkaUserCity? city;
 
   factory TwikkaUser.fromJson(Map<String, dynamic> json) => TwikkaUser(
         id: json['_id'] as String,
@@ -34,5 +40,30 @@ class TwikkaUser {
         deletionRequestedAt: (json['deletionRequestedAt'] as num?)?.toInt(),
         createdAt: (json['createdAt'] as num).toInt(),
         updatedAt: (json['updatedAt'] as num).toInt(),
+        cityId: json['cityId'] as String?,
+        timezone: json['timezone'] as String?,
+        city: json['city'] == null
+            ? null
+            : TwikkaUserCity.fromJson(json['city'] as Map<String, dynamic>),
+      );
+}
+
+class TwikkaUserCity {
+  const TwikkaUserCity({
+    required this.id,
+    required this.name,
+    required this.countryCode,
+    required this.timezone,
+  });
+  final String id;
+  final String name;
+  final String countryCode;
+  final String timezone;
+
+  factory TwikkaUserCity.fromJson(Map<String, dynamic> json) => TwikkaUserCity(
+        id: json['_id'] as String,
+        name: json['name'] as String,
+        countryCode: json['countryCode'] as String,
+        timezone: json['timezone'] as String,
       );
 }

@@ -183,15 +183,31 @@ export const ensureFromIdentity = mutation({
   },
 });
 
-// Live query the app subscribes to for the current user's row.
+// Live query the app subscribes to for the current user's row. Embeds
+// the current city (if any) so Settings → Profile renders without a
+// separate join request.
 export const current = query({
   args: {},
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) return null;
-    return await ctx.db
+    const user = await ctx.db
       .query("users")
       .withIndex("by_clerk", (q) => q.eq("clerkId", identity.subject))
       .first();
+    if (!user) return null;
+    const city = user.cityId ? await ctx.db.get(user.cityId) : null;
+    return {
+      ...user,
+      city: city
+        ? {
+            _id: city._id,
+            name: city.name,
+            asciiname: city.asciiname,
+            countryCode: city.countryCode,
+            timezone: city.timezone,
+          }
+        : null,
+    };
   },
 });

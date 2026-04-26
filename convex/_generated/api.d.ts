@@ -10,6 +10,7 @@
 
 import type * as audit from "../audit.js";
 import type * as auth from "../auth.js";
+import type * as cities from "../cities.js";
 import type * as coachPersonas from "../coachPersonas.js";
 import type * as http from "../http.js";
 import type * as lib_recordedCall from "../lib/recordedCall.js";
@@ -29,6 +30,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   audit: typeof audit;
   auth: typeof auth;
+  cities: typeof cities;
   coachPersonas: typeof coachPersonas;
   http: typeof http;
   "lib/recordedCall": typeof lib_recordedCall;
