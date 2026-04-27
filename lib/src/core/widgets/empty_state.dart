@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../theme/theme_constants.dart';
+import '../theme/app_theme.dart';
 
 class EmptyState extends StatelessWidget {
   const EmptyState({
@@ -25,14 +25,16 @@ class EmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 36, color: twMuted2),
+            Icon(icon, size: 36, color: context.tw.muted2),
             const SizedBox(height: gap4),
             Text(title, style: theme.textTheme.titleMedium, textAlign: TextAlign.center),
             if (description != null) ...[
               const SizedBox(height: gap1),
               Text(
                 description!,
-                style: theme.textTheme.bodyMedium?.copyWith(color: twMuted),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
                 textAlign: TextAlign.center,
               ),
             ],

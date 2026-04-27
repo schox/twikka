@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/theme_constants.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/twikka_icons.dart';
 import '../data/chat_message.dart';
 import '../data/coach.dart';
@@ -18,7 +18,7 @@ class Kicker extends StatelessWidget {
     return Text(
       text.toUpperCase(),
       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: twMuted,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             letterSpacing: 1.2,
           ),
     );
@@ -65,9 +65,9 @@ class CardButton extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final (bg, fg, side) = switch (kind) {
-      CardButtonKind.primary => (scheme.primary, twPaper, BorderSide.none),
-      CardButtonKind.ghost => (twPaper, twInk, BorderSide(color: twHairline)),
-      CardButtonKind.quiet => (Colors.transparent, twMuted, BorderSide.none),
+      CardButtonKind.primary => (scheme.primary, Theme.of(context).colorScheme.surfaceContainerLowest, BorderSide.none),
+      CardButtonKind.ghost => (Theme.of(context).colorScheme.surfaceContainerLowest, Theme.of(context).colorScheme.onSurface, BorderSide(color: Theme.of(context).colorScheme.outline)),
+      CardButtonKind.quiet => (Colors.transparent, Theme.of(context).colorScheme.onSurfaceVariant, BorderSide.none),
     };
 
     final btn = SizedBox(
@@ -82,7 +82,7 @@ class CardButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(radiusSm + 2),
             side: side,
           ),
-          textStyle: theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w500),
+          textStyle: Theme.of(context).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w500),
         ),
         child: Text(label),
       ),
@@ -105,7 +105,7 @@ class TimeStampWidget extends StatelessWidget {
       child: Center(
         child: Text(
           label.toUpperCase(),
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(color: twMuted),
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
         ),
       ),
     );
@@ -123,7 +123,7 @@ class SystemNoticeWidget extends StatelessWidget {
         child: Text(
           text,
           textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: twMuted, height: 1.5),
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant, height: 1.5),
         ),
       ),
     );
@@ -165,7 +165,7 @@ class _TypingIndicatorWidgetState extends State<TypingIndicatorWidget>
         Container(
           padding: const EdgeInsets.symmetric(horizontal: gap3, vertical: gap2),
           decoration: BoxDecoration(
-            color: twCream,
+            color: Theme.of(context).colorScheme.surfaceContainer,
             borderRadius: BorderRadius.circular(radiusBubble).copyWith(
               bottomLeft: const Radius.circular(radiusBubbleTail),
             ),
@@ -195,7 +195,7 @@ class _TypingIndicatorWidgetState extends State<TypingIndicatorWidget>
       width: 6,
       height: 6,
       decoration: BoxDecoration(
-        color: twMuted.withValues(alpha: opacity),
+        color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: opacity),
         shape: BoxShape.circle,
       ),
     );
@@ -228,14 +228,14 @@ class CoachBubbleRow extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: gap4, vertical: gap3),
               decoration: BoxDecoration(
-                color: twCream,
+                color: Theme.of(context).colorScheme.surfaceContainer,
                 borderRadius: BorderRadius.circular(radiusBubble).copyWith(
                   bottomLeft: const Radius.circular(radiusBubbleTail),
                 ),
               ),
               child: Text(
                 text,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: twInk),
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface),
               ),
             ),
           ),
@@ -258,14 +258,14 @@ class UserBubble extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: gap4, vertical: gap3),
           decoration: BoxDecoration(
-            color: twAccentTint,
+            color: context.tw.accentTint,
             borderRadius: BorderRadius.circular(radiusBubble).copyWith(
               bottomRight: const Radius.circular(radiusBubbleTail),
             ),
           ),
           child: Text(
             text,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: twInk),
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface),
           ),
         ),
       ),
@@ -291,7 +291,7 @@ class CoachCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = tone == CoachCardTone.cream ? twCream : twPaper;
+    final bg = tone == CoachCardTone.cream ? Theme.of(context).colorScheme.surfaceContainer : Theme.of(context).colorScheme.surfaceContainerLowest;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
@@ -306,7 +306,7 @@ class CoachCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(radiusCard).copyWith(
                   bottomLeft: const Radius.circular(radiusCardTail),
                 ),
-                border: Border.all(color: twHairline),
+                border: Border.all(color: Theme.of(context).colorScheme.outline),
               ),
               padding: const EdgeInsets.fromLTRB(gap4, gap4, gap4, gap3),
               child: child,
@@ -329,15 +329,17 @@ class ResponseFooter extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(top: gap1),
       padding: const EdgeInsets.only(top: gap2),
-      decoration: const BoxDecoration(
-        border: Border(top: BorderSide(color: twHairline, style: BorderStyle.solid)),
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(color: Theme.of(context).colorScheme.outline),
+        ),
       ),
       child: Row(
         children: [
-          Icon(TwikkaIcons.check, size: 14, color: twMuted),
+          Icon(TwikkaIcons.check, size: 14, color: Theme.of(context).colorScheme.onSurfaceVariant),
           const SizedBox(width: gap1),
           Expanded(
-            child: Text(label, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: twMuted)),
+            child: Text(label, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)),
           ),
         ],
       ),
@@ -356,7 +358,6 @@ class ActivityAckCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
@@ -368,27 +369,27 @@ class ActivityAckCardWidget extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: gap3, vertical: gap3),
               decoration: BoxDecoration(
-                color: twCream,
+                color: Theme.of(context).colorScheme.surfaceContainer,
                 borderRadius: BorderRadius.circular(radiusBubble).copyWith(
                   bottomLeft: const Radius.circular(radiusBubbleTail),
                 ),
-                border: Border.all(color: twHairline),
+                border: Border.all(color: Theme.of(context).colorScheme.outline),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      Icon(TwikkaIcons.circleOutline, size: 12, color: twMuted),
+                      Icon(TwikkaIcons.circleOutline, size: 12, color: Theme.of(context).colorScheme.onSurfaceVariant),
                       const SizedBox(width: 6),
                       Text('FROM ${message.source.toUpperCase()}',
-                          style: theme.textTheme.labelSmall?.copyWith(color: twMuted)),
+                          style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)),
                     ],
                   ),
                   const SizedBox(height: 6),
                   Text.rich(
                     TextSpan(
-                      style: theme.textTheme.bodyLarge?.copyWith(color: twInk),
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface),
                       children: [
                         const TextSpan(text: 'Saw you got out for a '),
                         TextSpan(
@@ -432,7 +433,6 @@ class SuggestionCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final pending = message.status == SuggestionResponse.pending;
     return CoachCard(
       coach: coach,
@@ -446,7 +446,7 @@ class SuggestionCardWidget extends StatelessWidget {
             const SizedBox(height: gap1),
             Text(
               message.detail!,
-              style: theme.textTheme.bodyMedium?.copyWith(color: twInk2, height: 1.5),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: context.tw.ink2, height: 1.5),
             ),
           ],
           const SizedBox(height: gap3),
@@ -511,7 +511,6 @@ class CheckInCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final pending = message.status == CheckInMood.pending;
     return CoachCard(
       coach: coach,
@@ -524,7 +523,7 @@ class CheckInCardWidget extends StatelessWidget {
           const SizedBox(height: gap1),
           Text(
             'Or tell me in your own words — whichever’s easier.',
-            style: theme.textTheme.bodyMedium?.copyWith(color: twMuted),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
           const SizedBox(height: gap3),
           if (pending)
@@ -570,10 +569,10 @@ class _MoodPill extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: gap3, vertical: gap1 + 3),
         decoration: BoxDecoration(
-          color: dashed ? Colors.transparent : twPaper,
+          color: dashed ? Colors.transparent : Theme.of(context).colorScheme.surfaceContainerLowest,
           borderRadius: BorderRadius.circular(radiusPill),
           border: Border.all(
-            color: twHairline,
+            color: Theme.of(context).colorScheme.outline,
             // Dashed border isn't supported natively; close enough with hairline + opacity.
           ),
         ),
@@ -581,7 +580,7 @@ class _MoodPill extends StatelessWidget {
           label,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontWeight: dashed ? FontWeight.w400 : FontWeight.w500,
-                color: dashed ? twMuted : twInk,
+                color: dashed ? Theme.of(context).colorScheme.onSurfaceVariant : Theme.of(context).colorScheme.onSurface,
               ),
         ),
       ),
@@ -600,7 +599,6 @@ class MilestoneCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
@@ -615,8 +613,8 @@ class MilestoneCardWidget extends StatelessWidget {
               ),
               child: Container(
                 decoration: BoxDecoration(
-                  color: twPaper,
-                  border: Border.all(color: twHairline),
+                  color: Theme.of(context).colorScheme.surfaceContainerLowest,
+                  border: Border.all(color: Theme.of(context).colorScheme.outline),
                   borderRadius: BorderRadius.circular(radiusCard).copyWith(
                     bottomLeft: const Radius.circular(radiusCardTail),
                   ),
@@ -633,7 +631,7 @@ class MilestoneCardWidget extends StatelessWidget {
                         height: 120,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: twAccentTint.withValues(alpha: 0.6),
+                          color: context.tw.accentTint.withValues(alpha: 0.6),
                         ),
                       ),
                     ),
@@ -647,8 +645,8 @@ class MilestoneCardWidget extends StatelessWidget {
                           children: [
                             Text(
                               message.figure,
-                              style: theme.textTheme.displayMedium?.copyWith(
-                                color: twAccent,
+                              style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                                color: Theme.of(context).colorScheme.primary,
                                 fontWeight: FontWeight.w400,
                                 height: 1,
                                 fontSize: 44,
@@ -660,7 +658,7 @@ class MilestoneCardWidget extends StatelessWidget {
                                 padding: const EdgeInsets.only(top: 8),
                                 child: Text(
                                   message.label,
-                                  style: theme.textTheme.bodyLarge?.copyWith(color: twInk),
+                                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface),
                                 ),
                               ),
                             ),
@@ -669,7 +667,7 @@ class MilestoneCardWidget extends StatelessWidget {
                         const SizedBox(height: gap2),
                         Text(
                           'Not a trophy, just a figure. Thought you’d want to know.',
-                          style: theme.textTheme.bodySmall?.copyWith(color: twMuted),
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                         ),
                       ],
                     ),
@@ -706,7 +704,7 @@ class ChatComposer extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: scheme.surface,
-        border: Border(top: BorderSide(color: twHairline)),
+        border: Border(top: BorderSide(color: Theme.of(context).colorScheme.outline)),
       ),
       padding: const EdgeInsets.fromLTRB(gap3, gap2, gap3, gap2),
       child: SafeArea(
@@ -717,8 +715,8 @@ class ChatComposer extends StatelessWidget {
             final hasText = value.text.trim().isNotEmpty;
             return Container(
               decoration: BoxDecoration(
-                color: twPaper,
-                border: Border.all(color: twHairline),
+                color: Theme.of(context).colorScheme.surfaceContainerLowest,
+                border: Border.all(color: Theme.of(context).colorScheme.outline),
                 borderRadius: BorderRadius.circular(radiusXl),
               ),
               padding: const EdgeInsets.fromLTRB(gap4, 6, 6, 6),
@@ -730,10 +728,10 @@ class ChatComposer extends StatelessWidget {
                       controller: controller,
                       minLines: 1,
                       maxLines: 5,
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: twInk),
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface),
                       decoration: InputDecoration.collapsed(
                         hintText: placeholder,
-                        hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(color: twMuted),
+                        hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                       ),
                     ),
                   ),
@@ -746,12 +744,12 @@ class ChatComposer extends StatelessWidget {
                       height: 38,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: hasText ? twAccent : twHairline,
+                        color: hasText ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.outline,
                       ),
                       child: Icon(
                         TwikkaIcons.send,
                         size: 18,
-                        color: hasText ? twPaper : twMuted,
+                        color: hasText ? Theme.of(context).colorScheme.surfaceContainerLowest : Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ),

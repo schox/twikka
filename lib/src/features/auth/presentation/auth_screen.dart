@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/theme/theme_constants.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/twikka_icons.dart';
 import '../data/auth_state.dart';
 import '../data/clerk_auth_notifier.dart';
@@ -221,18 +221,18 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       children: [
         Text('Twikka',
             textAlign: TextAlign.center,
-            style: theme.textTheme.displayMedium?.copyWith(color: twInk)),
+            style: theme.textTheme.displayMedium?.copyWith(color: theme.colorScheme.onSurface)),
         const SizedBox(height: gap2),
         Text(
           'A coach in your corner. Quietly there. No streaks, no shouting.',
           textAlign: TextAlign.center,
-          style: theme.textTheme.bodyLarge?.copyWith(color: twInk2, height: 1.5),
+          style: theme.textTheme.bodyLarge?.copyWith(color: context.tw.ink2, height: 1.5),
         ),
         const SizedBox(height: gap1),
         Text(
           'Coaches are AI personas trained by our expert team.',
           textAlign: TextAlign.center,
-          style: theme.textTheme.bodySmall?.copyWith(color: twMuted),
+          style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
         ),
         const SizedBox(height: gap5),
         TextField(
@@ -267,7 +267,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
         const SizedBox(height: gap1),
         Text(
           'We’ll email a 6-digit code to verify it’s you. No password needed.',
-          style: theme.textTheme.bodyMedium?.copyWith(color: twMuted),
+          style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
         ),
         const SizedBox(height: gap5),
         _LockedEmailRow(
@@ -311,7 +311,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
           padding: const EdgeInsets.symmetric(
               horizontal: gap2, vertical: gap1),
           decoration: BoxDecoration(
-            color: twAccentTint.withValues(alpha: 0.5),
+            color: context.tw.accentTint.withValues(alpha: 0.5),
             borderRadius: BorderRadius.circular(999),
           ),
           alignment: Alignment.center,
@@ -319,7 +319,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
             isSignup ? 'Creating your account' : 'Welcome back',
             textAlign: TextAlign.center,
             style: theme.textTheme.labelMedium?.copyWith(
-              color: twAccent,
+              color: theme.colorScheme.primary,
               fontWeight: FontWeight.w600,
               letterSpacing: 0.4,
             ),
@@ -333,13 +333,15 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
         const SizedBox(height: gap1),
         Text.rich(
           TextSpan(
-            style: theme.textTheme.bodyMedium?.copyWith(color: twMuted),
+            style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
             children: [
               const TextSpan(text: 'We sent a 6-digit code to '),
               TextSpan(
                 text: email,
-                style: const TextStyle(
-                    fontWeight: FontWeight.w600, color: twInk),
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: theme.colorScheme.onSurface,
+                ),
               ),
               const TextSpan(text: '.'),
             ],
@@ -403,18 +405,18 @@ class _BrandMark extends StatelessWidget {
     return Container(
       width: 72,
       height: 72,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: twAccentTint,
+        color: context.tw.accentTint,
       ),
       alignment: Alignment.center,
       child: Text(
         't',
         style: theme.textTheme.displayMedium?.copyWith(
-          color: twAccent,
+          color: theme.colorScheme.primary,
           fontWeight: FontWeight.w400,
           height: 1,
-          fontSize: 42,
+          fontSize: kFontBrandMark,
         ),
       ),
     );
@@ -433,17 +435,21 @@ class _LockedEmailRow extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: gap3, vertical: gap2),
       decoration: BoxDecoration(
-        color: twAccentTint.withValues(alpha: 0.4),
+        color: context.tw.accentTint.withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [
-          const Icon(TwikkaIcons.email, size: 18, color: twMuted),
+          Icon(
+            TwikkaIcons.email,
+            size: 18,
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
           const SizedBox(width: gap2),
           Expanded(
             child: Text(
               email,
-              style: theme.textTheme.bodyMedium?.copyWith(color: twInk),
+              style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurface),
               overflow: TextOverflow.ellipsis,
             ),
           ),

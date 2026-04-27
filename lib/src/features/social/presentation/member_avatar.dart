@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/branding/abstract_avatar.dart';
-import '../../../core/theme/theme_constants.dart';
 import '../data/social_models.dart';
 
 class MemberAvatar extends StatelessWidget {
@@ -44,7 +43,7 @@ class GroupAvatarWidget extends StatelessWidget {
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: twPaper,
+        color: Theme.of(context).colorScheme.surfaceContainerLowest,
         border: Border.all(color: group.avatar.ring, width: 1.5),
       ),
       alignment: Alignment.center,

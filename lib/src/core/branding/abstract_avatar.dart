@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../theme/theme_constants.dart';
+import '../theme/app_theme.dart';
 import 'avatar_palette.dart';
 
 /// Soft abstract portrait — overlapping circles, shoulder line, faint serif
@@ -38,7 +38,7 @@ class AbstractAvatar extends StatelessWidget {
               boxShadow: ring
                   ? [
                       BoxShadow(color: scheme.surface, blurRadius: 0, spreadRadius: 3),
-                      const BoxShadow(color: Color(0x141F2A2E), blurRadius: 0, spreadRadius: 4),
+                      BoxShadow(color: scheme.shadow, blurRadius: 0, spreadRadius: 4),
                     ]
                   : null,
             ),
@@ -46,7 +46,9 @@ class AbstractAvatar extends StatelessWidget {
               child: SizedBox(
                 width: size,
                 height: size,
-                child: CustomPaint(painter: _AbstractAvatarPainter(palette)),
+                child: CustomPaint(
+                  painter: _AbstractAvatarPainter(palette, scheme.shadow),
+                ),
               ),
             ),
           ),
@@ -73,7 +75,7 @@ class AbstractAvatar extends StatelessWidget {
                 height: size * 0.42,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: twAccentTint,
+                  color: context.tw.accentTint,
                   border: Border.all(color: scheme.surface, width: 1.5),
                 ),
                 alignment: Alignment.center,
@@ -82,7 +84,7 @@ class AbstractAvatar extends StatelessWidget {
                   style: GoogleFonts.fraunces(
                     fontSize: size * 0.24,
                     fontWeight: FontWeight.w500,
-                    color: twAccent,
+                    color: scheme.primary,
                     height: 1,
                   ),
                 ),
@@ -95,9 +97,10 @@ class AbstractAvatar extends StatelessWidget {
 }
 
 class _AbstractAvatarPainter extends CustomPainter {
-  _AbstractAvatarPainter(this.p);
+  _AbstractAvatarPainter(this.p, this.hairlineColor);
 
   final AvatarPalette p;
+  final Color hairlineColor;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -136,11 +139,15 @@ class _AbstractAvatarPainter extends CustomPainter {
     paint
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1
-      ..color = const Color(0x141F2A2E);
+      ..color = hairlineColor;
     canvas.drawCircle(Offset(r, r), r - 0.5, paint);
   }
 
   @override
   bool shouldRepaint(covariant _AbstractAvatarPainter old) =>
-      old.p.a != p.a || old.p.b != p.b || old.p.c != p.c || old.p.ink != p.ink;
+      old.p.a != p.a ||
+      old.p.b != p.b ||
+      old.p.c != p.c ||
+      old.p.ink != p.ink ||
+      old.hairlineColor != hairlineColor;
 }

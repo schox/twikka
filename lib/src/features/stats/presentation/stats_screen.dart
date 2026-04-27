@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/theme_constants.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/notifications_bell.dart';
 
 /// "Journal" — Twikka's progress view. Calm, never-rescinded framing:
@@ -23,14 +23,19 @@ class StatsScreen extends StatelessWidget {
         children: [
           // Hero "so far" line
           Text('SO FAR',
-              style: theme.textTheme.labelSmall?.copyWith(color: twMuted)),
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)),
           const SizedBox(height: gap2),
           Text.rich(
             TextSpan(
-              style: theme.textTheme.headlineLarge?.copyWith(height: 1.2),
+              style: Theme.of(context).textTheme.headlineLarge?.copyWith(height: 1.2),
               children: [
                 const TextSpan(text: 'You’ve been active on '),
-                TextSpan(text: '47 days', style: const TextStyle(color: twAccent)),
+                TextSpan(
+                  text: '47 days',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
                 const TextSpan(text: ' since you started with Twikka.'),
               ],
             ),
@@ -38,7 +43,7 @@ class StatsScreen extends StatelessWidget {
           const SizedBox(height: gap2),
           Text(
             'This number only goes up. Quiet days don’t take anything away.',
-            style: theme.textTheme.bodyMedium?.copyWith(color: twMuted),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
           const SizedBox(height: gap5),
 
@@ -48,16 +53,20 @@ class StatsScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('LAST 90 DAYS — ROLLING PACE',
-                    style: theme.textTheme.labelSmall?.copyWith(color: twMuted)),
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)),
                 const SizedBox(height: gap3),
                 SizedBox(
                   width: double.infinity,
                   height: statsAreaChartHeight,
-                  child: CustomPaint(painter: _AreaChartPainter()),
+                  child: CustomPaint(
+                    painter: _AreaChartPainter(
+                      lineColor: theme.colorScheme.primary,
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 6),
                 DefaultTextStyle(
-                  style: theme.textTheme.bodySmall!.copyWith(color: twMuted),
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [Text('Jan'), Text('Feb'), Text('Mar')],
@@ -79,7 +88,7 @@ class StatsScreen extends StatelessWidget {
           const SizedBox(height: gap5),
 
           Text('WHAT YOU’VE TRIED',
-              style: theme.textTheme.labelSmall?.copyWith(color: twMuted)),
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)),
           const SizedBox(height: gap2),
           _Card(
             padding: const EdgeInsets.symmetric(horizontal: gap4),
@@ -106,14 +115,14 @@ class StatsScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(gap4),
             decoration: BoxDecoration(
-              color: twCream,
+              color: Theme.of(context).colorScheme.surfaceContainer,
               borderRadius: BorderRadius.circular(radiusLg),
-              border: Border.all(color: twHairline),
+              border: Border.all(color: Theme.of(context).colorScheme.outline),
             ),
             child: Text(
               '“Morning walks are clearly your thing. You don’t have to make it more complicated than that — Margaret.”',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: twInk2,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: context.tw.ink2,
                 fontStyle: FontStyle.italic,
                 height: 1.5,
               ),
@@ -124,7 +133,7 @@ class StatsScreen extends StatelessWidget {
           Center(
             child: Text(
               'No streaks. No goals to miss.',
-              style: theme.textTheme.bodySmall?.copyWith(color: twMuted),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
           ),
         ],
@@ -145,8 +154,8 @@ class _Card extends StatelessWidget {
     return Container(
       padding: padding ?? const EdgeInsets.all(gap3),
       decoration: BoxDecoration(
-        color: twPaper,
-        border: Border.all(color: twHairline),
+        color: Theme.of(context).colorScheme.surfaceContainerLowest,
+        border: Border.all(color: Theme.of(context).colorScheme.outline),
         borderRadius: BorderRadius.circular(radiusMd),
       ),
       child: child,
@@ -162,7 +171,6 @@ class _Milestone extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return _Card(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: gap2, vertical: gap1),
@@ -172,15 +180,15 @@ class _Milestone extends StatelessWidget {
               constraints: const BoxConstraints(minWidth: 96, maxWidth: 130),
               child: Text(
                 value,
-                style: theme.textTheme.displaySmall?.copyWith(
-                  color: twAccent,
+                style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
                   fontSize: valueFontSize,
                   fontWeight: FontWeight.w400,
                 ),
               ),
             ),
             const SizedBox(width: gap3),
-            Expanded(child: Text(label, style: theme.textTheme.bodyLarge?.copyWith(color: twInk2))),
+            Expanded(child: Text(label, style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: context.tw.ink2))),
           ],
         ),
       ),
@@ -195,13 +203,12 @@ class _ActivityRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: gap2),
       child: Row(
         children: [
-          Expanded(child: Text(name, style: theme.textTheme.bodyLarge?.copyWith(color: twInk))),
-          Text(count, style: theme.textTheme.bodyMedium?.copyWith(color: twMuted)),
+          Expanded(child: Text(name, style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onSurface))),
+          Text(count, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)),
         ],
       ),
     );
@@ -211,8 +218,11 @@ class _ActivityRow extends StatelessWidget {
 class _Divider extends StatelessWidget {
   const _Divider();
   @override
-  Widget build(BuildContext context) =>
-      const Divider(height: 0.5, thickness: 0.5, color: twHairline);
+  Widget build(BuildContext context) => Divider(
+        height: 0.5,
+        thickness: 0.5,
+        color: Theme.of(context).colorScheme.outline,
+      );
 }
 
 // ─────────────────────────────────────────────────────────────────────
@@ -220,6 +230,10 @@ class _Divider extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────
 
 class _AreaChartPainter extends CustomPainter {
+  _AreaChartPainter({required this.lineColor});
+
+  final Color lineColor;
+
   static final List<double> _values = _generateRollingPace();
 
   static List<double> _generateRollingPace() {
@@ -284,8 +298,8 @@ class _AreaChartPainter extends CustomPainter {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          twAccent.withValues(alpha: 0.35),
-          twAccent.withValues(alpha: 0.04),
+          lineColor.withValues(alpha: 0.35),
+          lineColor.withValues(alpha: 0.04),
         ],
       ).createShader(Offset.zero & size);
     canvas.drawPath(buildSmoothed(closed: true), fill);
@@ -293,7 +307,7 @@ class _AreaChartPainter extends CustomPainter {
     canvas.drawPath(
       buildSmoothed(closed: false),
       Paint()
-        ..color = twAccent.withValues(alpha: 0.9)
+        ..color = lineColor.withValues(alpha: 0.9)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 1.6
         ..strokeCap = StrokeCap.round

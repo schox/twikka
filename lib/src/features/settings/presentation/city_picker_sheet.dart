@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:convex_flutter/convex_flutter.dart';
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/theme_constants.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/twikka_icons.dart';
 
 /// Result row from `cities:search` — kept lean (we don't need lat/long
@@ -150,7 +150,7 @@ class _CityPickerSheetState extends State<_CityPickerSheet> {
           padding: const EdgeInsets.all(gap4),
           child: Text(
             'Start typing to find your city.',
-            style: theme.textTheme.bodyMedium?.copyWith(color: twMuted),
+            style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
           ),
         ),
       );
@@ -161,7 +161,7 @@ class _CityPickerSheetState extends State<_CityPickerSheet> {
           padding: const EdgeInsets.all(gap4),
           child: Text(
             'No matches. Try a different spelling.',
-            style: theme.textTheme.bodyMedium?.copyWith(color: twMuted),
+            style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
           ),
         ),
       );

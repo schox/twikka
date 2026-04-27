@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/branding/abstract_avatar.dart';
 import '../../../core/branding/coach_palette.dart';
-import '../../../core/theme/theme_constants.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/twikka_icons.dart';
 import '../../../core/widgets/centered.dart';
 import '../../../data/models/coach_persona.dart';
@@ -107,7 +107,7 @@ class _CoachPickerScreenState extends ConsumerState<CoachPickerScreen> {
                 child: Text(
                   'Each coach is an AI personality. We\u2019ve spent time training their voice, manner, and what they know.',
                   textAlign: TextAlign.center,
-                  style: theme.textTheme.bodyMedium?.copyWith(color: twMuted),
+                  style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                 ),
               ),
               Expanded(
@@ -187,7 +187,7 @@ class _CoachCard extends StatelessWidget {
     final theme = Theme.of(context);
     final palette = paletteForCoachSlug(persona.slug);
     return Material(
-      color: selected ? twAccentTint.withValues(alpha: 0.45) : theme.colorScheme.surface,
+      color: selected ? context.tw.accentTint.withValues(alpha: 0.45) : theme.colorScheme.surface,
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
@@ -198,7 +198,7 @@ class _CoachCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: selected
-                  ? twAccent
+                  ? theme.colorScheme.primary
                   : theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
               width: selected ? 1.5 : 1,
             ),
@@ -227,7 +227,7 @@ class _CoachCard extends StatelessWidget {
                         Text(
                           _ageBandLabel(persona.ageBand),
                           style: theme.textTheme.labelMedium
-                              ?.copyWith(color: twMuted),
+                              ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
                         ),
                       ],
                     ),
@@ -235,13 +235,13 @@ class _CoachCard extends StatelessWidget {
                     Text(
                       persona.shortDescriptor,
                       style: theme.textTheme.bodyMedium
-                          ?.copyWith(color: twInk2),
+                          ?.copyWith(color: context.tw.ink2),
                     ),
                     const SizedBox(height: gap1),
                     Text(
                       '\u201c${persona.introSample}\u201d',
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: twMuted,
+                        color: theme.colorScheme.onSurfaceVariant,
                         fontStyle: FontStyle.italic,
                       ),
                     ),
@@ -251,7 +251,7 @@ class _CoachCard extends StatelessWidget {
               if (selected)
                 Padding(
                   padding: const EdgeInsets.only(left: gap2),
-                  child: Icon(TwikkaIcons.checkCircle, color: twAccent, size: 22),
+                  child: Icon(TwikkaIcons.checkCircle, color: theme.colorScheme.primary, size: 22),
                 ),
             ],
           ),

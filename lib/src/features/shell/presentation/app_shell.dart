@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/extensions/responsive.dart';
-import '../../../core/theme/theme_constants.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/twikka_icons.dart';
 import '../../../routing/app_routes.dart';
 
@@ -54,6 +54,7 @@ class AppShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final isExpanded = context.isExpanded;
     final selected = navigationShell.currentIndex;
 
@@ -73,20 +74,17 @@ class AppShell extends StatelessWidget {
                     label: Text(d.label),
                   ),
               ],
-              leading: const Padding(
-                padding: EdgeInsets.symmetric(vertical: gap4),
-                child: Text(
-                  'Twikka',
-                  style: TextStyle(
-                    fontFamily: 'Fraunces',
-                    fontSize: 18,
-                    fontWeight: FontWeight.w500,
-                    color: twAccent,
-                  ),
+              leading: Padding(
+                padding: const EdgeInsets.symmetric(vertical: gap4),
+                child: Image.asset(
+                  'assets/icons/twikka_icon_nbg.png',
+                  width: kRailIconSize,
+                  height: kRailIconSize,
+                  semanticLabel: 'Twikka',
                 ),
               ),
             ),
-            const VerticalDivider(width: 0.5, color: twHairline),
+            VerticalDivider(width: 0.5, color: theme.colorScheme.outline),
             Expanded(child: navigationShell),
           ],
         ),

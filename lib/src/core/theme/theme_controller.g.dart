@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'theme_notifier.dart';
+part of 'theme_controller.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -8,9 +8,14 @@ part of 'theme_notifier.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+/// Re-exported from theme_notifier for backwards-compatibility with
+/// callers that still inject SharedPreferences via overrideWithValue.
 
 @ProviderFor(sharedPreferences)
 final sharedPreferencesProvider = SharedPreferencesProvider._();
+
+/// Re-exported from theme_notifier for backwards-compatibility with
+/// callers that still inject SharedPreferences via overrideWithValue.
 
 final class SharedPreferencesProvider
     extends
@@ -20,6 +25,8 @@ final class SharedPreferencesProvider
           SharedPreferences
         >
     with $Provider<SharedPreferences> {
+  /// Re-exported from theme_notifier for backwards-compatibility with
+  /// callers that still inject SharedPreferences via overrideWithValue.
   SharedPreferencesProvider._()
     : super(
         from: null,
@@ -56,51 +63,65 @@ final class SharedPreferencesProvider
 
 String _$sharedPreferencesHash() => r'973eb999cefd0fe1fbe5d81b243316e29c628d3b';
 
-@ProviderFor(ThemeNotifier)
-final themeProvider = ThemeNotifierProvider._();
+/// Theme controller. State exposes the active variant and the
+/// chosen mode. Persisted to SharedPreferences on every change so the
+/// next launch picks up where we left off.
 
-final class ThemeNotifierProvider
-    extends $NotifierProvider<ThemeNotifier, Appearance> {
-  ThemeNotifierProvider._()
+@ProviderFor(ThemeController)
+final themeControllerProvider = ThemeControllerProvider._();
+
+/// Theme controller. State exposes the active variant and the
+/// chosen mode. Persisted to SharedPreferences on every change so the
+/// next launch picks up where we left off.
+final class ThemeControllerProvider
+    extends $NotifierProvider<ThemeController, ThemeState> {
+  /// Theme controller. State exposes the active variant and the
+  /// chosen mode. Persisted to SharedPreferences on every change so the
+  /// next launch picks up where we left off.
+  ThemeControllerProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'themeProvider',
+        name: r'themeControllerProvider',
         isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$themeNotifierHash();
+  String debugGetCreateSourceHash() => _$themeControllerHash();
 
   @$internal
   @override
-  ThemeNotifier create() => ThemeNotifier();
+  ThemeController create() => ThemeController();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(Appearance value) {
+  Override overrideWithValue(ThemeState value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<Appearance>(value),
+      providerOverride: $SyncValueProvider<ThemeState>(value),
     );
   }
 }
 
-String _$themeNotifierHash() => r'07044d234c15e753b75f350d461c36b592a9ec80';
+String _$themeControllerHash() => r'c0b1152becc8a6bed66016b7f86b1af340daacc4';
 
-abstract class _$ThemeNotifier extends $Notifier<Appearance> {
-  Appearance build();
+/// Theme controller. State exposes the active variant and the
+/// chosen mode. Persisted to SharedPreferences on every change so the
+/// next launch picks up where we left off.
+
+abstract class _$ThemeController extends $Notifier<ThemeState> {
+  ThemeState build();
   @$mustCallSuper
   @override
   void runBuild() {
-    final ref = this.ref as $Ref<Appearance, Appearance>;
+    final ref = this.ref as $Ref<ThemeState, ThemeState>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<Appearance, Appearance>,
-              Appearance,
+              AnyNotifier<ThemeState, ThemeState>,
+              ThemeState,
               Object?,
               Object?
             >;

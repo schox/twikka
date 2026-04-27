@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:convex_flutter/convex_flutter.dart';
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/theme_constants.dart';
 
 /// Tester-only feed of the latest activities for the current user.
 /// Reads `activities:listRecent` once on mount; pull-to-refresh
@@ -73,7 +72,7 @@ class _RecentActivitiesDebugPanelState
                 _rows.isEmpty
                     ? 'No activities yet — connect a source from Settings → Health.'
                     : '${_rows.length} most recent',
-                style: theme.textTheme.bodySmall?.copyWith(color: twMuted),
+                style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
               ),
               TextButton(
                 onPressed: _loading ? null : _refresh,
@@ -118,7 +117,7 @@ class _StepRow extends StatelessWidget {
         children: [
           Text(
             '${row['date']}  ·  ${(row['source'] as String).replaceAll('_', ' ')}',
-            style: theme.textTheme.bodySmall?.copyWith(color: twMuted),
+            style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
           ),
           Text(
             '${row['stepCount']} steps',
@@ -186,7 +185,7 @@ class _RowTile extends StatelessWidget {
               if (calories != null) '${calories.toStringAsFixed(0)} kcal',
               _formatDate(start),
             ].join(' \u00b7 '),
-            style: theme.textTheme.bodySmall?.copyWith(color: twMuted),
+            style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
           ),
         ],
       ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/theme_constants.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/twikka_icons.dart';
 import '../../../core/widgets/notifications_bell.dart';
 import '../data/social_models.dart';
@@ -30,7 +30,7 @@ class _SocialScreenState extends State<SocialScreen> {
     final rest = filtered.where((t) => t.kind != ThreadKind.invite).toList();
 
     return Scaffold(
-      backgroundColor: twPaper,
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLowest,
       appBar: AppBar(
         title: const Text('Social'),
         actions: [
@@ -103,7 +103,7 @@ class _SocialIntro extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(gap4, gap2, gap4, gap2),
       child: Text(
         'Your coach, plus people you’ve connected with.',
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: twMuted),
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
       ),
     );
   }
@@ -121,24 +121,24 @@ class _Search extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: gap3),
         decoration: BoxDecoration(
-          color: twCream,
+          color: Theme.of(context).colorScheme.surfaceContainer,
           borderRadius: BorderRadius.circular(radiusPill),
         ),
         child: Row(
           children: [
-            Icon(TwikkaIcons.search, size: 16, color: twMuted2),
+            Icon(TwikkaIcons.search, size: 16, color: context.tw.muted2),
             const SizedBox(width: gap1),
             Expanded(
               child: TextField(
                 controller: controller,
                 onChanged: onChanged,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: twInk),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurface),
                 decoration: InputDecoration(
                   isCollapsed: true,
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(vertical: gap2),
                   hintText: 'Search people, groups, messages',
-                  hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: twMuted),
+                  hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                   filled: false,
                 ),
               ),
@@ -159,7 +159,7 @@ class _SectionLabel extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(gap4, gap3, gap4, gap1),
       child: Text(
         text.toUpperCase(),
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(color: twMuted),
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
       ),
     );
   }
@@ -174,14 +174,13 @@ class _InviteRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final m = findMember(thread.peerId!);
     if (m == null) return const SizedBox.shrink();
-    final theme = Theme.of(context);
     return InkWell(
       onTap: onOpen,
       child: Container(
         margin: const EdgeInsets.fromLTRB(gap4, 0, gap4, gap2),
         padding: const EdgeInsets.fromLTRB(gap3, gap3, gap3, gap3),
         decoration: BoxDecoration(
-          color: twAccentTint,
+          color: context.tw.accentTint,
           borderRadius: BorderRadius.circular(radiusMd),
         ),
         child: Row(
@@ -195,9 +194,9 @@ class _InviteRow extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Text(m.name, style: theme.textTheme.titleMedium),
+                      Text(m.name, style: Theme.of(context).textTheme.titleMedium),
                       const SizedBox(width: gap2),
-                      Text('INVITE', style: theme.textTheme.labelSmall?.copyWith(color: twAccent)),
+                      Text('INVITE', style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).colorScheme.primary)),
                     ],
                   ),
                   const SizedBox(height: 4),
@@ -206,7 +205,7 @@ class _InviteRow extends StatelessWidget {
                       thread.inviteNote!,
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(color: twInk2, height: 1.45),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: context.tw.ink2, height: 1.45),
                     ),
                   const SizedBox(height: gap2),
                   Row(
@@ -237,9 +236,9 @@ class _InviteAction extends StatelessWidget {
     return TextButton(
       onPressed: onPressed,
       style: TextButton.styleFrom(
-        backgroundColor: primary ? twAccent : twPaper,
-        foregroundColor: primary ? twPaper : twInk,
-        side: BorderSide(color: primary ? Colors.transparent : twHairline),
+        backgroundColor: primary ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surfaceContainerLowest,
+        foregroundColor: primary ? Theme.of(context).colorScheme.surfaceContainerLowest : Theme.of(context).colorScheme.onSurface,
+        side: BorderSide(color: primary ? Colors.transparent : Theme.of(context).colorScheme.outline),
         padding: const EdgeInsets.symmetric(horizontal: gap3, vertical: gap1),
         minimumSize: const Size(0, 32),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(radiusSm)),
@@ -257,7 +256,6 @@ class _ThreadRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final (leading, title, subtitle) = _resolveLeading(thread);
     if (leading == null || title == null) return const SizedBox.shrink();
     return InkWell(
@@ -280,11 +278,17 @@ class _ThreadRow extends StatelessWidget {
                       height: 16,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: twPaper,
-                        border: Border.all(color: twHairline),
+                        color: Theme.of(context).colorScheme.surfaceContainerLowest,
+                        border: Border.all(color: Theme.of(context).colorScheme.outline),
                       ),
                       alignment: Alignment.center,
-                      child: const Text('◆', style: TextStyle(fontSize: 9, color: twAccent)),
+                      child: Text(
+                        '◆',
+                        style: TextStyle(
+                          fontSize: kFontLabelSmall - 2,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
                     ),
                   ),
               ],
@@ -301,12 +305,12 @@ class _ThreadRow extends StatelessWidget {
                       Expanded(
                         child: Text(
                           title,
-                          style: theme.textTheme.titleMedium?.copyWith(fontSize: 17),
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(fontSize: 17),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       const SizedBox(width: gap2),
-                      Text(thread.timeLabel, style: theme.textTheme.bodySmall?.copyWith(color: twMuted)),
+                      Text(thread.timeLabel, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)),
                     ],
                   ),
                   if (subtitle != null)
@@ -314,7 +318,7 @@ class _ThreadRow extends StatelessWidget {
                       padding: const EdgeInsets.only(top: 2),
                       child: Text(
                         subtitle,
-                        style: theme.textTheme.bodySmall?.copyWith(color: twMuted),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                       ),
                     ),
                   const SizedBox(height: 4),
@@ -326,8 +330,8 @@ class _ThreadRow extends StatelessWidget {
                           thread.preview,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: thread.unread > 0 ? twInk : twInk2,
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: thread.unread > 0 ? Theme.of(context).colorScheme.onSurface : context.tw.ink2,
                             height: 1.4,
                             fontWeight: thread.unread > 0 ? FontWeight.w500 : FontWeight.w400,
                           ),
@@ -338,13 +342,13 @@ class _ThreadRow extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                           decoration: BoxDecoration(
-                            color: twAccent,
+                            color: Theme.of(context).colorScheme.primary,
                             borderRadius: BorderRadius.circular(radiusPill),
                           ),
                           child: Text(
                             '${thread.unread}',
-                            style: theme.textTheme.labelSmall?.copyWith(
-                              color: twPaper,
+                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                              color: Theme.of(context).colorScheme.surfaceContainerLowest,
                               letterSpacing: 0,
                               fontWeight: FontWeight.w700,
                             ),

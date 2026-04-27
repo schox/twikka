@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'app.dart';
 import 'src/core/services/clerk_service.dart';
 import 'src/core/services/convex_service.dart';
-import 'src/core/theme/theme_notifier.dart';
+import 'src/core/theme/theme_controller.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

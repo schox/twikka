@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/theme/theme_constants.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/notifications_bell.dart';
 import '../data/chat_message.dart';
 import '../data/chat_notifier.dart';
@@ -113,7 +113,12 @@ class _CoachHeader extends StatelessWidget implements PreferredSizeWidget {
         padding: const EdgeInsets.fromLTRB(gap3, gap2, gap3, gap2),
         decoration: BoxDecoration(
           color: scheme.surface,
-          border: const Border(bottom: BorderSide(color: twHairline, width: 0.5)),
+          border: Border(
+            bottom: BorderSide(
+              color: Theme.of(context).colorScheme.outline,
+              width: 0.5,
+            ),
+          ),
         ),
         child: Row(
           children: [
@@ -131,7 +136,7 @@ class _CoachHeader extends StatelessWidget implements PreferredSizeWidget {
                   // docs/memory/reference_coach_character_system.md.
                   Text(
                     'AI coach \u00b7 usually replies in the morning',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: twMuted),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                   ),
                 ],
               ),

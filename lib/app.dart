@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'src/core/services/health_auto_sync.dart';
 import 'src/core/theme/app_theme.dart';
-import 'src/core/theme/theme_notifier.dart';
 import 'src/routing/app_router.dart';
 
 class TwikkaApp extends ConsumerWidget {
@@ -12,14 +11,14 @@ class TwikkaApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(appRouterProvider);
-    final appearance = ref.watch(themeProvider);
+    final themeState = ref.watch(themeControllerProvider);
     return HealthAutoSync(
       child: MaterialApp.router(
         title: 'Twikka',
         debugShowCheckedModeBanner: false,
-        theme: lightTheme(),
-        darkTheme: darkTheme(),
-        themeMode: appearance.themeMode,
+        theme: buildTwikkaTheme(themeState.variant.light),
+        darkTheme: buildTwikkaTheme(themeState.variant.dark),
+        themeMode: themeState.mode.materialMode,
         routerConfig: router,
       ),
     );

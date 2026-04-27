@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/services/health_service.dart';
-import '../../../core/theme/theme_constants.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/twikka_icons.dart';
 import '../../../core/widgets/centered.dart';
 import '../../../data/providers/current_user_provider.dart';
@@ -121,7 +121,7 @@ class _SettingsHealthScreenState extends ConsumerState<SettingsHealthScreen> {
           Container(
             padding: const EdgeInsets.all(gap4),
             decoration: BoxDecoration(
-              color: twAccentTint.withValues(alpha: 0.4),
+              color: context.tw.accentTint.withValues(alpha: 0.4),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Row(
@@ -130,11 +130,14 @@ class _SettingsHealthScreenState extends ConsumerState<SettingsHealthScreen> {
                   width: 44,
                   height: 44,
                   alignment: Alignment.center,
-                  decoration: const BoxDecoration(
-                    color: twPaper,
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.surfaceContainerLowest,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(TwikkaIcons.timezone, color: twAccent),
+                  child: Icon(
+                    TwikkaIcons.timezone,
+                    color: theme.colorScheme.primary,
+                  ),
                 ),
                 const SizedBox(width: gap3),
                 Expanded(
@@ -142,14 +145,14 @@ class _SettingsHealthScreenState extends ConsumerState<SettingsHealthScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(_providerLabel(),
-                          style: theme.textTheme.titleMedium),
+                          style: Theme.of(context).textTheme.titleMedium),
                       const SizedBox(height: 2),
                       Text(
                         connected
                             ? 'Connected · last sync ${_formatRelative(lastSync)}'
                             : 'Not connected',
-                        style: theme.textTheme.bodySmall
-                            ?.copyWith(color: twMuted),
+                        style: Theme.of(context).textTheme.bodySmall
+                            ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
                       ),
                     ],
                   ),
@@ -160,7 +163,7 @@ class _SettingsHealthScreenState extends ConsumerState<SettingsHealthScreen> {
           const SizedBox(height: gap4),
           Text(
             'Twikka reads your workout history so your coach can see what you\u2019re actually doing. We don\u2019t read steps, heart rate, sleep, or anything else.',
-            style: theme.textTheme.bodyMedium?.copyWith(color: twInk2),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: context.tw.ink2),
           ),
           const SizedBox(height: gap4),
           if (!connected)
@@ -192,7 +195,7 @@ class _SettingsHealthScreenState extends ConsumerState<SettingsHealthScreen> {
                       final ok = await _confirmWipe();
                       if (ok) await _disconnect(deleteActivities: true);
                     },
-              style: TextButton.styleFrom(foregroundColor: twError),
+              style: TextButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.error),
               child:
                   const Text('Disconnect and delete activities from this source'),
             ),
@@ -200,7 +203,7 @@ class _SettingsHealthScreenState extends ConsumerState<SettingsHealthScreen> {
           if (_statusMessage != null) ...[
             const SizedBox(height: gap3),
             Text(_statusMessage!,
-                style: theme.textTheme.bodySmall?.copyWith(color: twMuted)),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant)),
           ],
           const SizedBox(height: gap5),
           if (_counts != null) _CountsPanel(counts: _counts!),
@@ -226,7 +229,7 @@ class _SettingsHealthScreenState extends ConsumerState<SettingsHealthScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            style: TextButton.styleFrom(foregroundColor: twError),
+            style: TextButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.error),
             child: const Text('Delete'),
           ),
         ],
@@ -252,19 +255,18 @@ class _CountsPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     int n(String k) => (counts[k] as num?)?.toInt() ?? 0;
     return Container(
       padding: const EdgeInsets.all(gap3),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHighest
+        color: Theme.of(context).colorScheme.surfaceContainerHighest
             .withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Activities by source', style: theme.textTheme.labelLarge),
+          Text('Activities by source', style: Theme.of(context).textTheme.labelLarge),
           const SizedBox(height: gap2),
           _row('Apple Health', n('apple_hk')),
           _row('Health Connect', n('health_connect')),

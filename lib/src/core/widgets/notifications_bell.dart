@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../theme/theme_constants.dart';
+import '../theme/app_theme.dart';
 import '../theme/twikka_icons.dart';
 
 /// Bell icon shown in every shell tab's header. Tapping it currently shows a
@@ -35,8 +35,8 @@ class NotificationsBell extends StatelessWidget {
                 child: Container(
                   width: 8,
                   height: 8,
-                  decoration: const BoxDecoration(
-                    color: twAccent,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
                     shape: BoxShape.circle,
                   ),
                 ),

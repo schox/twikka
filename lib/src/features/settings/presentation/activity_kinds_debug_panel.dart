@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:convex_flutter/convex_flutter.dart';
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/theme_constants.dart';
 import '../../../core/theme/twikka_icons.dart';
 
 /// Tester-only browser over the activity_kinds table. Surfaces enough
@@ -158,7 +157,7 @@ class _ActivityKindsDebugPanelState extends State<ActivityKindsDebugPanel> {
             padding: const EdgeInsets.all(16),
             child: Text(
               'No matching activity_kinds rows.',
-              style: theme.textTheme.bodyMedium?.copyWith(color: twMuted),
+              style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant),
             ),
           )
         else
@@ -254,7 +253,7 @@ class _ActivityKindTile extends StatelessWidget {
               headingName,
               source,
             ].join(' \u00b7 '),
-            style: theme.textTheme.bodySmall?.copyWith(color: twMuted),
+            style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
           ),
           if (flags.isNotEmpty || platformTypes.isNotEmpty) ...[
             const SizedBox(height: 4),

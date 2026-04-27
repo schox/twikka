@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../theme/theme_constants.dart';
+import '../theme/app_theme.dart';
 
 /// Centers and width-caps its child. On phones the child fills the
 /// available width (the cap never engages); on tablets and desktop the

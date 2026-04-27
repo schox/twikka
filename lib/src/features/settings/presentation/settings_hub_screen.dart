@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/branding/abstract_avatar.dart';
-import '../../../core/theme/theme_constants.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/twikka_icons.dart';
 import '../../../core/widgets/centered.dart';
 import '../../../core/widgets/notifications_bell.dart';
@@ -75,7 +75,7 @@ class SettingsHubScreen extends ConsumerWidget {
                       children: [
                         Text(user.displayName, style: theme.textTheme.titleLarge),
                         const SizedBox(height: 2),
-                        Text(user.email, style: theme.textTheme.bodyMedium?.copyWith(color: twMuted)),
+                        Text(user.email, style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
                       ],
                     ),
                   ),
@@ -88,13 +88,22 @@ class SettingsHubScreen extends ConsumerWidget {
               leading: Icon(item.icon),
               title: Text(item.label),
               subtitle: Text(item.subtitle),
-              trailing: const Icon(TwikkaIcons.chevronRight, color: twMuted2),
+              trailing: Icon(
+                TwikkaIcons.chevronRight,
+                color: context.tw.muted2,
+              ),
               onTap: () => context.goNamed(item.route.name),
             ),
           const Divider(),
           ListTile(
-            leading: const Icon(TwikkaIcons.signOut, color: twError),
-            title: const Text('Sign out', style: TextStyle(color: twError)),
+            leading: Icon(
+              TwikkaIcons.signOut,
+              color: theme.colorScheme.error,
+            ),
+            title: Text(
+              'Sign out',
+              style: TextStyle(color: theme.colorScheme.error),
+            ),
             onTap: () => ref.read(clerkAuthProvider.notifier).signOut(),
           ),
         ],

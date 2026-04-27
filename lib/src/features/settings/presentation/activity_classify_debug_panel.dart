@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:convex_flutter/convex_flutter.dart';
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/theme_constants.dart';
 import '../../../core/theme/twikka_icons.dart';
 
 /// Tester-only panel for sending a phrase through the 5-step activity
@@ -68,7 +67,7 @@ class _ActivityClassifyDebugPanelState
         children: [
           Text(
             'Type something a user might say (e.g. "did the lawn", "morning loop", "spin class").',
-            style: theme.textTheme.bodySmall?.copyWith(color: twMuted),
+            style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
           ),
           const SizedBox(height: 8),
           Row(
@@ -196,7 +195,7 @@ class _ResultView extends StatelessWidget {
             heading,
             if (score != null) 'score ${(score as num).toStringAsFixed(3)}',
           ].join(' · '),
-          style: theme.textTheme.bodySmall?.copyWith(color: twMuted),
+          style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant),
         ),
       ],
     );
