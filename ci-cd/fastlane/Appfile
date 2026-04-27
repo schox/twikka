@@ -1,0 +1,13 @@
+# Fastlane app configuration
+# https://docs.fastlane.tools/advanced/Appfile/
+
+# iOS
+app_identifier("com.novansa.twka")
+apple_id(ENV["APPLE_ID"] || "your-apple-id@example.com")
+team_id(ENV["TEAM_ID"] || "4R5HLHSR7V")
+
+# Android
+package_name(ENV["ANDROID_PACKAGE_NAME"] || "com.novansa.twka")
+
+# Note: json_key_file is set via SUPPLY_JSON_KEY environment variable in
+# android-credentials.env. fastlane supply uses ENV["SUPPLY_JSON_KEY"].

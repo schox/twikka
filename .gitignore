@@ -51,3 +51,26 @@ app.*.map.json
 
 # Node / Convex
 node_modules/
+
+# CI/CD — secrets, build artefacts, and per-deploy logs
+ci-cd/secrets/*.env
+!ci-cd/secrets/*.env.example
+ci-cd/secrets/*.p8
+ci-cd/secrets/*.p12
+ci-cd/secrets/*.json
+ci-cd/secrets/*.jks
+ci-cd/secrets/*.mobileprovision
+ci-cd/secrets/certificates/
+ci-cd/secrets/profiles/
+ci-cd/build_number.txt
+ci-cd/logs/
+
+# Fastlane scratch
+ci-cd/fastlane/report.xml
+ci-cd/fastlane/Preview.html
+ci-cd/fastlane/screenshots/
+ci-cd/fastlane/test_output/
+
+# Bundler
+/.bundle/
+/vendor/bundle/
