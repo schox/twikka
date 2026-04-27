@@ -64,9 +64,13 @@ ci-cd/
 3. `deploy-all.sh` bumps once, then runs both deploy scripts with
    `SKIP_VERSION_BUMP=true` so they share the same `+N`.
 
-The Fastfile passes `--dart-define-from-file=.env.local` to `flutter
-build`, so the same env file `flutter run` reads in development is what
-release builds compile against.
+Env vars are injected via [`envied`](https://pub.dev/packages/envied):
+`@Envied(path: '.env.local')` reads `.env.local` at codegen time and
+bakes the values into `lib/src/core/config/env.g.dart` as `static
+const` fields. The Fastfile runs `dart run build_runner build` before
+each `flutter build` so the committed `env.g.dart` is in sync. After
+editing `.env.local` locally, run `dart run build_runner build
+--delete-conflicting-outputs` and commit the regenerated file.
 
 ## First-time setup
 

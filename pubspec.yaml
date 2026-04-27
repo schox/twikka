@@ -55,6 +55,12 @@ dependencies:
   # running on a real device.
   health: ^13.3.1
 
+  # Compile-time env var injection. Reads .env.local at codegen time and
+  # bakes the values into env.g.dart as const fields — no runtime file IO,
+  # no --dart-define plumbing in the build command. Missing keys fail
+  # codegen rather than crashing at runtime.
+  envied: ^1.3.1
+
 dependency_overrides:
   # convex_flutter 3.0.1 ships codegen for flutter_rust_bridge 2.11.1;
   # pub otherwise resolves 2.12.0, which fails the runtime/codegen version check at startup.
@@ -72,6 +78,7 @@ dev_dependencies:
   custom_lint: ^0.8.0
   freezed: ^3.2.3
   json_serializable: ^6.9.0
+  envied_generator: ^1.0.0
 
   # Native asset generation
   flutter_launcher_icons: ^0.14.3

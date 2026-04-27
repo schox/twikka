@@ -14,11 +14,11 @@ def project_root
   File.expand_path("../..", __dir__)
 end
 
-# Load CONVEX_URL / CLERK_PUBLISHABLE_KEY etc. into the dart-define-from-file
-# path. The .env.local at the repo root is the same file `flutter run` reads
-# in dev — keep them aligned.
-def dart_define_from_file
-  File.join(project_root, ".env.local")
+# Twikka uses envied for env var injection — values are baked into
+# env.g.dart at codegen time. Run build_runner before each release build
+# so the committed env.g.dart is in sync with the current .env.local.
+def regenerate_env(project_root)
+  sh("cd #{project_root} && dart run build_runner build --delete-conflicting-outputs")
 end
 
 platform :ios do
@@ -31,6 +31,7 @@ platform :ios do
 
     sh("cd #{project_root} && flutter clean")
     sh("cd #{project_root} && flutter pub get")
+    regenerate_env(project_root)
 
     cocoapods(
       podfile: "#{project_root}/ios/Podfile",
@@ -68,7 +69,7 @@ platform :ios do
     export_options_plist = File.join(Dir.tmpdir, 'TwikkaExportOptions.plist')
     File.write(export_options_plist, export_options_content)
 
-    sh("cd #{project_root} && flutter build ipa --release --no-tree-shake-icons --build-name=#{version_name} --build-number=#{build_number} --dart-define-from-file='#{dart_define_from_file}' --export-options-plist='#{export_options_plist}'")
+    sh("cd #{project_root} && flutter build ipa --release --no-tree-shake-icons --build-name=#{version_name} --build-number=#{build_number} --export-options-plist='#{export_options_plist}'")
 
     ipa_path = Dir["#{project_root}/build/ios/ipa/*.ipa"].first
     UI.user_error!("IPA not found at #{project_root}/build/ios/ipa/") unless ipa_path
@@ -107,7 +108,8 @@ platform :ios do
 
     sh("cd #{project_root} && flutter clean")
     sh("cd #{project_root} && flutter pub get")
-    sh("cd #{project_root} && flutter build ipa --release --no-tree-shake-icons --build-name=#{version_name} --build-number=#{build_number} --dart-define-from-file='#{dart_define_from_file}'")
+    regenerate_env(project_root)
+    sh("cd #{project_root} && flutter build ipa --release --no-tree-shake-icons --build-name=#{version_name} --build-number=#{build_number}")
 
     ipa_path = Dir["#{project_root}/build/ios/ipa/*.ipa"].first
     UI.success("IPA built: #{ipa_path}")
@@ -124,7 +126,8 @@ platform :android do
 
     sh("cd #{project_root} && flutter clean")
     sh("cd #{project_root} && flutter pub get")
-    sh("cd #{project_root} && flutter build appbundle --release --no-tree-shake-icons --build-name=#{version_name} --build-number=#{build_number} --dart-define-from-file='#{dart_define_from_file}'")
+    regenerate_env(project_root)
+    sh("cd #{project_root} && flutter build appbundle --release --no-tree-shake-icons --build-name=#{version_name} --build-number=#{build_number}")
 
     aab_path = "#{project_root}/build/app/outputs/bundle/release/app-release.aab"
     UI.user_error!("AAB not found at #{aab_path}") unless File.exist?(aab_path)
@@ -160,7 +163,8 @@ platform :android do
 
     sh("cd #{project_root} && flutter clean")
     sh("cd #{project_root} && flutter pub get")
-    sh("cd #{project_root} && flutter build appbundle --release --no-tree-shake-icons --build-name=#{version_name} --build-number=#{build_number} --dart-define-from-file='#{dart_define_from_file}'")
+    regenerate_env(project_root)
+    sh("cd #{project_root} && flutter build appbundle --release --no-tree-shake-icons --build-name=#{version_name} --build-number=#{build_number}")
 
     aab_path = "#{project_root}/build/app/outputs/bundle/release/app-release.aab"
     UI.success("AAB built: #{aab_path}")
