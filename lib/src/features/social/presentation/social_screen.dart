@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/branding/twikka_avatars.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/twikka_icons.dart';
 import '../../../core/widgets/notifications_bell.dart';
 import '../data/social_models.dart';
-import 'member_avatar.dart';
 
 class SocialScreen extends StatefulWidget {
   const SocialScreen({super.key});
@@ -186,7 +186,7 @@ class _InviteRow extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            MemberAvatar(member: m, size: avatarRow),
+            PersonAvatar(id: m.id, name: m.name, size: avatarRow),
             const SizedBox(width: gap3),
             Expanded(
               child: Column(
@@ -271,7 +271,7 @@ class _ThreadRow extends StatelessWidget {
                 leading,
                 if (thread.pinned)
                   Positioned(
-                    left: -2,
+                    right: -2,
                     top: -2,
                     child: Container(
                       width: 16,
@@ -282,12 +282,10 @@ class _ThreadRow extends StatelessWidget {
                         border: Border.all(color: Theme.of(context).colorScheme.outline),
                       ),
                       alignment: Alignment.center,
-                      child: Text(
-                        '◆',
-                        style: TextStyle(
-                          fontSize: kFontLabelSmall - 2,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
+                      child: Icon(
+                        TwikkaIcons.pinFilled,
+                        size: 9,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                   ),
@@ -371,15 +369,34 @@ class _ThreadRow extends StatelessWidget {
       case ThreadKind.coach:
         final m = findMember(t.peerId!);
         if (m == null) return (null, null, null);
-        return (MemberAvatar(member: m, size: avatarRow, coachBadge: true), m.name, 'Your coach');
+        return (
+          CoachAvatar(name: m.name, photoUrl: m.photoUrl, size: avatarRow),
+          m.name,
+          'Your coach',
+        );
       case ThreadKind.dm:
         final m = findMember(t.peerId!);
         if (m == null) return (null, null, null);
-        return (MemberAvatar(member: m, size: avatarRow), m.name, null);
+        if (m.isCoach) {
+          return (
+            CoachAvatar(name: m.name, photoUrl: m.photoUrl, size: avatarRow),
+            m.name,
+            null,
+          );
+        }
+        return (
+          PersonAvatar(id: m.id, name: m.name, photoUrl: m.photoUrl, size: avatarRow),
+          m.name,
+          null,
+        );
       case ThreadKind.group:
         final g = findGroup(t.groupId!);
         if (g == null) return (null, null, null);
-        return (GroupAvatarWidget(group: g, size: avatarRow), g.name, g.topic);
+        return (
+          GroupAvatar(id: g.id, photoUrl: g.photoUrl, size: avatarRow),
+          g.name,
+          g.topic,
+        );
       case ThreadKind.invite:
         return (null, null, null); // invites rendered separately
     }

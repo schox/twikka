@@ -1,6 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../core/branding/coach_palette.dart';
 import '../../../data/providers/current_coach_provider.dart';
 import '../../auth/data/auth_state.dart';
 import '../../auth/data/clerk_auth_notifier.dart';
@@ -9,11 +8,11 @@ import 'coach.dart';
 
 part 'chat_notifier.g.dart';
 
-/// Local presentational coach (palette + monogram + sample) for the chat
-/// widgets. Derived from the Convex-backed `currentCoachPersonaProvider`
-/// — when the user picks a coach in the picker, this provider rebuilds
-/// and the chat re-renders. Falls back to Margaret while the assignment
-/// loads or hasn't been made.
+/// Local presentational coach (name + descriptor + intro sample) for
+/// the chat widgets. Derived from the Convex-backed
+/// `currentCoachPersonaProvider` — when the user picks a coach in the
+/// picker, this provider rebuilds and the chat re-renders. Falls back
+/// to Margaret while the assignment loads or hasn't been made.
 @Riverpod(keepAlive: true)
 Coach currentCoach(Ref ref) {
   final persona = ref.watch(currentCoachPersonaProvider).asData?.value;
@@ -21,10 +20,8 @@ Coach currentCoach(Ref ref) {
   return Coach(
     id: persona.slug,
     name: persona.name,
-    monogram: coachInitial(persona.name),
     descriptor: persona.shortDescriptor,
     sample: persona.introSample,
-    palette: paletteForCoachSlug(persona.slug),
   );
 }
 

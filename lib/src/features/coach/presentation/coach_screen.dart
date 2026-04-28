@@ -7,7 +7,7 @@ import '../data/chat_message.dart';
 import '../data/chat_notifier.dart';
 import '../data/coach.dart';
 import 'chat_widgets.dart';
-import 'coach_avatar.dart';
+import '../../../core/branding/twikka_avatars.dart';
 
 class CoachScreen extends ConsumerStatefulWidget {
   const CoachScreen({super.key});
@@ -122,7 +122,7 @@ class _CoachHeader extends StatelessWidget implements PreferredSizeWidget {
         ),
         child: Row(
           children: [
-            CoachAvatar(coach: coach, size: avatarHeader, ring: true),
+            CoachAvatar(name: coach.name, size: avatarHeader),
             const SizedBox(width: gap3),
             Expanded(
               child: Column(

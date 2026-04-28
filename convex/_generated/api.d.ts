@@ -20,6 +20,8 @@ import type * as http from "../http.js";
 import type * as lib_openrouter from "../lib/openrouter.js";
 import type * as lib_recordedCall from "../lib/recordedCall.js";
 import type * as lib_scope from "../lib/scope.js";
+import type * as media from "../media.js";
+import type * as r2 from "../r2.js";
 import type * as seed_activityKindEmbeddings from "../seed/activityKindEmbeddings.js";
 import type * as seed_coachPersonas from "../seed/coachPersonas.js";
 import type * as seed_modelPricing from "../seed/modelPricing.js";
@@ -46,6 +48,8 @@ declare const fullApi: ApiFromModules<{
   "lib/openrouter": typeof lib_openrouter;
   "lib/recordedCall": typeof lib_recordedCall;
   "lib/scope": typeof lib_scope;
+  media: typeof media;
+  r2: typeof r2;
   "seed/activityKindEmbeddings": typeof seed_activityKindEmbeddings;
   "seed/coachPersonas": typeof seed_coachPersonas;
   "seed/modelPricing": typeof seed_modelPricing;
@@ -80,4 +84,6 @@ export declare const internal: FilterApi<
   FunctionReference<any, "internal">
 >;
 
-export declare const components: {};
+export declare const components: {
+  r2: import("@convex-dev/r2/_generated/component.js").ComponentApi<"r2">;
+};

@@ -203,8 +203,9 @@ export const setTesterByEmail = mutation({
 });
 
 // Live query the app subscribes to for the current user's row. Embeds
-// the current city (if any) so Settings → Profile renders without a
-// separate join request.
+// the current city (if any) and the resolved profile photo URL so
+// Settings → Profile and the various avatar surfaces render without
+// extra join requests.
 export const current = query({
   args: {},
   handler: async (ctx) => {
@@ -216,6 +217,11 @@ export const current = query({
       .first();
     if (!user) return null;
     const city = user.cityId ? await ctx.db.get(user.cityId) : null;
+    const photo = user.photoMediaId
+      ? await ctx.runQuery(internal.media._resolveMediaUrl, {
+          mediaId: user.photoMediaId,
+        })
+      : null;
     return {
       ...user,
       city: city
@@ -227,6 +233,7 @@ export const current = query({
             timezone: city.timezone,
           }
         : null,
+      photoUrl: photo?.url ?? null,
     };
   },
 });

@@ -58,4 +58,5 @@ class TwikkaIcons {
   static const IconData search = PhosphorIconsRegular.magnifyingGlass;
   static const IconData edit = PhosphorIconsRegular.pencilSimple;
   static const IconData send = PhosphorIconsBold.arrowUp;
+  static const IconData pinFilled = PhosphorIconsFill.pushPin;
 }

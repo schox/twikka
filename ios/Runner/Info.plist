@@ -28,6 +28,8 @@
 		<true/>
 		<key>NSHealthShareUsageDescription</key>
 		<string>Twikka reads your workout history so your coach can see what you’re actually doing. We don’t read steps, heart rate, sleep, or anything else.</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Twikka uses your photos so you can set a profile picture.</string>
 		<key>UIApplicationSceneManifest</key>
 		<dict>
 			<key>UIApplicationSupportsMultipleScenes</key>

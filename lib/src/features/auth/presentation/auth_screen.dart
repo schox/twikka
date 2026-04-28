@@ -188,7 +188,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                     const Spacer()
                   else
                     const SizedBox(height: gap4),
-                  Center(child: _BrandMark(theme: theme)),
+                  const Center(child: _BrandMark()),
                   const SizedBox(height: gap4),
                   Expanded(
                     child: AnimatedSwitcher(
@@ -397,28 +397,15 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 }
 
 class _BrandMark extends StatelessWidget {
-  const _BrandMark({required this.theme});
-  final ThemeData theme;
+  const _BrandMark();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Image.asset(
+      'assets/icons/twikka_icon_nbg.png',
       width: 72,
       height: 72,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: context.tw.accentTint,
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        't',
-        style: theme.textTheme.displayMedium?.copyWith(
-          color: theme.colorScheme.primary,
-          fontWeight: FontWeight.w400,
-          height: 1,
-          fontSize: kFontBrandMark,
-        ),
-      ),
+      semanticLabel: 'Twikka',
     );
   }
 }

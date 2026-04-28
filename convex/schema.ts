@@ -49,6 +49,10 @@ export default defineSchema({
     // Latest workout endTime we've ingested for this user. The next
     // foreground sync starts from here + 1ms.
     lastHealthSyncAt: v.optional(v.number()),
+    // Pointer to the user's current profile photo in `media`. Replaced
+    // (not appended) on each upload — the prior media row is marked
+    // `orphaned` rather than deleted so a future GC cron can reap it.
+    photoMediaId: v.optional(v.id("media")),
     createdAt: v.number(),
     updatedAt: v.number(),
   })
@@ -397,6 +401,43 @@ export default defineSchema({
   })
     .index("by_user_source_date", ["userId", "source", "date"])
     .index("by_user_date", ["userId", "date"]),
+
+  // ── Media ───────────────────────────────────────────────────────────
+  // Application-domain layer over @convex-dev/r2. The R2 component
+  // owns object-level metadata (sha256, etag, etc.); this table owns
+  // ownership, kind, foreign-key wiring back to the rest of the
+  // domain, plus a free-form metadata blob per kind.
+  //
+  // Lifecycle: insert as `pending` when an upload URL is issued; flip
+  // to `active` after syncUpload confirms the bytes landed; flip to
+  // `orphaned` when superseded (e.g. user picks a new profile photo)
+  // so a GC cron can reap them later.
+  media: defineTable({
+    userId: v.id("users"),
+    organisationId: v.id("organisations"),
+    kind: v.union(
+      v.literal("user_photo"), // settings → profile
+      v.literal("coach_avatar"), // future: admin-uploaded coach photos
+      v.literal("attachment"), // future: message attachments
+      v.literal("source_document"), // future: chunked-for-search originals
+    ),
+    r2Key: v.string(),
+    mimeType: v.string(),
+    sizeBytes: v.number(),
+    status: v.union(
+      v.literal("pending"),
+      v.literal("active"),
+      v.literal("orphaned"),
+    ),
+    // Free-form per kind. For images: { width, height, originalFilename }.
+    // For source documents: { pageCount, chunkBatchId } once chunked.
+    metadata: v.optional(v.any()),
+    createdAt: v.number(),
+  })
+    .index("by_user_kind", ["userId", "kind"])
+    .index("by_user_status", ["userId", "status"])
+    .index("by_r2_key", ["r2Key"])
+    .index("by_org_kind", ["organisationId", "kind"]),
 
   // Per-user phrasings learned from chat. "the lawn" → mowing,
   // "morning loop" → walking, etc. Resolved at the alias step before

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/branding/abstract_avatar.dart';
+import '../../../core/branding/twikka_avatars.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/twikka_icons.dart';
 import '../../../core/widgets/centered.dart';
@@ -11,7 +11,6 @@ import '../../../data/providers/current_user_provider.dart';
 import '../../../routing/app_routes.dart';
 import '../../auth/data/auth_state.dart';
 import '../../auth/data/clerk_auth_notifier.dart';
-import '../../coach/data/coach.dart';
 
 class SettingsHubScreen extends ConsumerWidget {
   const SettingsHubScreen({super.key});
@@ -62,11 +61,11 @@ class SettingsHubScreen extends ConsumerWidget {
               padding: const EdgeInsets.fromLTRB(gap4, gap3, gap4, gap3),
               child: Row(
                 children: [
-                  AbstractAvatar(
-                    palette: defaultCoach.palette,
-                    monogram: _initials(user.displayName),
-                    size: 56,
-                    ring: true,
+                  PersonAvatar(
+                    id: user.email,
+                    name: user.displayName,
+                    photoUrl: convexUser?.photoUrl,
+                    size: avatarPortrait,
                   ),
                   const SizedBox(width: gap4),
                   Expanded(
@@ -111,13 +110,6 @@ class SettingsHubScreen extends ConsumerWidget {
       ),
     );
   }
-}
-
-String _initials(String name) {
-  final parts = name.trim().split(RegExp(r'\s+'));
-  if (parts.isEmpty) return '?';
-  if (parts.length == 1) return parts.first.substring(0, 1).toUpperCase();
-  return (parts.first.substring(0, 1) + parts.last.substring(0, 1)).toUpperCase();
 }
 
 class _SettingsItem {

@@ -2,8 +2,7 @@ import 'package:convex_flutter/convex_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/branding/abstract_avatar.dart';
-import '../../../core/branding/coach_palette.dart';
+import '../../../core/branding/twikka_avatars.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/twikka_icons.dart';
 import '../../../core/widgets/centered.dart';
@@ -185,7 +184,6 @@ class _CoachCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final palette = paletteForCoachSlug(persona.slug);
     return Material(
       color: selected ? context.tw.accentTint.withValues(alpha: 0.45) : theme.colorScheme.surface,
       borderRadius: BorderRadius.circular(16),
@@ -206,12 +204,7 @@ class _CoachCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              AbstractAvatar(
-                palette: palette,
-                monogram: coachInitial(persona.name),
-                size: 64,
-                ring: selected,
-              ),
+              CoachAvatar(name: persona.name, size: 64),
               const SizedBox(width: gap3),
               Expanded(
                 child: Column(

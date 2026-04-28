@@ -4,7 +4,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/twikka_icons.dart';
 import '../data/chat_message.dart';
 import '../data/coach.dart';
-import 'coach_avatar.dart';
+import '../../../core/branding/twikka_avatars.dart';
 
 // ─────────────────────────────────────────────────────────────────────
 // Primitives — Kicker, CardTitle, CardButton, Surfaces, helpers
@@ -160,7 +160,7 @@ class _TypingIndicatorWidgetState extends State<TypingIndicatorWidget>
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        CoachAvatar(coach: widget.coach, size: avatarChatTrail),
+        CoachAvatar(name: widget.coach.name, size: avatarChatTrail),
         const SizedBox(width: gap2),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: gap3, vertical: gap2),
@@ -219,7 +219,7 @@ class CoachBubbleRow extends StatelessWidget {
       children: [
         SizedBox(
           width: avatarChatTrail,
-          child: showAvatar ? CoachAvatar(coach: coach, size: avatarChatTrail) : null,
+          child: showAvatar ? CoachAvatar(name: coach.name, size: avatarChatTrail) : null,
         ),
         const SizedBox(width: gap2),
         Flexible(
@@ -295,7 +295,7 @@ class CoachCard extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        CoachAvatar(coach: coach, size: avatarChatTrail),
+        CoachAvatar(name: coach.name, size: avatarChatTrail),
         const SizedBox(width: gap2),
         Flexible(
           child: ConstrainedBox(
@@ -361,7 +361,7 @@ class ActivityAckCardWidget extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        CoachAvatar(coach: coach, size: avatarChatTrail),
+        CoachAvatar(name: coach.name, size: avatarChatTrail),
         const SizedBox(width: gap2),
         Flexible(
           child: ConstrainedBox(
@@ -602,7 +602,7 @@ class MilestoneCardWidget extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        CoachAvatar(coach: coach, size: avatarChatTrail),
+        CoachAvatar(name: coach.name, size: avatarChatTrail),
         const SizedBox(width: gap2),
         Flexible(
           child: ConstrainedBox(

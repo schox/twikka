@@ -8,29 +8,29 @@ part of 'chat_notifier.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// Local presentational coach (palette + monogram + sample) for the chat
-/// widgets. Derived from the Convex-backed `currentCoachPersonaProvider`
-/// — when the user picks a coach in the picker, this provider rebuilds
-/// and the chat re-renders. Falls back to Margaret while the assignment
-/// loads or hasn't been made.
+/// Local presentational coach (name + descriptor + intro sample) for
+/// the chat widgets. Derived from the Convex-backed
+/// `currentCoachPersonaProvider` — when the user picks a coach in the
+/// picker, this provider rebuilds and the chat re-renders. Falls back
+/// to Margaret while the assignment loads or hasn't been made.
 
 @ProviderFor(currentCoach)
 final currentCoachProvider = CurrentCoachProvider._();
 
-/// Local presentational coach (palette + monogram + sample) for the chat
-/// widgets. Derived from the Convex-backed `currentCoachPersonaProvider`
-/// — when the user picks a coach in the picker, this provider rebuilds
-/// and the chat re-renders. Falls back to Margaret while the assignment
-/// loads or hasn't been made.
+/// Local presentational coach (name + descriptor + intro sample) for
+/// the chat widgets. Derived from the Convex-backed
+/// `currentCoachPersonaProvider` — when the user picks a coach in the
+/// picker, this provider rebuilds and the chat re-renders. Falls back
+/// to Margaret while the assignment loads or hasn't been made.
 
 final class CurrentCoachProvider
     extends $FunctionalProvider<Coach, Coach, Coach>
     with $Provider<Coach> {
-  /// Local presentational coach (palette + monogram + sample) for the chat
-  /// widgets. Derived from the Convex-backed `currentCoachPersonaProvider`
-  /// — when the user picks a coach in the picker, this provider rebuilds
-  /// and the chat re-renders. Falls back to Margaret while the assignment
-  /// loads or hasn't been made.
+  /// Local presentational coach (name + descriptor + intro sample) for
+  /// the chat widgets. Derived from the Convex-backed
+  /// `currentCoachPersonaProvider` — when the user picks a coach in the
+  /// picker, this provider rebuilds and the chat re-renders. Falls back
+  /// to Margaret while the assignment loads or hasn't been made.
   CurrentCoachProvider._()
     : super(
         from: null,
@@ -64,7 +64,7 @@ final class CurrentCoachProvider
   }
 }
 
-String _$currentCoachHash() => r'6bd798042bbcd1f02411fd10018f15746f77c27a';
+String _$currentCoachHash() => r'07570b846ecca1dabcb915e9dbecc031e05887af';
 
 /// Fake chat state for the Coach screen. Mirrors the sample mid-conversation
 /// from the design's `buildInitialMessages()`.
