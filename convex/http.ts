@@ -119,12 +119,8 @@ type ClerkUserDeleted = {
   };
 };
 
-type ClerkOther = {
-  type: string;
-  data: Record<string, unknown>;
-};
-
-type ClerkWebhookEvent =
-  | ClerkUserCreatedOrUpdated
-  | ClerkUserDeleted
-  | ClerkOther;
+// Narrow union — the switch's default branch handles every other
+// Clerk event type without reading `data`, so we don't need a
+// catch-all variant. Including one with `type: string` would widen
+// the discriminator and defeat narrowing on the user.* cases.
+type ClerkWebhookEvent = ClerkUserCreatedOrUpdated | ClerkUserDeleted;

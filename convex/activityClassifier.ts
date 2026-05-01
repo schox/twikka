@@ -6,7 +6,7 @@ import {
 } from "./_generated/server";
 import { internal } from "./_generated/api";
 import type { Doc, Id } from "./_generated/dataModel";
-import { recordedChat, recordedEmbedding } from "./lib/openrouter.ts";
+import { recordedChat, recordedEmbedding } from "./lib/openrouter";
 
 // PRD §9.2 five-step resolver. Phrase → activity_kinds row.
 //   1. user-alias lookup  — phrase the same user has used before
@@ -251,7 +251,18 @@ export const classify = action({
     {
       let cursor: string | null = null;
       for (let i = 0; i < 20; i++) {
-        const page = await ctx.runQuery(
+        // Annotated to break circular type inference through
+        // `internal.activityClassifier.findGlobalAliasPage`.
+        const page: {
+          match: {
+            activityKindId: Id<"activity_kinds">;
+            name: string;
+            mets: number | undefined;
+            headingName: string;
+          } | null;
+          isDone: boolean;
+          continueCursor: string;
+        } = await ctx.runQuery(
           internal.activityClassifier.findGlobalAliasPage,
           { phrase: trimmed, cursor, pageSize: 200 },
         );

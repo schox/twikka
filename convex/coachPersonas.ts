@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import { mutation, query } from "./_generated/server";
+import { requireIdentity, requireUser } from "./lib/auth";
 
 export const listActive = query({
   args: {},
@@ -15,11 +16,16 @@ export const listActive = query({
 /// The persona the current user is assigned to, or null if they haven't
 /// picked yet. Drives the router's onboarding redirect (no assignment →
 /// /onboarding/coach) and the chat header.
+///
+/// Throws on missing identity rather than returning null — otherwise the
+/// router can't distinguish "JWT expired mid-session" from "user has no
+/// coach", and would falsely redirect to /onboarding/coach when auth is
+/// merely stale. The Flutter subscription wrapper retries on error, so
+/// the stream recovers once auth is refreshed.
 export const currentForUser = query({
   args: {},
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) return null;
+    const identity = await requireIdentity(ctx);
     const user = await ctx.db
       .query("users")
       .withIndex("by_clerk", (q) => q.eq("clerkId", identity.subject))
@@ -39,16 +45,7 @@ export const currentForUser = query({
 export const assignCoach = mutation({
   args: { coachPersonaId: v.id("coach_personas") },
   handler: async (ctx, { coachPersonaId }) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("assignCoach called without auth");
-
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerk", (q) => q.eq("clerkId", identity.subject))
-      .first();
-    if (!user) {
-      throw new Error("No users row for the authenticated identity");
-    }
+    const { user } = await requireUser(ctx);
 
     const persona = await ctx.db.get(coachPersonaId);
     if (!persona) throw new Error("Unknown coach persona");

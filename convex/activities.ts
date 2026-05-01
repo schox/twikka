@@ -4,15 +4,30 @@ import {
   internalQuery,
   mutation,
   query,
+  type MutationCtx,
+  type QueryCtx,
 } from "./_generated/server";
 import { internal } from "./_generated/api";
 import type { Doc, Id } from "./_generated/dataModel";
+import { requireUser } from "./lib/auth";
 
 // Shared validators.
+//
+// `sourceValidator` covers per-activity provenance — including `manual`
+// (typed by the user) — so it's used for the `source` field on rows
+// being ingested. `healthSourceValidator` is narrower and represents
+// the user's *connected sync source*, which only makes sense for the
+// two automated platforms; matches the schema's `users.healthSource`
+// union exactly.
 const sourceValidator = v.union(
   v.literal("apple_hk"),
   v.literal("health_connect"),
   v.literal("manual"),
+);
+
+const healthSourceValidator = v.union(
+  v.literal("apple_hk"),
+  v.literal("health_connect"),
 );
 
 const incomingActivity = v.object({
@@ -31,7 +46,7 @@ const incomingActivity = v.object({
 // ── Helpers ────────────────────────────────────────────────────────────
 
 async function findKindByPlatformType(
-  ctx: { db: { query: typeof internalQuery extends never ? never : ReturnType<typeof internalMutation>["_typeguard"] } | any },
+  ctx: QueryCtx | MutationCtx,
   platformType: string,
 ): Promise<Id<"activity_kinds"> | null> {
   // Linear scan, but most cases short-circuit early because we paginate.
@@ -153,7 +168,7 @@ export const upsertOne = internalMutation({
 export const setHealthSource = internalMutation({
   args: {
     userId: v.id("users"),
-    source: v.optional(sourceValidator),
+    source: v.optional(healthSourceValidator),
     lastSyncAt: v.optional(v.number()),
   },
   handler: async (ctx, { userId, source, lastSyncAt }) => {
@@ -174,16 +189,10 @@ export const upsertBatch = mutation({
   args: {
     activities: v.array(incomingActivity),
     advanceLastSyncTo: v.optional(v.number()),
-    setSource: v.optional(sourceValidator),
+    setSource: v.optional(healthSourceValidator),
   },
   handler: async (ctx, { activities, advanceLastSyncTo, setSource }) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("upsertBatch called without auth");
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerk", (q) => q.eq("clerkId", identity.subject))
-      .first();
-    if (!user) throw new Error("No users row");
+    const { user } = await requireUser(ctx);
 
     let inserted = 0;
     let updated = 0;
@@ -232,13 +241,7 @@ export const disconnectSource = mutation({
     deleteActivities: v.boolean(),
   },
   handler: async (ctx, { source, deleteActivities }) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("disconnectSource called without auth");
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerk", (q) => q.eq("clerkId", identity.subject))
-      .first();
-    if (!user) throw new Error("No users row");
+    const { user } = await requireUser(ctx);
 
     let deleted = 0;
     if (deleteActivities) {
@@ -280,13 +283,7 @@ export const disconnectSource = mutation({
 export const listRecent = query({
   args: { limit: v.optional(v.number()) },
   handler: async (ctx, { limit }) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) return [];
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerk", (q) => q.eq("clerkId", identity.subject))
-      .first();
-    if (!user) return [];
+    const { user } = await requireUser(ctx);
 
     const rows = await ctx.db
       .query("activities")
@@ -335,29 +332,7 @@ export const listRecent = query({
 export const countsBySource = query({
   args: {},
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      return {
-        apple_hk: 0,
-        health_connect: 0,
-        manual: 0,
-        healthSource: null,
-        lastHealthSyncAt: null,
-      };
-    }
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerk", (q) => q.eq("clerkId", identity.subject))
-      .first();
-    if (!user) {
-      return {
-        apple_hk: 0,
-        health_connect: 0,
-        manual: 0,
-        healthSource: null,
-        lastHealthSyncAt: null,
-      };
-    }
+    const { user } = await requireUser(ctx);
 
     async function countFor(
       source: "apple_hk" | "health_connect" | "manual",
@@ -365,7 +340,7 @@ export const countsBySource = query({
       const rows = await ctx.db
         .query("activities")
         .withIndex("by_user_source", (q) =>
-          q.eq("userId", user!._id).eq("source", source),
+          q.eq("userId", user._id).eq("source", source),
         )
         .take(2000);
       return rows.length;

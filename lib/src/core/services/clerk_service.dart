@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:clerk_auth/clerk_auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
@@ -24,7 +26,7 @@ import '../config/env.dart';
 class ClerkService {
   ClerkService._();
 
-  static Auth? _auth;
+  static _NotifyingAuth? _auth;
 
   static Auth get auth {
     final a = _auth;
@@ -36,10 +38,29 @@ class ClerkService {
     return a;
   }
 
+  /// Fires whenever Clerk's internal `Auth.update()` hook is invoked —
+  /// i.e. whenever client/env/session state mutates. Used by
+  /// `ClerkAuth` to recompute its public AuthState when Clerk hydrates
+  /// asynchronously after `initialize()` returns (e.g. cold start with
+  /// a slow network: the 1s API timeout fires, the persisted client
+  /// is loaded from disk shortly after, and `update()` gets called
+  /// from the refetch timer on the next successful network round-trip
+  /// — without this stream we'd miss the transition and surface the
+  /// AuthScreen even though Clerk has a live session).
+  static Stream<void> get authChanges {
+    final a = _auth;
+    if (a == null) {
+      throw StateError(
+        'ClerkService.initialise() must be called before ClerkService.authChanges.',
+      );
+    }
+    return a.changes;
+  }
+
   static Future<void> initialise() async {
     if (_auth != null) return;
 
-    final a = Auth(
+    final a = _NotifyingAuth(
       config: AuthConfig(
         publishableKey: AppEnv.clerkPublishableKey,
         persistor: DefaultPersistor(
@@ -58,6 +79,30 @@ class ClerkService {
     );
     await a.initialize();
     _auth = a;
+  }
+}
+
+/// Subclass of [Auth] that exposes `update()` invocations as a broadcast
+/// stream. clerk_auth's base [Auth.update] is a no-op hook intended to
+/// be overridden by mixins like [ChangeNotifier] in the official
+/// clerk_flutter package; we don't use that package, so we surface the
+/// signal directly.
+class _NotifyingAuth extends Auth {
+  _NotifyingAuth({required super.config});
+
+  final _changes = StreamController<void>.broadcast();
+  Stream<void> get changes => _changes.stream;
+
+  @override
+  void update() {
+    super.update();
+    if (!_changes.isClosed) _changes.add(null);
+  }
+
+  @override
+  void terminate() {
+    _changes.close();
+    super.terminate();
   }
 }
 

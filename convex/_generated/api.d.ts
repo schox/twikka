@@ -17,6 +17,7 @@ import type * as cities from "../cities.js";
 import type * as coachPersonas from "../coachPersonas.js";
 import type * as dailySummaries from "../dailySummaries.js";
 import type * as http from "../http.js";
+import type * as lib_auth from "../lib/auth.js";
 import type * as lib_openrouter from "../lib/openrouter.js";
 import type * as lib_recordedCall from "../lib/recordedCall.js";
 import type * as lib_scope from "../lib/scope.js";
@@ -45,6 +46,7 @@ declare const fullApi: ApiFromModules<{
   coachPersonas: typeof coachPersonas;
   dailySummaries: typeof dailySummaries;
   http: typeof http;
+  "lib/auth": typeof lib_auth;
   "lib/openrouter": typeof lib_openrouter;
   "lib/recordedCall": typeof lib_recordedCall;
   "lib/scope": typeof lib_scope;

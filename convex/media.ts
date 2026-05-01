@@ -3,11 +3,9 @@ import {
   mutation,
   query,
   internalQuery,
-  type MutationCtx,
-  type QueryCtx,
 } from "./_generated/server";
-import type { Doc } from "./_generated/dataModel";
 import { r2 } from "./r2";
+import { requireUser } from "./lib/auth";
 
 const kindValidator = v.union(
   v.literal("user_photo"),
@@ -42,7 +40,7 @@ export const generateUploadUrl = mutation({
     sizeBytes: v.number(),
   },
   handler: async (ctx, { kind, mimeType, sizeBytes }) => {
-    const user = await _resolveUser(ctx);
+    const { user } = await requireUser(ctx);
 
     const { key, url } = await r2.generateUploadUrl();
     const mediaId = await ctx.db.insert("media", {
@@ -71,7 +69,7 @@ export const generateUploadUrl = mutation({
 export const finalizeUpload = mutation({
   args: { mediaId: v.id("media") },
   handler: async (ctx, { mediaId }) => {
-    const user = await _resolveUser(ctx);
+    const { user } = await requireUser(ctx);
     const media = await ctx.db.get(mediaId);
     if (!media) throw new Error("Media not found");
     if (media.userId !== user._id) throw new Error("Not your upload");
@@ -109,7 +107,7 @@ export const finalizeUpload = mutation({
 export const cancelUpload = mutation({
   args: { mediaId: v.id("media") },
   handler: async (ctx, { mediaId }) => {
-    const user = await _resolveUser(ctx);
+    const { user } = await requireUser(ctx);
     const media = await ctx.db.get(mediaId);
     if (!media) return;
     if (media.userId !== user._id) throw new Error("Not your upload");
@@ -126,7 +124,7 @@ export const cancelUpload = mutation({
 export const getDownloadUrl = query({
   args: { mediaId: v.id("media") },
   handler: async (ctx, { mediaId }) => {
-    const user = await _resolveUser(ctx);
+    const { user } = await requireUser(ctx);
     const media = await ctx.db.get(mediaId);
     if (!media) return null;
     if (media.userId !== user._id) return null;
@@ -154,17 +152,3 @@ export const _resolveMediaUrl = internalQuery({
   },
 });
 
-// ── Local helpers ───────────────────────────────────────────────────
-
-async function _resolveUser(
-  ctx: MutationCtx | QueryCtx,
-): Promise<Doc<"users">> {
-  const identity = await ctx.auth.getUserIdentity();
-  if (!identity) throw new Error("Auth required");
-  const user = await ctx.db
-    .query("users")
-    .withIndex("by_clerk", (q) => q.eq("clerkId", identity.subject))
-    .first();
-  if (!user) throw new Error("No user");
-  return user;
-}

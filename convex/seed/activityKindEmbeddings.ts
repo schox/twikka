@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { action, internalMutation, internalQuery } from "../_generated/server";
 import { internal } from "../_generated/api";
-import { recordedEmbeddingBatch } from "../lib/openrouter.ts";
+import { recordedEmbeddingBatch } from "../lib/openrouter";
 import type { Id } from "../_generated/dataModel";
 
 // Embed each activity_kinds row's "name · headingName · aliases" into
@@ -103,13 +103,24 @@ export const countEmbeddedPaged = internalQuery({
 
 export const countEmbedded = action({
   args: {},
-  handler: async (ctx) => {
+  handler: async (ctx): Promise<{
+    totalEmbedded: number;
+    totalUnembedded: number;
+    pages: number;
+  }> => {
     let cursor: string | null = null;
     let totalEmbedded = 0;
     let totalUnembedded = 0;
     let pages = 0;
     while (pages < 50) {
-      const page = await ctx.runQuery(
+      // Annotated to break circular type inference through `internal`.
+      const page: {
+        pageLen: number;
+        embedded: number;
+        unembedded: number;
+        isDone: boolean;
+        continueCursor: string;
+      } = await ctx.runQuery(
         internal.seed.activityKindEmbeddings.countEmbeddedPaged,
         { cursor, pageSize: 200 },
       );
@@ -128,7 +139,10 @@ export const countEmbedded = action({
 // gets uncomfortable. For 1334 rows at batch=100 it takes ~14 iterations.
 export const backfill = action({
   args: { maxBatches: v.optional(v.number()) },
-  handler: async (ctx, { maxBatches }) => {
+  handler: async (
+    ctx,
+    { maxBatches },
+  ): Promise<{ totalEmbedded: number; batches: number; isDone: boolean }> => {
     const cap = maxBatches ?? 30;
     const cfg = await ctx.runQuery(internal.seed.activityKindEmbeddings.fetchSystemConfig, {});
     if (!cfg) throw new Error("system_config singleton missing");
@@ -139,7 +153,17 @@ export const backfill = action({
     let cursor: string | null = null;
     let isDone = false;
     while (!isDone && batches < cap) {
-      const page = await ctx.runQuery(
+      // Annotated to break circular type inference through `internal`.
+      const page: {
+        isDone: boolean;
+        continueCursor: string;
+        rows: Array<{
+          _id: Id<"activity_kinds">;
+          name: string;
+          headingName: string;
+          aliases: string[];
+        }>;
+      } = await ctx.runQuery(
         internal.seed.activityKindEmbeddings.pageUnembedded,
         { cursor, pageSize: BATCH_SIZE },
       );

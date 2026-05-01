@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { requireUser } from "./lib/auth";
 
 const sourceValidator = v.union(
   v.literal("apple_hk"),
@@ -20,13 +21,7 @@ export const upsertBatch = mutation({
     entries: v.array(summaryEntry),
   },
   handler: async (ctx, { source, entries }) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("upsertBatch called without auth");
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerk", (q) => q.eq("clerkId", identity.subject))
-      .first();
-    if (!user) throw new Error("No users row");
+    const { user } = await requireUser(ctx);
 
     let inserted = 0;
     let updated = 0;
@@ -71,13 +66,7 @@ export const upsertBatch = mutation({
 export const recent = query({
   args: { days: v.optional(v.number()) },
   handler: async (ctx, { days }) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) return [];
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerk", (q) => q.eq("clerkId", identity.subject))
-      .first();
-    if (!user) return [];
+    const { user } = await requireUser(ctx);
 
     const cap = Math.min(Math.max(days ?? 14, 1), 90);
     const rows = await ctx.db

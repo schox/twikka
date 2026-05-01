@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { internal } from "./_generated/api";
 import { mutation, query } from "./_generated/server";
+import { requireUser } from "./lib/auth";
 
 // Type-ahead search over the cities table. Hits the `by_haystack`
 // search index — relevance-ordered, capped at 20 results. Optional
@@ -40,14 +41,7 @@ export const search = query({
 export const setForCurrentUser = mutation({
   args: { cityId: v.id("cities") },
   handler: async (ctx, { cityId }) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("setForCurrentUser called without auth");
-
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerk", (q) => q.eq("clerkId", identity.subject))
-      .first();
-    if (!user) throw new Error("No users row for the authenticated identity");
+    const { user } = await requireUser(ctx);
 
     const city = await ctx.db.get(cityId);
     if (!city) throw new Error("Unknown city");

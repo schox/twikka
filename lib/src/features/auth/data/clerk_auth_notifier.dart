@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:clerk_auth/clerk_auth.dart';
 import 'package:convex_flutter/convex_flutter.dart';
+import 'package:flutter/widgets.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../core/services/clerk_service.dart';
@@ -19,19 +20,83 @@ typedef EmailProbeResult = ({bool ok, bool exists, String? errorMessage});
 const _ok = (ok: true, errorMessage: null);
 
 @Riverpod(keepAlive: true)
-class ClerkAuth extends _$ClerkAuth {
+class ClerkAuth extends _$ClerkAuth with WidgetsBindingObserver {
   Auth get _auth => ClerkService.auth;
   AuthHandleWrapper? _convexHandle;
+  bool _refreshingOnResume = false;
+  StreamSubscription<void>? _clerkChangesSub;
 
   @override
   AuthState build() {
+    WidgetsBinding.instance.addObserver(this);
+    // Clerk hydrates client/session asynchronously when the cold-start
+    // network round-trip exceeds its 1s init timeout. Without this
+    // listener we'd take the initial AuthLoggedOut snapshot and miss
+    // the later transition to AuthLoggedIn — the user would land on
+    // the AuthScreen and get "already signed in" the moment they try
+    // to start a sign-in. Dedup'd inside `_onClerkStateChanged` so
+    // identity-equal recomputes don't churn the router.
+    _clerkChangesSub = ClerkService.authChanges.listen((_) {
+      _onClerkStateChanged();
+    });
     ref.onDispose(() {
+      WidgetsBinding.instance.removeObserver(this);
+      _clerkChangesSub?.cancel();
+      _clerkChangesSub = null;
       _convexHandle?.dispose();
       _convexHandle = null;
     });
     final initial = _computeState();
     _syncConvexAuth(initial);
     return initial;
+  }
+
+  void _onClerkStateChanged() {
+    final next = _computeState();
+    if (_authStateEquals(state, next)) return;
+    _setState(next);
+  }
+
+  /// On resume, force-rebind the Convex auth handle so the refresh loop
+  /// is re-armed with a fresh JWT. The simulator (and real devices under
+  /// memory pressure) can suspend the app long enough that Convex's
+  /// "60s before expiry" refresh callback never fires, leaving stale
+  /// auth on the wire. Disposing + rebinding triggers an immediate
+  /// fetchToken — Clerk's session token cache returns null when expired,
+  /// which forces a network refresh against Clerk's API, and we apply
+  /// the fresh JWT to Convex before any subscription notices the gap.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState lifecycle) {
+    if (lifecycle == AppLifecycleState.resumed) {
+      unawaited(_refreshConvexAuthOnResume());
+    }
+  }
+
+  Future<String?> _fetchToken() async {
+    final token = await _auth.sessionToken();
+    return token.jwt;
+  }
+
+  Future<void> _refreshConvexAuthOnResume() async {
+    if (_refreshingOnResume) return;
+    if (state is! AuthLoggedIn) return;
+    if (_convexHandle == null) return;
+    _refreshingOnResume = true;
+    try {
+      // dispose() clears Convex auth and stops the old refresh loop. The
+      // brief gap between dispose and the new handle's first fetchToken
+      // is covered by convexSubscribe's retry-with-backoff.
+      _convexHandle?.dispose();
+      _convexHandle = null;
+      _convexHandle = await ConvexClient.instance.setAuthWithRefresh(
+        fetchToken: _fetchToken,
+      );
+    } catch (err) {
+      // ignore: avoid_print
+      print('resume: failed to refresh Convex auth: $err');
+    } finally {
+      _refreshingOnResume = false;
+    }
   }
 
   AuthState _computeState() {
@@ -65,20 +130,32 @@ class ClerkAuth extends _$ClerkAuth {
     return const AuthLoggedOut();
   }
 
+  bool _authStateEquals(AuthState a, AuthState b) {
+    if (a.runtimeType != b.runtimeType) return false;
+    if (a is AuthLoggedIn && b is AuthLoggedIn) {
+      return a.email == b.email &&
+          a.displayName == b.displayName &&
+          a.onboardingComplete == b.onboardingComplete;
+    }
+    if (a is AuthAwaitingCode && b is AuthAwaitingCode) {
+      return a.email == b.email &&
+          a.isSignup == b.isSignup &&
+          a.pendingDisplayName == b.pendingDisplayName;
+    }
+    return true; // both AuthLoggedOut
+  }
+
   Future<void> _syncConvexAuth(AuthState newState) async {
     final signedIn = newState is AuthLoggedIn;
     final bound = _convexHandle != null;
 
     if (signedIn && !bound) {
+      // Clerk's Convex integration injects aud:"convex" into the default
+      // session token — no dedicated JWT template — so we request the
+      // default token (no templateName) and Convex validates the aud
+      // claim against applicationID: "convex" in auth.config.ts.
       _convexHandle = await ConvexClient.instance.setAuthWithRefresh(
-        // Clerk's Convex integration injects aud:"convex" into the default
-        // session token — no dedicated JWT template — so we request the
-        // default token (no templateName) and Convex validates the aud
-        // claim against applicationID: "convex" in auth.config.ts.
-        fetchToken: () async {
-          final token = await _auth.sessionToken();
-          return token.jwt;
-        },
+        fetchToken: _fetchToken,
       );
       // setAuthWithRefresh returns before the Convex server has finished
       // latching the token, so an immediate authenticated mutation races and

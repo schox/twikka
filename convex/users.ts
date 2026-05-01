@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import type { Id } from "./_generated/dataModel";
+import type { Doc, Id } from "./_generated/dataModel";
 import { internal } from "./_generated/api";
 import {
   internalMutation,
@@ -7,6 +7,20 @@ import {
   query,
   type MutationCtx,
 } from "./_generated/server";
+import { requireIdentity } from "./lib/auth";
+
+type CurrentUserResult =
+  | (Doc<"users"> & {
+      city: {
+        _id: Id<"cities">;
+        name: string;
+        asciiname: string;
+        countryCode: string;
+        timezone: string;
+      } | null;
+      photoUrl: string | null;
+    })
+  | null;
 
 // Creates the organisations + users + memberships + audit trio for a brand-new
 // Clerk identity, or returns the existing user row if one already exists for
@@ -158,8 +172,7 @@ export const markDeletedFromClerk = internalMutation({
 export const ensureFromIdentity = mutation({
   args: {},
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("ensureFromIdentity called without auth");
+    const identity = await requireIdentity(ctx);
 
     const email = identity.email;
     if (!email) {
@@ -206,22 +219,30 @@ export const setTesterByEmail = mutation({
 // the current city (if any) and the resolved profile photo URL so
 // Settings → Profile and the various avatar surfaces render without
 // extra join requests.
+//
+// Throws on missing identity rather than returning null. Returning null
+// would conflate "JWT expired" with "no user row", which surfaces as a
+// stale/empty Profile while the subscription is silently broken.
 export const current = query({
   args: {},
-  handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) return null;
+  handler: async (ctx): Promise<CurrentUserResult> => {
+    const identity = await requireIdentity(ctx);
     const user = await ctx.db
       .query("users")
       .withIndex("by_clerk", (q) => q.eq("clerkId", identity.subject))
       .first();
     if (!user) return null;
     const city = user.cityId ? await ctx.db.get(user.cityId) : null;
-    const photo = user.photoMediaId
-      ? await ctx.runQuery(internal.media._resolveMediaUrl, {
-          mediaId: user.photoMediaId,
-        })
-      : null;
+    // Annotated to break TypeScript's circular inference through
+    // `internal.media._resolveMediaUrl` — without this, both `current`
+    // and its handler infer as `any`, since the api.d.ts type graph
+    // refers back into this file.
+    const photo: { url: string; mimeType: string; sizeBytes: number } | null =
+      user.photoMediaId
+        ? await ctx.runQuery(internal.media._resolveMediaUrl, {
+            mediaId: user.photoMediaId,
+          })
+        : null;
     return {
       ...user,
       city: city
