@@ -324,6 +324,73 @@ The knowledge context slot is empty now; wiki chunks slot in later without touch
 
 ---
 
+## Model Strategy
+
+### Current: Sonnet for Everything
+
+Claude Sonnet handles all coaching interactions during the prototype phase. The priority is learning what interaction patterns actually emerge before optimising model selection. The `coach_interactions` audit table instruments this automatically.
+
+### Where the Model Actually Earns Its Keep
+
+Not all coaching tasks require the same inference capability:
+
+| Task | AI Complexity | Why |
+|------|--------------|-----|
+| Activity planning | Low | Rule-based + template selection from user profile |
+| Progress monitoring | Very low | Maths + threshold comparison against DB |
+| Suggesting improvements | Low-moderate | Pattern matching against wiki + user history |
+| Answering exercise questions | Moderate | Wiki retrieval + synthesis |
+| Motivational support | Moderate-high | Tone, empathy, personalisation |
+| BCT selection and delivery | Moderate-high | Right technique, right moment, natural framing |
+| Handling novel/complex queries | High | Genuine inference needed |
+
+Realistically 70-80% of interactions fall into the first four categories. A well-structured prompt with the right DB context and wiki chunks handed to a modest model handles these well. The genuinely hard parts — empathetic tone calibration, BCT selection, persona consistency, handling ambiguity — are where smaller models noticeably fall short.
+
+### Future: Hybrid Model Routing
+
+When unit economics demand it, a router sits in front of the model call and directs traffic based on interaction complexity. The architecture already supports this without structural changes.
+
+```
+Simple/structured interactions
+  → Smaller/cheaper model (e.g. Llama 3.3 70B via Groq, Mistral Small)
+  → High-context DB + wiki retrieval doing the heavy lifting
+  → Model formats and tones the response
+
+Complex/sensitive interactions
+  → Frontier model (Sonnet or equivalent)
+  → Genuine inference, empathy, BCT selection
+  → Triggered by: first session, low confidence signal,
+    emotional content detected, novel query type
+```
+
+### Open Source / Self-Hosted Considerations
+
+If self-hosting becomes viable:
+
+- **Llama 3.3 70B** — strongest open weight option; needs ~40GB VRAM (4-bit quantisation)
+- **Mistral Small 3.1** — 24B, less hardware, capable for structured tasks
+- **Groq hosted inference** — open models without GPU infrastructure; fast, cheap, no ops overhead
+
+Hardware reality: a 70B model requires dedicated GPU nodes (Hetzner GPU servers or equivalent), making hosted inference APIs (Groq, Together AI, Fireworks) more practical than true self-hosting for most interaction volumes.
+
+### Migration Path (when needed)
+
+All instrumentation is already in place:
+
+1. Query `coach_interactions` — find low-complexity, high-volume interaction clusters
+2. Define routing rules from observed patterns (`confidence_signal`, `topic_tags`)
+3. Add router step before model call
+4. Shadow test — run both models, compare outputs
+5. Gradually shift traffic
+
+No product or wiki changes required. Purely infrastructure.
+
+### Why the Wiki Helps Model Routing
+
+As the wiki matures it progressively reduces inference burden regardless of model — the more context injected from structured sources, the less raw inference required. This makes the cheaper routing path more viable over time and increases the ceiling on what a smaller model can handle competently.
+
+---
+
 ## Key Design Decisions
 
 | Decision | Choice | Rationale |
@@ -336,3 +403,5 @@ The knowledge context slot is empty now; wiki chunks slot in later without touch
 | Content safety gate | `visible_to_users` boolean | LLM-compiled content withheld until reviewed |
 | Wiki priority | Behaviour change first | It's the product core; exercise science is reference |
 | Special Populations | First wiki sprint | Weakest area in base LLM knowledge |
+| Model (now) | Claude Sonnet | Learn interaction patterns before optimising |
+| Model (future) | Hybrid routing | Data-driven; instrumentation already in place |
