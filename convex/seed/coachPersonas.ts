@@ -275,10 +275,10 @@ export const seed = internalMutation({
         .withIndex("by_slug", (q) => q.eq("slug", p.slug))
         .first();
 
-      // avatarRefs / safetyResponses left undefined — Phase D fills the
-      // photos via the Midjourney → HeyGen → R2 pipeline; safety lines
-      // are authored before Phase C ships. UI falls back to AbstractAvatar
-      // (per-coach palette held client-side keyed by slug) and a neutral
+      // avatarMediaId / safetyResponses left undefined — avatars are
+      // wired by `coachPersonas:registerAvatarMedia` after operator
+      // upload to R2; safety lines are authored before Phase C ships.
+      // UI falls back to monogram + brand colour and a neutral
       // Severity-2 safety template until those land.
       const doc = {
         ...p,
@@ -288,10 +288,13 @@ export const seed = internalMutation({
       };
 
       if (existing) {
-        // db.replace clears any old fields (e.g. legacy avatarRefs) that
-        // are no longer in the doc — db.patch would keep them.
+        // db.replace clears any old fields no longer in the doc.
+        // Carry forward operator-managed wiring (avatarMediaId,
+        // safetyResponses) so re-running the seed doesn't wipe them.
         await ctx.db.replace(existing._id, {
           ...doc,
+          avatarMediaId: existing.avatarMediaId,
+          safetyResponses: existing.safetyResponses,
           createdAt: existing.createdAt,
         });
         updated.push(p.slug);

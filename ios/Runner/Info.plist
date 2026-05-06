@@ -26,8 +26,12 @@
 		<string>$(FLUTTER_BUILD_NUMBER)</string>
 		<key>LSRequiresIPhoneOS</key>
 		<true/>
+		<key>ITSAppUsesNonExemptEncryption</key>
+		<false/>
 		<key>NSHealthShareUsageDescription</key>
 		<string>Twikka reads your workout history so your coach can see what you’re actually doing. We don’t read steps, heart rate, sleep, or anything else.</string>
+		<key>NSHealthUpdateUsageDescription</key>
+		<string>Twikka logs activities you tell your coach about back to Health when there’s no matching workout already recorded, so your activity history stays complete even when you weren’t wearing your watch.</string>
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>Twikka uses your photos so you can set a profile picture.</string>
 		<key>UIApplicationSceneManifest</key>

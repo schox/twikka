@@ -5,15 +5,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/branding/twikka_avatars.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/twikka_icons.dart';
+import '../../../core/widgets/avatar_preview.dart';
 import '../../../core/widgets/centered.dart';
 import '../../../data/models/coach_persona.dart';
 import '../../../data/providers/coach_personas_provider.dart';
 import '../../../data/providers/current_coach_provider.dart' as convex_coach;
 
 /// Coach picker. Used both as the post-OTP onboarding step and as
-/// Settings → Coach for repeat use. Renders the six active personas with
-/// AbstractAvatar fallbacks (per-coach palette + monogram) until Phase D
-/// fills `coach_personas.avatarRefs` with real HeyGen photos.
+/// Settings → Coach for repeat use. Renders the six active personas;
+/// the avatar photo (from `coach_personas.avatarMediaId` resolved
+/// server-side) is shown when present, otherwise a brand-coloured
+/// monogram fallback.
 class CoachPickerScreen extends ConsumerStatefulWidget {
   const CoachPickerScreen({super.key, this.onPicked});
 
@@ -204,7 +206,34 @@ class _CoachCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CoachAvatar(name: persona.name, size: 64),
+              SizedBox.square(
+                dimension: 64,
+                child: persona.avatarUrl == null
+                    ? CoachAvatar(
+                        name: persona.name,
+                        photoUrl: persona.avatarUrl,
+                        cacheKey: persona.avatarCacheKey,
+                        size: 64,
+                      )
+                    : Material(
+                        type: MaterialType.transparency,
+                        child: InkWell(
+                          customBorder: const CircleBorder(),
+                          onTap: () => showAvatarPreview(
+                            context,
+                            imageUrl: persona.avatarUrl!,
+                            cacheKey: persona.avatarCacheKey,
+                            name: persona.name,
+                          ),
+                          child: CoachAvatar(
+                            name: persona.name,
+                            photoUrl: persona.avatarUrl,
+                            cacheKey: persona.avatarCacheKey,
+                            size: 64,
+                          ),
+                        ),
+                      ),
+              ),
               const SizedBox(width: gap3),
               Expanded(
                 child: Column(

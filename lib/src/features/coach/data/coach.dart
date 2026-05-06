@@ -8,6 +8,7 @@ class Coach {
     required this.descriptor,
     required this.sample,
     this.photoUrl,
+    this.cacheKey,
   });
 
   final String id;
@@ -15,6 +16,9 @@ class Coach {
   final String descriptor;
   final String sample;
   final String? photoUrl;
+  // R2 object key — passed through to CachedNetworkImage so cache hits
+  // survive signed-URL rotations.
+  final String? cacheKey;
 }
 
 const List<Coach> kCoaches = [

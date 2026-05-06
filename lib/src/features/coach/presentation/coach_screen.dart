@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/avatar_preview.dart';
 import '../../../core/widgets/notifications_bell.dart';
 import '../data/chat_message.dart';
 import '../data/chat_notifier.dart';
@@ -122,7 +123,18 @@ class _CoachHeader extends StatelessWidget implements PreferredSizeWidget {
         ),
         child: Row(
           children: [
-            CoachAvatar(name: coach.name, size: avatarHeader),
+            _AvatarTapTarget(
+              size: avatarHeader,
+              photoUrl: coach.photoUrl,
+              cacheKey: coach.cacheKey,
+              name: coach.name,
+              child: CoachAvatar(
+                name: coach.name,
+                photoUrl: coach.photoUrl,
+                cacheKey: coach.cacheKey,
+                size: avatarHeader,
+              ),
+            ),
             const SizedBox(width: gap3),
             Expanded(
               child: Column(
@@ -143,6 +155,47 @@ class _CoachHeader extends StatelessWidget implements PreferredSizeWidget {
             ),
             const NotificationsBell(),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Wraps a circular avatar in a circular ink-well that opens the
+/// preview overlay when tapped. No-op if there's no image to preview,
+/// so the monogram fallback stays a static badge.
+class _AvatarTapTarget extends StatelessWidget {
+  const _AvatarTapTarget({
+    required this.size,
+    required this.photoUrl,
+    required this.cacheKey,
+    required this.name,
+    required this.child,
+  });
+
+  final double size;
+  final String? photoUrl;
+  final String? cacheKey;
+  final String name;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final url = photoUrl;
+    if (url == null) return child;
+    return SizedBox.square(
+      dimension: size,
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          customBorder: const CircleBorder(),
+          onTap: () => showAvatarPreview(
+            context,
+            imageUrl: url,
+            cacheKey: cacheKey,
+            name: name,
+          ),
+          child: child,
         ),
       ),
     );

@@ -1,7 +1,7 @@
 # Twikka — Build Plan
 
 **Status:** Active. The plan we work to. Updated as decisions evolve.
-**Origin:** Distilled from `docs/twikka_v1_prd.md` + design discussion 2026-04-18; revised through the architectural decisions on memory / audit / system config / live globals / gating states; updated 2026-04-26 with audit-driven decisions on avatars (monogram-now / HeyGen-Phase-D), `/docs/memory/` governance, safety calibration deferred to pre-Phase-C, Phase E pricing kickoff, and W-22 trigger spec.
+**Origin:** Distilled from `docs/twikka_v1_prd.md` + design discussion 2026-04-18; revised through the architectural decisions on memory / audit / system config / live globals / gating states; updated 2026-04-26 with audit-driven decisions on avatars (monogram-now / HeyGen-Phase-D), `/docs/memory/` governance, safety calibration deferred to pre-Phase-C, Phase E pricing kickoff, and W-22 trigger spec; refreshed 2026-05-02 to capture Phase B completion + post-Phase-B polish wave + the auth-robustness pass.
 **How to use:** Each phase below is a self-contained, demoable chunk. We complete one, ship-or-show, then move on. Decisions deferred *into* a phase are listed at the start of that phase so we don't pre-litigate them.
 
 > **Working principle:** every phase ends in a state the user can run on the iOS simulator and click through. No "scaffolding completed but nothing visibly different" milestones. If a phase's only output is back-end, we add a debug screen that proves it works.
@@ -23,10 +23,12 @@ The PRD §16 and the coach interaction design §Data Structures describe the ful
 | `external_call` | `docs/memory/reference_external_call_audit.md` | ✓ | Phase A |
 | `model_pricing` | `docs/memory/reference_external_call_audit.md` | ✓ | Phase A |
 | `audit_log` | PRD §16.2 | ✓ | Phase A |
-| `activity_kinds` | PRD §9.2 | — | Phase B |
-| `user_activity_aliases` | PRD §9.2 | — | Phase B |
-| `activities` | PRD §9.4 | — | Phase B |
-| `cities` | PRD §16.2 (implied) | — | Phase B |
+| `activity_kinds` | PRD §9.2 | ✓ | Phase B |
+| `user_activity_aliases` | PRD §9.2 | ✓ | Phase B |
+| `activities` | PRD §9.4 | ✓ | Phase B |
+| `daily_summaries` | not in PRD | ✓ | Phase B (added; idempotent step-count rollup per user/source/date) |
+| `cities` | PRD §16.2 (implied) | ✓ | Phase B |
+| `media` | not in PRD | ✓ | post-Phase-B polish (R2-backed user photos + future coach avatars) |
 | `knowledge_fact` | Interaction design §2 | — | Phase C |
 | `user_profile_slots` | Interaction design §6 (also PRD §8.1) | — | Phase C |
 | `user_goals` | Interaction design §3 | — | Phase C |
@@ -35,7 +37,7 @@ The PRD §16 and the coach interaction design §Data Structures describe the ful
 | `coach_triggers` | Interaction design §7 | — | Phase C |
 | `threads` | PRD §16.2, interaction design § Thread model | — | Phase C |
 | `messages` | PRD §16.2 | — | Phase C |
-| `device_connections` | PRD §16.2 | — | Phase B (created with health integration) |
+| `device_connections` | PRD §16.2 | — | **deferred** — B's health integration uses the `health` plugin directly with `users.healthSource`; revisit if multi-device or richer connection state is needed |
 | `subscriptions` | PRD §16.2 | — | Phase E |
 | `wiki_*` (5 tables) | `docs/twikka-wiki-design.md` | — | Phase C (basic) / wiki sprint (full) |
 | `connections` | PRD §16.3 | — | Phase G (built, flagged off) |
@@ -53,7 +55,9 @@ Update this table as phases ship. The intent is that "✓" matches what's in `co
 
 ## Where we are now
 
-Head: `57a6ffd` on `main`. Stage 0 (the `67c36dd` shell) plus four Phase A slices have shipped.
+Head: `19b26e1` on `main`. Stage 0 + all of Phase A + all of Phase B have shipped, plus a deliberate post-Phase-B polish wave (CI/CD lanes, env-var codegen, theme variants, R2 photo upload + avatar system, and an end-to-end auth-robustness pass).
+
+**Phase A — complete.**
 
 - **Stage 0** — Adaptive shell (`NavigationBar` <600px / `NavigationRail` ≥600px), four tabs (Coach / Progress / Social / Settings), Margaret-flavoured fake chat, Settings hub + 5 subroutes, Warm Light theme, Fraunces + Plus Jakarta Sans.
 - **A1** — Convex spine: schema for `organisations` / `users` / `memberships` / `coach_personas` / `coachAssignment` / `system_config` / `external_call` / `model_pricing` / `audit_log`. Audit + `recordedCall` helpers, `system_config` and `model_pricing` seeds.
@@ -61,11 +65,24 @@ Head: `57a6ffd` on `main`. Stage 0 (the `67c36dd` shell) plus four Phase A slice
 - **A3.1** — Real Clerk auth via `clerk_auth 0.0.14-beta`. `ClerkService` (DefaultPersistor + path_provider), `ClerkAuth` Riverpod notifier replacing FakeAuth. Convex token binding via `setAuthWithRefresh`.
 - **A3.2** — Clerk webhook → Convex provisioning. `convex/http.ts` with svix-verified `/clerk-webhook` endpoint dispatching `user.created` / `user.updated` / `user.deleted` to internal `users` mutations. `ensureFromIdentity` self-upsert as a webhook-race / pre-existing-user fallback. `currentUserProvider` live query rendered in Settings → Debug.
 - **A3.3** — Single morphing auth screen (email → probe → name-if-new → code → in). `convex/auth.ts` `probeEmail` action wraps Clerk Backend API. HttpService shim strips `strategy` from POST `/v1/client/sign_ups` so Clerk's auto-prepare is suppressed and signup sends one email instead of two. Inline error surfacing via `AuthResult` records.
+- **A3.4** — Six coach personas seeded into `coach_personas`. Coach picker shown after first OTP for new users; Settings → Coach for repeat use. AI disclosure copy in welcome subtitle, coach-selection screen, chat header. Avatars are placeholder monograms (`AbstractAvatar`) — `coach_personas.avatarRefs` stays optional so Phase D's HeyGen swap-in is a pure data fill.
 
-**Still ahead in Phase A:**
-- **A3.4** — Six coach personas seeded into `coach_personas`. Coach picker shown after first OTP for new users; Settings → Coach for repeat use. Avatars are placeholder monograms (per `AbstractAvatar`) since HeyGen photos are deferred to Phase D — `coach_personas.avatarRefs` is `v.optional(...)` and seeds with `null`. AI disclosure copy lands in welcome subtitle, coach-selection screen, chat header.
+**Phase B — complete.**
 
-**What's still fake or unbuilt:** the chat seed under Margaret is fake (no real LLM, no memory); no activity capture; no real notifications; no payments; no dark-mode switcher; no v2 social. Everything below.
+- **B1** — `cities` table seeded with the full ~140k GeoNames dump (one-shot ingest). Convex search index on `name` / `asciiname` / `alternatenames` / `country_code`. Settings → Profile city picker with type-ahead. Time zone auto-derived on pick, user-overridable.
+- **B2** — `activity_kinds` (CoPA + Apple HK + Health Connect reconciliation), `user_activity_aliases`. Tester gate (`users.tester`) reveals Settings → Debug. Debug viewer renders the resolved activity feed.
+- **B3** — Activity classifier action implementing the 5-step PRD §9.2 resolver (user-alias → global-alias → embedding → ambiguous → new-with-`needsReview`). OpenRouter wrapper module with `recordedCall` cost auditing. Embedding backfill action against the `by_embedding` vector index. Models pinned in `system_config.models.{classifier,embedding,extractor,general,deep}`.
+- **B4** — Apple HealthKit + Android Health Connect via the `health` package. `daily_summaries` step-count rollup (idempotent per user/source/date). iPad-friendly responsive layout. Bundle ID swapped to `com.novansa.twka` (final).
+
+**Post-Phase-B polish (between B and C):**
+
+- **CI/CD scaffold** — `ci-cd/` with Fastlane (`Fastfile`, `Appfile`, `ExportOptions.plist`) + `deploy-{ios,android,all}.sh` mirroring the couple-tools pattern. Setup notes in `ci-cd/docs/twikka-setup.md`. Not yet wired through to a green device build (next session).
+- **Envied** — `String.fromEnvironment` replaced with `envied`-codegen'd const accessors so env-var names live in one place.
+- **Theme variants** — Pluggable variant system; Classic + Warm Coach themes ship; full audit purge of inline theme data.
+- **R2 + avatars** — Three-shape `AbstractAvatar` system; user profile photo upload via `@convex-dev/r2`; `media` table for current photo + orphan-on-replace.
+- **Auth robustness** (this session) — `_NotifyingAuth` exposes Clerk's `update()` as a stream so cold-start hydration races don't strand the user on AuthScreen. App-resume rebinds the Convex auth handle so JWTs that expire during suspend get refreshed before the next query. `convexSubscribe` auto-retries on error with exponential backoff. Server-side queries throw on missing identity (centralized in `convex/lib/auth.ts`) so the Flutter retry actually has something to react to. TS strict pass + `convex/tsconfig.json` so `convex codegen --typecheck` actually runs `tsc`.
+
+**What's still fake or unbuilt:** chat under Margaret is still seeded (no real LLM, no memory) — that's Phase C, the next phase. No real notifications (E), no payments (E), no dark-mode switcher (F), no v2 social (G).
 
 ---
 
@@ -119,7 +136,7 @@ A new user signs up with Clerk for real, gets an email code (Clerk default sende
 
 ### Effort
 
-Medium-large. Multi-day. **Status:** A1 / A2 / A3.1 / A3.2 / A3.3 shipped. A3.4 (persona seed + coach picker + AI disclosure copy) remaining.
+Medium-large. Multi-day. **Status:** complete (A1 → A3.4 shipped; auth robustness re-hardened in the post-B polish wave).
 
 ---
 
@@ -163,7 +180,7 @@ User connects Apple Health from Settings → Health, walks around (or nudges act
 
 ### Effort
 
-Medium. The 140k city ingest is mostly a script; Health plugin has surface area but is well-documented.
+Medium. The 140k city ingest is mostly a script; Health plugin has surface area but is well-documented. **Status:** complete (B1 → B4 shipped). `device_connections` deferred — the `health` plugin + `users.healthSource` + `daily_summaries` covers v1 needs without a separate connections table.
 
 ---
 
@@ -576,12 +593,13 @@ A → B → C → D → E → F → G → H → I.
 | Phase | Scope | Est. | Demoable end state |
 |---|---|---|---|
 | **0** | Shell, theme, fake auth | done | The pre-Phase-A scaffold |
-| **A** | Real auth + Convex spine + safety gates + onboarding | medium-large; **A1–A3.3 done, A3.4 remaining** | Sign up for real, pick coach, kill-switch & update-required gates work live |
-| **B** | Activities + cities + Health plugin | medium | Activities flow in, city pickable |
-| **C** | Memory + agent (Margaret comes alive) | large | Coach is real, remembers you, every turn cost-audited |
+| **A** | Real auth + Convex spine + safety gates + onboarding | medium-large; **done** | Sign up for real, pick coach, kill-switch & update-required gates work live |
+| **B** | Activities + cities + Health plugin | medium; **done** | Activities flow in from HK / Health Connect, city pickable, classifier resolves phrases with cost auditing |
+| *(polish)* | CI/CD scaffold, envied, theme variants, R2 photo upload, auth robustness | small-medium each; **done** | Shippable infra; not a phase, but worth tracking |
+| **C** | Memory + agent (Margaret comes alive) | large; **next** | Coach is real, remembers you, every turn cost-audited |
 | **D** | Widget catalogue + settings expansion | medium-large | Full v1 UI surface, widgets respect simulated read-only state |
-| **E** | OneSignal + Postmark + GHL + Paddle + R2 + lapse-as-banner | large | Production plumbing; subscription lapse cleanly blocks writes via banner |
-| **F** | Themes + a11y + i18n + flags | medium | Polish + dark mode + flag system |
+| **E** | OneSignal + Postmark + GHL + Paddle (R2 already in) + lapse-as-banner | large | Production plumbing; subscription lapse cleanly blocks writes via banner |
+| **F** | Themes (variant system already in) + a11y + i18n + flags | medium | Polish + dark mode + flag system |
 | **G** | v2 social scaffolding (flagged off) | large | Future-proof, ready to reveal |
 | **H** | Stub v3/v4 structures | small | Schema slots exist |
 | **I** | Release prep | medium (non-code) | Submitted to stores |

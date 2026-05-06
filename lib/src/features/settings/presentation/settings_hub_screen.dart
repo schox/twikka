@@ -65,6 +65,7 @@ class SettingsHubScreen extends ConsumerWidget {
                     id: user.email,
                     name: user.displayName,
                     photoUrl: convexUser?.photoUrl,
+                    cacheKey: convexUser?.photoCacheKey,
                     size: avatarPortrait,
                   ),
                   const SizedBox(width: gap4),

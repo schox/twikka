@@ -40,7 +40,7 @@ final class ClerkAuthProvider extends $NotifierProvider<ClerkAuth, AuthState> {
   }
 }
 
-String _$clerkAuthHash() => r'75bcae897249ee7a16cde745b422c8dc80bf79a1';
+String _$clerkAuthHash() => r'36c263c9fe2259a92a401de9a0f57b7534ac4944';
 
 abstract class _$ClerkAuth extends $Notifier<AuthState> {
   AuthState build();

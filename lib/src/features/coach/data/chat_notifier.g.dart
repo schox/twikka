@@ -64,7 +64,7 @@ final class CurrentCoachProvider
   }
 }
 
-String _$currentCoachHash() => r'07570b846ecca1dabcb915e9dbecc031e05887af';
+String _$currentCoachHash() => r'138465ca729c0c8654e4a74e65d0371d16e4296c';
 
 /// Fake chat state for the Coach screen. Mirrors the sample mid-conversation
 /// from the design's `buildInitialMessages()`.

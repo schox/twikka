@@ -1,0 +1,12 @@
+# Copy to android/key.properties and fill in. The real file is gitignored.
+# Generate the keystore with:
+#   keytool -genkey -v \
+#     -keystore ../ci-cd/secrets/twikka-release-key.jks \
+#     -alias twikka \
+#     -keyalg RSA -keysize 2048 -validity 10000
+# (run from the android/ directory; the path below is relative to android/app/)
+
+storePassword=CHANGE_ME
+keyPassword=CHANGE_ME
+keyAlias=twikka
+storeFile=../../ci-cd/secrets/twikka-release-key.jks

@@ -18,6 +18,7 @@ class TwikkaUser {
     this.lastHealthSyncAt,
     this.photoMediaId,
     this.photoUrl,
+    this.photoCacheKey,
   });
 
   final String id;
@@ -38,12 +39,16 @@ class TwikkaUser {
   final int? lastHealthSyncAt;
   final String? photoMediaId;
 
-  /// Signed R2 URL resolved server-side at query time. ~24h TTL, so
-  /// cached_network_image survives across screen visits without
-  /// having to re-fetch the bytes. When the user replaces their
-  /// photo, the underlying media row changes and this URL refreshes
-  /// reactively.
+  /// Signed R2 URL resolved server-side at query time. ~24h TTL.
+  /// The signature changes on every refresh, but [photoCacheKey] is
+  /// stable per image — pass that to CachedNetworkImage so cache hits
+  /// survive URL rotations.
   final String? photoUrl;
+
+  /// Stable identifier for the underlying R2 object (its key). Use as
+  /// `CachedNetworkImage.cacheKey` so the local cache stays warm even
+  /// when [photoUrl] rotates. Null when [photoUrl] is null.
+  final String? photoCacheKey;
 
   factory TwikkaUser.fromJson(Map<String, dynamic> json) => TwikkaUser(
         id: json['_id'] as String,
@@ -66,6 +71,7 @@ class TwikkaUser {
         lastHealthSyncAt: (json['lastHealthSyncAt'] as num?)?.toInt(),
         photoMediaId: json['photoMediaId'] as String?,
         photoUrl: json['photoUrl'] as String?,
+        photoCacheKey: json['photoCacheKey'] as String?,
       );
 }
 

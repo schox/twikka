@@ -22,6 +22,8 @@ Coach currentCoach(Ref ref) {
     name: persona.name,
     descriptor: persona.shortDescriptor,
     sample: persona.introSample,
+    photoUrl: persona.avatarUrl,
+    cacheKey: persona.avatarCacheKey,
   );
 }
 

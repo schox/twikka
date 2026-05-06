@@ -160,7 +160,12 @@ class _TypingIndicatorWidgetState extends State<TypingIndicatorWidget>
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        CoachAvatar(name: widget.coach.name, size: avatarChatTrail),
+        CoachAvatar(
+          name: widget.coach.name,
+          photoUrl: widget.coach.photoUrl,
+          cacheKey: widget.coach.cacheKey,
+          size: avatarChatTrail,
+        ),
         const SizedBox(width: gap2),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: gap3, vertical: gap2),
@@ -219,7 +224,14 @@ class CoachBubbleRow extends StatelessWidget {
       children: [
         SizedBox(
           width: avatarChatTrail,
-          child: showAvatar ? CoachAvatar(name: coach.name, size: avatarChatTrail) : null,
+          child: showAvatar
+              ? CoachAvatar(
+                  name: coach.name,
+                  photoUrl: coach.photoUrl,
+                  cacheKey: coach.cacheKey,
+                  size: avatarChatTrail,
+                )
+              : null,
         ),
         const SizedBox(width: gap2),
         Flexible(
@@ -295,7 +307,12 @@ class CoachCard extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        CoachAvatar(name: coach.name, size: avatarChatTrail),
+        CoachAvatar(
+          name: coach.name,
+          photoUrl: coach.photoUrl,
+          cacheKey: coach.cacheKey,
+          size: avatarChatTrail,
+        ),
         const SizedBox(width: gap2),
         Flexible(
           child: ConstrainedBox(
@@ -361,7 +378,12 @@ class ActivityAckCardWidget extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        CoachAvatar(name: coach.name, size: avatarChatTrail),
+        CoachAvatar(
+          name: coach.name,
+          photoUrl: coach.photoUrl,
+          cacheKey: coach.cacheKey,
+          size: avatarChatTrail,
+        ),
         const SizedBox(width: gap2),
         Flexible(
           child: ConstrainedBox(
@@ -602,7 +624,12 @@ class MilestoneCardWidget extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        CoachAvatar(name: coach.name, size: avatarChatTrail),
+        CoachAvatar(
+          name: coach.name,
+          photoUrl: coach.photoUrl,
+          cacheKey: coach.cacheKey,
+          size: avatarChatTrail,
+        ),
         const SizedBox(width: gap2),
         Flexible(
           child: ConstrainedBox(

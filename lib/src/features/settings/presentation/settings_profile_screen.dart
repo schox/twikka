@@ -31,6 +31,7 @@ class _SettingsProfileScreenState extends ConsumerState<SettingsProfileScreen> {
     final city = convexUser?.city;
     final timezone = convexUser?.timezone;
     final photoUrl = convexUser?.photoUrl;
+    final photoCacheKey = convexUser?.photoCacheKey;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Profile')),
@@ -43,6 +44,7 @@ class _SettingsProfileScreenState extends ConsumerState<SettingsProfileScreen> {
                 id: authUser?.email ?? 'unknown',
                 name: authUser?.displayName ?? '?',
                 photoUrl: photoUrl,
+                photoCacheKey: photoCacheKey,
                 uploading: _uploading,
                 onTap: _uploading ? null : _changePhoto,
               ),
@@ -121,6 +123,7 @@ class _ProfilePhoto extends StatelessWidget {
     required this.id,
     required this.name,
     required this.photoUrl,
+    required this.photoCacheKey,
     required this.uploading,
     required this.onTap,
   });
@@ -128,6 +131,7 @@ class _ProfilePhoto extends StatelessWidget {
   final String id;
   final String name;
   final String? photoUrl;
+  final String? photoCacheKey;
   final bool uploading;
   final VoidCallback? onTap;
 
@@ -147,6 +151,7 @@ class _ProfilePhoto extends StatelessWidget {
               id: id,
               name: name,
               photoUrl: photoUrl,
+              cacheKey: photoCacheKey,
               size: avatarProfile,
             ),
             if (uploading)

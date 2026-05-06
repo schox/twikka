@@ -70,12 +70,19 @@ class CoachAvatar extends StatelessWidget {
     super.key,
     required this.name,
     this.photoUrl,
+    this.cacheKey,
     this.size = avatarRow,
     this.showBadge = true,
   });
 
   final String name;
   final String? photoUrl;
+  // Stable identifier for the underlying image (e.g. R2 object key).
+  // Lets CachedNetworkImage survive URL rotations — if the URL is a
+  // signed URL with a TTL, the signature changes on each refresh, but
+  // bytes only need re-downloading when the image itself changes.
+  // Falls back to imageUrl when null.
+  final String? cacheKey;
   final double size;
   final bool showBadge;
 
@@ -97,6 +104,7 @@ class CoachAvatar extends StatelessWidget {
         child: photoUrl != null
             ? CachedNetworkImage(
                 imageUrl: photoUrl!,
+                cacheKey: cacheKey,
                 fit: BoxFit.cover,
                 placeholder: (_, __) => fallback,
                 errorWidget: (_, __, ___) => fallback,
@@ -151,12 +159,15 @@ class PersonAvatar extends StatelessWidget {
     required this.id,
     required this.name,
     this.photoUrl,
+    this.cacheKey,
     this.size = avatarRow,
   });
 
   final String id;
   final String name;
   final String? photoUrl;
+  // See [CoachAvatar.cacheKey].
+  final String? cacheKey;
   final double size;
 
   @override
@@ -180,6 +191,7 @@ class PersonAvatar extends StatelessWidget {
         dimension: size,
         child: CachedNetworkImage(
           imageUrl: photoUrl!,
+          cacheKey: cacheKey,
           fit: BoxFit.cover,
           placeholder: (_, __) => fallback,
           errorWidget: (_, __, ___) => fallback,

@@ -35,7 +35,8 @@ class CoachPersona {
     required this.genderPresentation,
     required this.shortDescriptor,
     required this.introSample,
-    this.avatarRefs,
+    this.avatarUrl,
+    this.avatarCacheKey,
     required this.styleDescriptors,
     required this.sampleLines,
     required this.wouldSayExamples,
@@ -57,7 +58,13 @@ class CoachPersona {
   final CoachGender genderPresentation;
   final String shortDescriptor;
   final String introSample;
-  final CoachAvatarRefs? avatarRefs;
+  // Resolved by `coachPersonas:listActive` / `currentForUser` server-side.
+  // Null until the operator runs `coachPersonas:registerAvatarMedia`.
+  final String? avatarUrl;
+  // Stable across signed-URL rotations (the underlying R2 object key).
+  // Used as `CachedNetworkImage.cacheKey` so local cache hits survive
+  // URL refresh; null when avatarUrl is null.
+  final String? avatarCacheKey;
   final String? heyGenAvatarId;
   final String? voiceId;
   final List<String> styleDescriptors;
@@ -80,11 +87,8 @@ class CoachPersona {
             _genderFromString(json['genderPresentation'] as String),
         shortDescriptor: json['shortDescriptor'] as String,
         introSample: json['introSample'] as String,
-        avatarRefs: json['avatarRefs'] == null
-            ? null
-            : CoachAvatarRefs.fromJson(
-                json['avatarRefs'] as Map<String, dynamic>,
-              ),
+        avatarUrl: json['avatarUrl'] as String?,
+        avatarCacheKey: json['avatarCacheKey'] as String?,
         heyGenAvatarId: json['heyGenAvatarId'] as String?,
         voiceId: json['voiceId'] as String?,
         styleDescriptors:
@@ -100,30 +104,5 @@ class CoachPersona {
         modelOverride: json['modelOverride'] as String?,
         active: json['active'] as bool,
         promptVersion: (json['promptVersion'] as num).toInt(),
-      );
-}
-
-class CoachAvatarRefs {
-  const CoachAvatarRefs({
-    required this.hero,
-    required this.profile,
-    required this.chat,
-    required this.message,
-    required this.tiny,
-  });
-
-  final String hero;
-  final String profile;
-  final String chat;
-  final String message;
-  final String tiny;
-
-  factory CoachAvatarRefs.fromJson(Map<String, dynamic> json) =>
-      CoachAvatarRefs(
-        hero: json['hero'] as String,
-        profile: json['profile'] as String,
-        chat: json['chat'] as String,
-        message: json['message'] as String,
-        tiny: json['tiny'] as String,
       );
 }

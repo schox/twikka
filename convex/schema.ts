@@ -87,18 +87,14 @@ export default defineSchema({
     shortDescriptor: v.string(),
     introSample: v.string(),
 
-    // null until Phase D fills these via the Midjourney → HeyGen → R2
-    // pipeline. UI falls back to AbstractAvatar (monogram + per-coach
-    // palette) while null.
-    avatarRefs: v.optional(
-      v.object({
-        hero: v.string(),
-        profile: v.string(),
-        chat: v.string(),
-        message: v.string(),
-        tiny: v.string(),
-      }),
-    ),
+    // Single media row holding the coach's avatar. Resolved server-side
+    // by listActive / currentForUser into a signed URL + r2Key (the URL
+    // rotates on every signed-URL refresh; the r2Key is stable per
+    // image and used as the client cacheKey so CachedNetworkImage hits
+    // local cache across URL rotations). Null until the operator runs
+    // coachPersonas:registerAvatarMedia after uploading bytes to R2;
+    // UI falls back to monogram + brand colour while null.
+    avatarMediaId: v.optional(v.id("media")),
     heyGenAvatarId: v.optional(v.string()),
     voiceId: v.optional(v.string()),
 
@@ -413,11 +409,14 @@ export default defineSchema({
   // `orphaned` when superseded (e.g. user picks a new profile photo)
   // so a GC cron can reap them later.
   media: defineTable({
-    userId: v.id("users"),
-    organisationId: v.id("organisations"),
+    // Optional because some media kinds (notably coach_avatar) have no
+    // user owner — they're operator-uploaded assets shared across
+    // every user. user_photo and attachment kinds always set both.
+    userId: v.optional(v.id("users")),
+    organisationId: v.optional(v.id("organisations")),
     kind: v.union(
       v.literal("user_photo"), // settings → profile
-      v.literal("coach_avatar"), // future: admin-uploaded coach photos
+      v.literal("coach_avatar"), // operator-uploaded, shared across users
       v.literal("attachment"), // future: message attachments
       v.literal("source_document"), // future: chunked-for-search originals
     ),

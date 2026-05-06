@@ -2,7 +2,7 @@ name: twikka
 description: "Twikka — your AI-driven training companion"
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
   sdk: ^3.11.4
@@ -69,6 +69,10 @@ dependencies:
   # placeholders. Avatars use this so signed-URL refreshes don't refetch
   # bytes already cached.
   cached_network_image: ^3.4.1
+  # Same disk cache that cached_network_image uses internally. Imported
+  # directly so the coach-avatar preloader can warm the cache at app
+  # start (DefaultCacheManager().getSingleFile).
+  flutter_cache_manager: ^3.4.0
 
 dependency_overrides:
   # convex_flutter 3.0.1 ships codegen for flutter_rust_bridge 2.11.1;

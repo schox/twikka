@@ -138,7 +138,13 @@ export const getDownloadUrl = query({
 /**
  * Look up a media row + signed URL by id, with no auth check. Used
  * by queries that have already verified the caller (e.g.
- * `users:current`). Returns null if missing or not active.
+ * `users:current`) or by queries serving public-by-design content
+ * (`coachPersonas:listActive`). Returns null if missing or not active.
+ *
+ * Returns r2Key alongside url because the signed URL rotates on every
+ * call (different signature each time) but r2Key is stable per image —
+ * the client uses r2Key as CachedNetworkImage's cacheKey so the local
+ * cache stays warm across URL rotations.
  */
 export const _resolveMediaUrl = internalQuery({
   args: { mediaId: v.id("media") },
@@ -148,7 +154,12 @@ export const _resolveMediaUrl = internalQuery({
     const url = await r2.getUrl(media.r2Key, {
       expiresIn: DOWNLOAD_TTL_SECONDS,
     });
-    return { url, mimeType: media.mimeType, sizeBytes: media.sizeBytes };
+    return {
+      url,
+      r2Key: media.r2Key,
+      mimeType: media.mimeType,
+      sizeBytes: media.sizeBytes,
+    };
   },
 });
 

@@ -19,6 +19,9 @@ type CurrentUserResult =
         timezone: string;
       } | null;
       photoUrl: string | null;
+      // Stable cache key (r2Key) so CachedNetworkImage hits the local
+      // cache even when the signed URL rotates.
+      photoCacheKey: string | null;
     })
   | null;
 
@@ -237,12 +240,16 @@ export const current = query({
     // `internal.media._resolveMediaUrl` — without this, both `current`
     // and its handler infer as `any`, since the api.d.ts type graph
     // refers back into this file.
-    const photo: { url: string; mimeType: string; sizeBytes: number } | null =
-      user.photoMediaId
-        ? await ctx.runQuery(internal.media._resolveMediaUrl, {
-            mediaId: user.photoMediaId,
-          })
-        : null;
+    const photo: {
+      url: string;
+      r2Key: string;
+      mimeType: string;
+      sizeBytes: number;
+    } | null = user.photoMediaId
+      ? await ctx.runQuery(internal.media._resolveMediaUrl, {
+          mediaId: user.photoMediaId,
+        })
+      : null;
     return {
       ...user,
       city: city
@@ -255,6 +262,7 @@ export const current = query({
           }
         : null,
       photoUrl: photo?.url ?? null,
+      photoCacheKey: photo?.r2Key ?? null,
     };
   },
 });
