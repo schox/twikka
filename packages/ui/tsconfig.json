@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.package.json",
+  "compilerOptions": {
+    // Package-specific overrides
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "src/test",
+    "src/**/__tests__",
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx"
+  ]
+}

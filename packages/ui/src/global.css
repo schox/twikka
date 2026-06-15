@@ -1,0 +1,126 @@
+/* UI Package - Provides theme tokens + shared component styles, apps handle Tailwind compilation */
+/* No Tailwind imports here to avoid conflicts - apps import Tailwind and scan UI sources */
+
+/* Shared component styles. Consumers get the package's built JS, where tsup
+   strips component CSS imports into dist/index.css that nothing loads — so
+   ship editor styles through this file, which every app already imports. */
+@import './components/lexical-editor.css';
+
+/* Complete semantic color mapping for shared components */
+@theme inline {
+  /* Core background and surface colors */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  
+  /* Brand and interaction colors */
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  
+  /* System and feedback colors */
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  
+  /* Form and interaction elements */
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  
+  /* Chart colors for data visualization */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  
+  /* Sidebar colors for navigation components */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  
+  /* Brand colors for public websites */
+  --color-brand-primary: var(--color-brand-primary);
+  --color-brand-secondary: var(--color-brand-secondary);
+  --color-brand-accent1: var(--color-brand-accent1);
+  --color-brand-accent2: var(--color-brand-accent2);
+  --color-brand-accent3: var(--color-brand-accent3);
+  --color-brand-neutral1: var(--color-brand-neutral1);
+  --color-brand-neutral2: var(--color-brand-neutral2);
+  
+  /* Border radius system */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* Base style reset */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  /* Tailwind v4 transform CSS variables - required for translate utilities */
+  :root {
+    --tw-translate-x: 0;
+    --tw-translate-y: 0;
+    --tw-rotate: 0;
+    --tw-skew-x: 0;
+    --tw-skew-y: 0;
+    --tw-scale-x: 1;
+    --tw-scale-y: 1;
+  }
+}
+
+/* Theme-aware utility classes for shared components */
+@layer utilities {
+  /* Surface utilities - variables already contain hsl() values */
+  .bg-surface {
+    background-color: var(--background);
+  }
+
+  .text-surface {
+    color: var(--foreground);
+  }
+
+  .border-surface {
+    border-color: var(--border);
+  }
+
+  /* Status color utilities - variables already contain hsl() values */
+  .text-success {
+    color: var(--success);
+  }
+
+  .text-warning {
+    color: var(--warning);
+  }
+
+  .text-error {
+    color: var(--destructive);
+  }
+
+  .text-info {
+    color: var(--info);
+  }
+}

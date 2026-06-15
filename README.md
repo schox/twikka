@@ -1,17 +1,46 @@
-# twikka
+# Twikka
 
-Twikka — your AI-driven training companion
+Twikka monorepo — one vertical project containing all of Twikka's deployments.
 
-## Getting Started
+## Layout (standard Novansa product layout)
 
-This project is a starting point for a Flutter application.
+```
+apps/
+  mobile/     Flutter app (Convex via convex_flutter + Clerk) — includes ci-cd/ (fastlane)
+  website/    Next.js marketing site  — folded in from novansa-apps 2026-06-15
+  admin/      Next.js admin panel     — folded in from novansa-apps 2026-06-15
+convex/       Convex backend (root, shared by all apps)
+packages/     vendored shared code (@novansa/ui, config, auth, database, providers, …)
+scripts/      Convex seed/data tooling (npx convex import)
+docs/         product & migration docs
+```
 
-A few resources to get you started if this is your first Flutter project:
+## Status
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- **Mobile app**: already on Convex + Clerk.
+- **Website + admin**: folded in but **still on Supabase** (`@novansa/auth`, `@novansa/database`).
+  To be migrated to Convex/Clerk against the root `convex/` backend, then `supabase-twikka`
+  decommissioned. Working now (both build); migration is the next dev task.
+- **Mobile CI/CD**: moved into `apps/mobile/ci-cd/` — see
+  [`docs/ci-cd-fastlane-migration.md`](docs/ci-cd-fastlane-migration.md). Verify before deploying.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Develop
+
+```bash
+npm install
+npm run packages:build      # build vendored packages' dist (runtime; .d.ts has a TS6 wart)
+npm run website:dev         # or website:build
+npm run admin:dev           # or admin:build
+npm run convex:dev          # Convex backend (EU/Ireland deployment)
+# mobile:
+cd apps/mobile && flutter pub get && flutter run
+```
+
+## Known warts (tidy at novansa-kit extraction)
+
+- Vendored `packages/*` `.d.ts` emit fails under TypeScript 6 (`baseUrl` deprecation,
+  TS5101). Runtime `dist` builds fine and the web apps compile; types show as `any`.
+  Fix by adding `"ignoreDeprecations": "6.0"` to each package tsconfig, or reconcile
+  into `novansa-kit`.
+- `packages/*` are vendored copies from `novansa-apps` — they exist in CalmerFlow too and
+  will be unified into `novansa-kit` once all products are migrated.

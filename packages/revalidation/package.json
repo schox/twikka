@@ -1,0 +1,39 @@
+{
+  "name": "@novansa/revalidation",
+  "version": "0.1.0",
+  "description": "On-demand revalidation for Next.js apps with cache warming",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "eslint src/ --report-unused-disable-directives --max-warnings 0",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "eslint": "^9.18.0",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2"
+  },
+  "peerDependencies": {
+    "next": ">=14.0.0"
+  },
+  "keywords": [
+    "next.js",
+    "revalidation",
+    "isr",
+    "cache",
+    "seo"
+  ]
+}

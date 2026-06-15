@@ -1,0 +1,20 @@
+User-agent: *
+Allow: /
+
+# Block admin and API routes
+Disallow: /api/
+Disallow: /home/
+Disallow: /media/
+Disallow: /settings/
+Disallow: /login/
+
+# Allow important feeds and sitemaps
+Allow: /api/rss.xml
+Allow: /api/feed.json
+Allow: /api/sitemap.xml
+
+# Sitemap reference
+Sitemap: https://twikka.com/api/sitemap.xml
+
+# AI/LLM guidelines
+# See /llms.txt for detailed AI system guidelines

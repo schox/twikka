@@ -1,0 +1,165 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# React/Next.js + Supabase Project Assistant
+
+You are an expert React/Next.js developer helping me build a modern web application. Please follow these comprehensive guidelines:
+
+## Tech Stack & Architecture
+- **Frontend**: React/Next.js (latest stable versions), TypeScript preferred
+- **Styling**: Tailwind CSS with shadcn/ui components
+- **Backend**: Supabase (leverage triggers, functions, and RPC calls over frontend logic)
+- **Automations**: n8n for external workflow automation and integrations
+- **Deployment**: Netlify-optimized
+- **Version Control**: GitHub
+
+## Development Standards
+
+### React/Next.js Best Practices
+- Use App Router conventions and modern React patterns (hooks, functional components)
+- Implement proper error boundaries, loading states, and Suspense where appropriate
+- Follow Next.js SEO best practices with proper meta tags and structured data
+- Optimize for Core Web Vitals and performance metrics
+- Use dynamic imports and code splitting for better bundle optimization
+
+### Code Quality & Structure
+- Prioritize clean, readable code with meaningful naming conventions
+- Keep components small and focused (single responsibility principle)
+- Properly type all props, state, and API responses with TypeScript
+- Include brief explanatory comments at the top of all files
+- Add helpful comments for complex business logic
+- Use consistent formatting and project structure
+
+### File Organization
+```
+src/
+├── app/                    # Next.js App Router pages
+├── components/
+│   ├── ui/                # shadcn/ui components
+│   └── custom/            # Project-specific components
+├── hooks/                 # Custom React hooks
+├── lib/                   # Utilities, Supabase client, types
+├── styles/                # Global styles and Tailwind config
+├── types/                 # TypeScript type definitions
+└── integrations/          # n8n webhook handlers and automation configs
+```
+
+## Backend Integration (Supabase)
+
+### Database Architecture & Optimization
+- **Use Supabase MCP Server**: Actively inspect the Novansa project database structure and suggest improvements
+- Identify opportunities to refactor data models for better performance and scalability
+- Recommend proper indexing strategies and query optimization
+- Suggest normalization improvements and relationship restructuring
+
+### Server-Side Logic Priority
+- **Database Triggers**: Implement for data validation, audit logs, and automatic field updates
+- **PostgreSQL Functions**: Use for complex business logic, data transformations, and calculations
+- **Supabase Edge Functions**: Deploy for API integrations, webhooks, and external service communications
+- **RPC Calls**: Leverage for complex queries and server-side operations
+- Keep frontend focused on presentation and user interaction
+- Implement proper error handling for database operations
+- Use Supabase's real-time features when appropriate
+- Follow Row Level Security (RLS) best practices
+
+### Automation Integration (n8n)
+- Design webhook endpoints for n8n workflow triggers
+- Create Supabase Edge Functions to handle n8n automation callbacks
+- Implement proper authentication and security for automation endpoints
+- Structure data models to support external automation workflows
+- Document automation trigger points and data flow patterns
+
+## UI/UX Requirements
+
+### Theming System
+- Implement comprehensive light/dark/system theme support
+- Use CSS custom properties with Tailwind for theme variables
+- Ensure proper contrast ratios and accessibility across all themes
+- Persist theme preferences in localStorage/user settings
+
+### Responsive Design
+- Mobile-first approach with proper breakpoint usage
+- Adaptive layouts that work across all device sizes
+- Touch-friendly interactions for mobile devices
+- Optimize images and assets for different screen densities
+
+### Component Strategy
+- Create custom components for repeated UI patterns
+- Extend shadcn/ui components when additional functionality is needed
+- Build a consistent design system with reusable patterns
+- Document component props and usage examples
+
+## Performance & Optimization
+- Implement proper caching strategies (Next.js, Supabase)
+- Use Next.js Image component for optimized image loading
+- Minimize bundle size with tree shaking and dynamic imports
+- Optimize for Netlify deployment with proper build configurations
+- Design efficient database queries and minimize round trips
+
+## Development Workflow
+
+### Supabase MCP Server Integration
+- **Active Database Analysis**: Use MCP server to continuously inspect and analyze the Novansa project structure
+- **Refactoring Recommendations**: Provide specific suggestions for:
+  - Table structure optimization
+  - Index creation and optimization
+  - Trigger implementation opportunities
+  - Function migration from frontend to backend
+  - Edge function deployment strategies
+- **Performance Monitoring**: Identify slow queries and suggest optimizations
+- **Security Analysis**: Review RLS policies and suggest improvements
+
+### Automation Workflow Design
+- Plan n8n integrations from the database design phase
+- Create webhook-friendly data structures
+- Design automation trigger points in the application flow
+- Implement proper logging and monitoring for automated processes
+
+### General Practices
+- **Commit Messages**: Brief and concise (max 2 sentences)
+- **Error Handling**: Comprehensive error boundaries and user feedback
+- **Loading States**: Skeleton loaders and proper loading indicators
+- **Accessibility**: WCAG 2.1 AA compliance where possible
+
+## Code Examples Format
+When providing code:
+1. Include file path and brief description at the top
+2. Explain architectural decisions and Next.js-specific optimizations
+3. Highlight Supabase integration patterns (triggers, functions, RPC)
+4. Show responsive design implementation
+5. Demonstrate theme integration
+6. Include n8n webhook integration examples where relevant
+7. Provide MCP server analysis results and refactoring suggestions
+
+## MCP Server Analysis Protocol
+When working with the Novansa project:
+
+### Database Structure Review
+- Analyze current table relationships and suggest improvements
+- Identify redundant data and normalization opportunities
+- Review foreign key constraints and suggest optimizations
+- Assess query patterns and recommend index strategies
+
+### Backend Logic Migration
+- Identify frontend logic that should move to database triggers
+- Suggest PostgreSQL functions for complex calculations
+- Recommend Edge Functions for external API integrations
+- Plan automation integration points for n8n workflows
+
+### Performance Optimization
+- Analyze query performance and suggest improvements
+- Recommend caching strategies at the database level
+- Identify opportunities for real-time subscriptions
+- Suggest batch processing improvements
+## Additional Considerations
+- Suggest modern, well-maintained tools when they add value
+- Consider SEO implications for all user-facing features
+- Include necessary Netlify configuration files
+- Plan for scalability and maintainability with automation in mind
+- Implement proper TypeScript strict mode practices
+- Design with n8n integration patterns from the start
+- Create comprehensive documentation for automation workflows
+
+Focus on building a production-ready application that follows modern web development best practices while maintaining excellent user experience across all devices and themes. Prioritize server-side logic over client-side complexity, and design with automation and scalability as core principles.

@@ -1,0 +1,368 @@
+/* Twikka Website - Tailwind CSS v4 with Twikka brand theme */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
+@import 'tailwindcss';
+@plugin 'tailwindcss-animate';
+
+/* Import shared UI package foundation */
+@import '@novansa/ui/src/global.css';
+
+/* Tailwind v4 CSS-only configuration */
+@source "../**/*.{js,ts,jsx,tsx,mdx}";
+@source "../../../../packages/ui/src/**/*.{js,ts,jsx,tsx}";
+
+/* Custom dark variant for shadcn compatibility */
+@custom-variant dark (&:is(.dark *));
+
+/* Configure Nunito font for Tailwind v4 */
+@theme {
+  --font-family-sans: 'Nunito', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Force Nunito font application */
+* {
+  font-family: 'Nunito', ui-sans-serif, system-ui, sans-serif !important;
+}
+
+html {
+  font-family: 'Nunito', ui-sans-serif, system-ui, sans-serif !important;
+}
+
+body {
+  font-family: 'Nunito', ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* ============================================================================
+   TWIKKA BRAND THEME
+
+   Brand Colors:
+   - Primary: #5f27cd (Purple)
+   - Secondary: #ffa000 (Amber/Orange)
+   - Tertiary: #14CC76 (Green)
+   - onPrimary: #ffffff
+   - onSecondary: #201425
+   - Background: #ffffff
+   - primaryContainer: #f5f5f5
+   ============================================================================ */
+
+/* ✅ Light theme: Twikka brand design */
+:root,
+.light {
+  /* Border radius design tokens */
+  --radius: 8px;
+  --radius-default: 16px;
+  --radius-card: 12px;
+  --radius-button: 12px;
+  --radius-chip: 8px;
+  --radius-input: 12px;
+
+  /* Twikka Brand Colors - Light Mode */
+  --color-primary: #5f27cd; /* Purple - main brand color */
+  --color-primary-dark: #4a1fa3; /* Darker purple variant */
+  --color-secondary: #ffa000; /* Amber/Orange - secondary brand */
+  --color-secondary-dark: #cc8000; /* Darker amber variant */
+  --color-tertiary: #14CC76; /* Green - tertiary accent */
+  --color-tertiary-dark: #10a35f; /* Darker green variant */
+  --color-background-light: #f5f5f5; /* Light container background */
+  --color-error: #BA1A1A; /* Error red */
+  --color-error-container: #FFDAD6; /* Error background */
+
+  /* Semantic Colors - Light Mode */
+  --color-success: #14CC76; /* Green (same as tertiary) */
+  --color-info: #5f27cd; /* Purple (same as primary) */
+  --color-warning: #ffa000; /* Amber (same as secondary) */
+
+  /* Core theme colors mapped to Twikka brand palette */
+  --background: #ffffff; /* Pure white background */
+  --foreground: hsl(282 30% 11%); /* #201425 - Dark purple-tinted text */
+  --card: hsl(0 0% 100%); /* Pure white cards */
+  --card-foreground: hsl(282 30% 11%); /* Dark text */
+  --popover: hsl(0 0% 100%); /* Pure white */
+  --popover-foreground: hsl(282 30% 11%); /* Dark text */
+
+  /* Primary: Purple */
+  --primary: #5f27cd;
+  --primary-foreground: hsl(0 0% 100%); /* White text on purple */
+
+  /* Secondary: Amber */
+  --secondary: #fff8e6;
+  --secondary-foreground: hsl(282 30% 11%); /* Dark text on amber bg */
+
+  /* Muted: Light backgrounds */
+  --muted: #f5f5f5;
+  --muted-foreground: hsl(282 15% 40%); /* Medium purple-gray text */
+
+  /* Accent: Tertiary Green */
+  --accent: #14CC76;
+  --accent-foreground: hsl(0 0% 100%); /* White */
+
+  /* Destructive: Error red */
+  --destructive: #BA1A1A;
+  --destructive-foreground: hsl(0 0% 100%); /* White */
+
+  /* Success: Green */
+  --success: #14CC76;
+  --success-foreground: hsl(0 0% 100%); /* White */
+
+  /* Warning: Amber */
+  --warning: #ffa000;
+  --warning-foreground: hsl(282 30% 11%); /* Dark text */
+
+  /* Info: Purple */
+  --info: #5f27cd;
+  --info-foreground: hsl(0 0% 100%); /* White */
+
+  /* Borders and inputs */
+  --border: hsl(0 0% 88%); /* Light gray border */
+  --input: hsl(0 0% 96%); /* Light gray input */
+  --ring: #5f27cd; /* Purple ring */
+
+  /* Chart colors - Twikka palette */
+  --chart-1: #5f27cd; /* Purple */
+  --chart-2: #ffa000; /* Amber */
+  --chart-3: #14CC76; /* Green */
+  --chart-4: #7c3aed; /* Lighter purple */
+  --chart-5: #f59e0b; /* Lighter amber */
+}
+
+/* ✅ Dark theme: Twikka dark mode */
+.dark {
+  /* Twikka Brand Colors - Dark Mode */
+  --color-primary: #a78bfa; /* Lighter purple for visibility */
+  --color-primary-dark: #5f27cd; /* Original purple */
+  --color-secondary: #ffc44d; /* Lighter amber */
+  --color-secondary-dark: #ffa000; /* Original amber */
+  --color-tertiary: #4ade80; /* Lighter green */
+  --color-tertiary-dark: #14CC76; /* Original green */
+  --color-background-dark: #0f0a19; /* Dark purple-tinted background */
+  --color-card-dark: #1a1025; /* Dark purple card background */
+  --color-error: #EF5350; /* Brighter error for dark mode */
+
+  /* Semantic Colors - Dark Mode */
+  --color-success: #4ade80; /* Lighter green */
+  --color-info: #a78bfa; /* Lighter purple */
+  --color-warning: #ffc44d; /* Lighter amber */
+
+  /* Core dark colors */
+  --background: #0f0a19; /* Dark purple-tinted background */
+  --foreground: hsl(0 0% 95%); /* Light text */
+  --card: #1a1025; /* Dark purple card background */
+  --card-foreground: hsl(0 0% 95%); /* Light text */
+  --popover: #1a1025; /* Dark background */
+  --popover-foreground: hsl(0 0% 95%); /* Light text */
+
+  /* Primary: Lighter purple for dark mode */
+  --primary: #a78bfa;
+  --primary-foreground: #0f0a19; /* Dark text on lighter purple */
+
+  /* Secondary: Lighter amber for dark mode */
+  --secondary: #2a1f0a;
+  --secondary-foreground: hsl(0 0% 95%); /* Light text */
+
+  /* Muted: Dark backgrounds and muted text */
+  --muted: #1a1025; /* Dark muted */
+  --muted-foreground: hsl(282 15% 60%); /* Medium purple-gray */
+
+  /* Accent: Lighter green for dark mode */
+  --accent: #4ade80;
+  --accent-foreground: hsl(0 0% 0%); /* Dark text */
+
+  /* Destructive: Brighter error for dark mode */
+  --destructive: #EF5350;
+  --destructive-foreground: hsl(0 0% 100%); /* White */
+
+  /* Success: Lighter green */
+  --success: #4ade80;
+  --success-foreground: hsl(0 0% 0%); /* Dark text */
+
+  /* Warning: Lighter amber */
+  --warning: #ffc44d;
+  --warning-foreground: #0f0a19; /* Dark text */
+
+  /* Info: Lighter purple */
+  --info: #a78bfa;
+  --info-foreground: hsl(0 0% 100%); /* White */
+
+  /* Borders and inputs */
+  --border: hsl(282 20% 20%); /* Dark purple-gray border */
+  --input: hsl(282 20% 15%); /* Dark input */
+  --ring: #a78bfa; /* Lighter purple ring for dark mode */
+
+  /* Chart colors - Twikka palette for dark mode */
+  --chart-1: #a78bfa; /* Lighter purple */
+  --chart-2: #ffc44d; /* Lighter amber */
+  --chart-3: #4ade80; /* Lighter green */
+  --chart-4: #c4b5fd; /* Even lighter purple */
+  --chart-5: #fcd34d; /* Lighter amber */
+}
+
+/* Base style reset */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  /* Tailwind v4 transform CSS variables */
+  :root {
+    --tw-translate-x: 0;
+    --tw-translate-y: 0;
+    --tw-rotate: 0;
+    --tw-skew-x: 0;
+    --tw-skew-y: 0;
+    --tw-scale-x: 1;
+    --tw-scale-y: 1;
+  }
+}
+
+/* ✅ Twikka Component Styles */
+@layer components {
+  /* Card with shadow - enhanced borders for mobile visibility */
+  .card-elevated {
+    background: white;
+    border-radius: var(--radius-card);
+    padding: 24px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border: 2px solid hsl(0 0% 85%);
+    transition: box-shadow 0.3s, border-color 0.3s;
+  }
+
+  /* Desktop: Lighter, thinner borders */
+  @media (min-width: 1024px) {
+    .card-elevated {
+      border: 1px solid var(--border);
+    }
+  }
+
+  .card-elevated:hover {
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    border-color: hsl(0 0% 75%);
+  }
+
+  /* Dark mode adjustments */
+  .dark .card-elevated {
+    background: var(--card);
+    border-color: hsl(282 20% 25%);
+  }
+
+  .dark .card-elevated:hover {
+    border-color: hsl(282 20% 35%);
+  }
+
+  /* Form input with focus state */
+  .form-input-enhanced {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid hsl(0 0% 80%);
+    border-radius: var(--radius-input);
+    font-size: 16px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  @media (min-width: 1024px) {
+    .form-input-enhanced {
+      border: 2px solid var(--border);
+    }
+  }
+
+  .form-input-enhanced:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(95, 39, 205, 0.1);
+  }
+
+  /* Dark mode form inputs */
+  .dark .form-input-enhanced {
+    border-color: hsl(282 20% 30%);
+  }
+
+  /* Pill button */
+  .btn-pill {
+    border-radius: var(--radius-button);
+    padding: 12px 32px;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+
+  /* Chip/Tag style */
+  .chip {
+    border-radius: var(--radius-chip);
+    padding: 6px 12px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  /* Gradient backgrounds */
+  .bg-gradient-primary {
+    background: linear-gradient(135deg, #5f27cd 0%, #7c3aed 100%);
+  }
+
+  .bg-gradient-secondary {
+    background: linear-gradient(135deg, #ffa000 0%, #f59e0b 100%);
+  }
+
+  .bg-gradient-hero {
+    background: linear-gradient(135deg, rgba(95, 39, 205, 0.05) 0%, rgba(20, 204, 118, 0.05) 100%);
+  }
+}
+
+/* ✅ Stable theme-aware Tailwind utilities */
+@layer utilities {
+  .bg-surface {
+    background-color: var(--background);
+  }
+
+  .text-surface {
+    color: var(--foreground);
+  }
+
+  .border-surface {
+    border-color: var(--border);
+  }
+
+  .text-on-primary {
+    color: var(--primary-foreground);
+  }
+
+  /* Consistent border radius using CSS variables */
+  .rounded-button {
+    border-radius: var(--radius-button);
+  }
+
+  .rounded-input {
+    border-radius: var(--radius-input);
+  }
+
+  .rounded-card {
+    border-radius: var(--radius-card);
+  }
+
+  .rounded-chip {
+    border-radius: var(--radius-chip);
+  }
+
+  /* Hide scrollbar for horizontal scrolling elements */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Enhanced mobile borders */
+  .border-mobile-enhanced {
+    border-width: 2px;
+    border-color: hsl(0 0% 80%);
+  }
+
+  @media (min-width: 1024px) {
+    .border-mobile-enhanced {
+      border-width: 1px;
+      border-color: var(--border);
+    }
+  }
+
+  .dark .border-mobile-enhanced {
+    border-color: hsl(282 20% 30%);
+  }
+}

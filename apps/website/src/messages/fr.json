@@ -1,0 +1,730 @@
+{
+  "notFound": {
+    "title": "Page Non Trouvée",
+    "description": "Nous n'avons pas pu trouver la page que vous recherchez. Elle a peut-être été déplacée ou n'existe plus.",
+    "buttons": {
+      "home": "Aller à l'Accueil",
+      "contact": "Nous Contacter"
+    },
+    "helpfulLinks": {
+      "title": "Voici quelques liens utiles :",
+      "about": "À propos",
+      "blog": "Blog",
+      "contact": "Contact"
+    }
+  },
+  "blogNotFound": {
+    "title": "Article Non Trouvé",
+    "description": "Désolé, nous n'avons pas pu trouver l'article que vous recherchez. Il a peut-être été déplacé ou supprimé.",
+    "buttons": {
+      "backToBlog": "Retour au Blog",
+      "home": "Aller à l'Accueil"
+    }
+  },
+  "common": {
+    "home": "Accueil",
+    "about": "A propos",
+    "blog": "Blog",
+    "contact": "Contact",
+    "pricing": "Tarifs",
+    "help": "Aide",
+    "faq": "FAQ",
+    "getApp": "Telecharger l'App",
+    "learnMore": "En savoir plus",
+    "readMore": "Lire la suite",
+    "viewAll": "Voir tout",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "translationComingSoon": "Ce contenu n'est disponible qu'en anglais pour le moment. La traduction arrive bientot!"
+  },
+  "header": {
+    "navigation": {
+      "home": "Accueil",
+      "about": "A propos",
+      "blog": "Blog",
+      "contact": "Contact"
+    },
+    "cta": "Obtenir un Acces Anticipe",
+    "languageSwitcher": {
+      "label": "Langue",
+      "english": "Anglais",
+      "spanish": "Espagnol",
+      "portuguese": "Portugais",
+      "french": "Français",
+      "german": "Allemand",
+      "italian": "Italien",
+      "japanese": "Japonais"
+    }
+  },
+  "footer": {
+    "tagline": "Fait avec soin pour votre parcours santé et fitness",
+    "copyright": "© {year} Novansa OÜ. Tous droits réservés.",
+    "sections": {
+      "quickLinks": "Liens Rapides",
+      "legal": "Mentions légales"
+    },
+    "links": {
+      "home": "Accueil",
+      "about": "À propos",
+      "blog": "Blog",
+      "contact": "Contact",
+      "privacy": "Politique de confidentialité",
+      "terms": "Conditions d'utilisation",
+      "support": "Support"
+    }
+  },
+  "contactForm": {
+    "placeholders": {
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "message": "Message"
+    },
+    "buttons": {
+      "submit": "Envoyer",
+      "sending": "Envoi en cours..."
+    },
+    "errors": {
+      "firstNameRequired": "Le prénom est requis",
+      "lastNameRequired": "Le nom est requis",
+      "emailRequired": "L'e-mail est requis",
+      "emailInvalid": "Veuillez entrer une adresse e-mail valide",
+      "phoneRequired": "Le téléphone est requis",
+      "phoneInvalid": "Veuillez entrer un numéro de téléphone valide",
+      "messageRequired": "Le message est requis",
+      "messageMinLength": "Le message doit contenir au moins 10 caractères",
+      "submitError": "Une erreur s'est produite lors de l'envoi. Veuillez réessayer."
+    },
+    "success": {
+      "title": "Merci !",
+      "message": "Votre message a été envoyé avec succès. Nous vous recontacterons rapidement !",
+      "sendAnother": "Envoyer un autre message"
+    }
+  },
+  "home": {
+    "hero": {
+      "badge": "Bientot Disponible - Rejoignez l'Acces Anticipe",
+      "titlePart1": "Bougez",
+      "titlePart2": "pour la Vie!",
+      "subtitle": "Twikka est une facon scientifique et bienveillante de construire une activite durable sur le long terme.",
+      "tagline": "Soutenu par la science, pas par la honte. Concu pour les gens, pas pour les athletes.",
+      "getEarlyAccess": "Rejoignez l'Acces Anticipe!",
+      "learnMore": "En Savoir Plus"
+    },
+    "features": {
+      "title": "Tout ce Dont Vous Avez Besoin pour Reussir",
+      "subtitle": "Twikka combine des fonctionnalites puissantes avec un design simple et intuitif pour vous aider a atteindre vos objectifs de sante.",
+      "items": {
+        "goals": {
+          "title": "Definissez Vos Objectifs",
+          "description": "Definissez des objectifs de sante et de fitness personnalises qui correspondent a votre style de vie et a votre emploi du temps."
+        },
+        "progress": {
+          "title": "Suivez Vos Progres",
+          "description": "Surveillez votre parcours avec des outils de suivi intuitifs et celebrez chaque etape franchie."
+        },
+        "habits": {
+          "title": "Construisez des Habitudes",
+          "description": "Transformez de petites actions quotidiennes en habitudes saines durables grace a notre approche basee sur la science."
+        },
+        "motivation": {
+          "title": "Restez Motive",
+          "description": "Rejoignez une communaute de soutien et obtenez les encouragements dont vous avez besoin pour continuer a avancer."
+        }
+      }
+    },
+    "earlyAccess": {
+      "title": "Soyez Parmi les Premiers",
+      "subtitle": "Rejoignez notre programme d'acces anticipe et aidez a faconner l'avenir de Twikka. Les membres anticipees beneficient d'avantages exclusifs et d'une voix dans notre developpement.",
+      "benefits": {
+        "premium": "Acces premium gratuit pendant la beta",
+        "input": "Influence directe sur les fonctionnalites et le design",
+        "perks": "Avantages exclusifs de membre fondateur"
+      },
+      "joinWaitlist": "Rejoindre la Liste d'Attente"
+    },
+    "learnMore": {
+      "title": "En Savoir Plus",
+      "faqs": {
+        "whatIs": {
+          "question": "Qu'est-ce que Twikka?",
+          "answer": {
+            "intro": "Twikka est une application de creation d'habitudes qui aide les gens a devenir plus actifs - et a le rester.",
+            "description": "Il ne s'agit pas d'entrainements, de repetitions ou de classements. Twikka est pour les vraies personnes qui veulent bouger un peu plus, se sentir mieux et construire une routine qui dure.",
+            "points": {
+              "science": "Soutenu par la science et construit avec soin",
+              "sustainability": "Axe sur la durabilite, pas sur les efforts brefs",
+              "designed": "Concu pour les personnes qui ont deja essaye - et veulent que ca marche cette fois",
+              "social": "Comprend des fonctionnalites sociales, des defis et des encouragements pour vous aider a rester sur la bonne voie"
+            },
+            "conclusion": "Que vous partiez de zero ou que vous recommenciez, Twikka vous rencontre la ou vous etes."
+          }
+        },
+        "why": {
+          "question": "Pourquoi Twikka?",
+          "answer": {
+            "intro": "La plupart des applications de fitness supposent que vous etes deja motive. Twikka vous aide a construire la motivation.",
+            "description": "Il existe de nombreux outils pour les coureurs, les halterophiles et les fanas de gym. Twikka est different. Il est concu pour les personnes qui veulent creer un mode de vie actif - mais ne savent pas par ou commencer (ou ont essaye et se sont arretes avant).",
+            "points": {
+              "steps": "Encourage les petits pas, pas les grandes promesses",
+              "progress": "Suit les progres dans le temps, pas la perfection",
+              "science": "Utilise les principes de la science comportementale et du modele suedois FaR",
+              "support": "Offre structure, soutien et communaute - pas de culpabilite"
+            },
+            "conclusion": "Notre objectif est de vous aider a passer de \"Je devrais en faire plus\" a \"Cela fait simplement partie de ma vie maintenant.\""
+          }
+        },
+        "howWorks": {
+          "question": "Comment ca marche?",
+          "answer": {
+            "intro": "Commencez simplement. Faites le point. Developpez votre habitude.",
+            "description": "Twikka est construit autour d'une boucle claire et basee sur la science:",
+            "steps": {
+              "plan": {
+                "title": "Creez un Plan Hebdomadaire",
+                "description": "Repondez a quelques questions, et l'application vous aide a concevoir un modele d'activite realiste - cardio, force, ou les deux."
+              },
+              "checkins": {
+                "title": "Points Quotidiens",
+                "description": "Notez ce que vous avez fait - ou pourquoi vous ne l'avez pas fait. Vous verrez un historique visuel de vos progres au fil du temps."
+              },
+              "adapt": {
+                "title": "Adaptez au Fur et a Mesure",
+                "description": "Au fur et a mesure que l'application apprend a vous connaitre, elle vous aide a affiner votre plan. Vous recevrez egalement des conseils, des rappels et des encouragements pour rester sur la bonne voie."
+              },
+              "join": {
+                "title": "Participez",
+                "description": "Participez a des defis, connectez-vous avec d'autres et construisez la responsabilite grace a des groupes et des evenements de soutien."
+              }
+            },
+            "conclusion": "L'objectif n'est pas d'en faire plus - c'est de faire ce qui est bon pour vous, de maniere constante."
+          }
+        },
+        "forMe": {
+          "question": "Est-ce pour moi?",
+          "answer": {
+            "intro": "Si vous avez deja dit \"Je devrais me remettre a l'exercice\" - c'est pour vous.",
+            "description": "Twikka est particulierement utile si:",
+            "points": {
+              "age": "Vous avez 40 ans ou plus",
+              "tried": "Vous avez commence et arrete des routines d'exercice dans le passe",
+              "notFitness": "Vous ne vous sentez pas comme une \"personne fitness\"",
+              "support": "Vous voulez du soutien et de la structure, mais pas de pression",
+              "change": "Vous voulez faire un changement qui dure vraiment cette fois"
+            },
+            "conclusion": "C'est aussi parfait pour les petits groupes, clubs, organisations communautaires ou meme les lieux de travail qui veulent devenir actifs ensemble."
+          }
+        },
+        "start": {
+          "question": "Par ou commencer?",
+          "answer": {
+            "intro": "Vous pouvez commencer ici meme. Cela ne prend que quelques minutes.",
+            "description": "Nous accueillons actuellement les utilisateurs en acces anticipe qui veulent faconner l'avenir de Twikka. Vous serez parmi les premiers a:",
+            "points": {
+              "try": "Essayer l'application",
+              "feedback": "Donner des commentaires qui nous aident a nous ameliorer",
+              "community": "Rejoindre une communaute croissante de personnes qui construisent de meilleures habitudes",
+              "perks": "(Et oui - les premiers supporters auront des avantages a vie!)"
+            }
+          }
+        }
+      }
+    },
+    "newsletter": {
+      "title": "Restez Informe",
+      "subtitle": "Abonnez-vous a notre newsletter pour les dernieres mises a jour, conseils de sante et opportunites exclusives d'acces anticipe.",
+      "cta": "Pret a commencer votre parcours sante? Rejoignez notre communaute aujourd'hui.",
+      "button": "Rejoignez l'Acces Anticipe",
+      "form": {
+        "name": "Votre nom",
+        "namePlaceholder": "Nom complet",
+        "email": "Adresse email",
+        "emailPlaceholder": "votre@email.com",
+        "submit": "S'abonner",
+        "description": "Inscrivez-vous a notre newsletter \"Get Active for Life\". Desabonnez-vous a tout moment.",
+        "success": "Merci ! Vous etes inscrit. Nous vous contacterons bientot.",
+        "errors": {
+          "nameRequired": "Le nom est requis",
+          "emailRequired": "L'email est requis",
+          "emailInvalid": "Veuillez entrer une adresse email valide"
+        }
+      }
+    },
+    "blogPreview": {
+      "title": "Perspectives Sante et Fitness",
+      "subtitle": "Conseils d'experts et recommandations pour vous aider dans votre parcours bien-etre",
+      "button": "Explorer Notre Blog"
+    }
+  },
+  "blog": {
+    "title": "Le Blog Twikka",
+    "subtitle": "Perspectives, conseils et histoires pour les couples qui veulent grandir ensemble.",
+    "featured": "A la une",
+    "recentPosts": "Articles Recents",
+    "allPosts": "Tous les Articles",
+    "readingTime": "{minutes} min de lecture",
+    "publishedBy": "Par {author}",
+    "categories": "Categories",
+    "tags": "Tags",
+    "relatedArticles": "Articles Similaires",
+    "noPostsYet": "Pas encore d'articles",
+    "blogComingSoon": "Nous preparons du contenu de qualite. Revenez bientot!",
+    "subscribeTitle": "Ne Manquez Aucune Mise a Jour",
+    "subscribeSubtitle": "Recevez nos derniers articles et conseils de relation dans votre boite mail chaque semaine.",
+    "subscribe": "S'abonner a la Newsletter"
+  },
+  "contact": {
+    "title": "Contactez-nous",
+    "subtitle": "Nous serions ravis de vous entendre",
+    "form": {
+      "name": "Nom",
+      "email": "Email",
+      "message": "Message",
+      "submit": "Envoyer le Message",
+      "sending": "Envoi en cours...",
+      "success": "Message envoye avec succes!",
+      "error": "Echec de l'envoi. Veuillez reessayer."
+    }
+  },
+  "about": {
+    "meta": {
+      "title": "A propos de {siteName} - Notre Mission et Histoire",
+      "description": "Decouvrez Twikka, l'application de sante et fitness concue pour vous aider a construire des habitudes saines durables. Decouvrez notre mission, nos valeurs et l'equipe derriere l'app.",
+      "ogAlt": "A propos de {siteName}"
+    },
+    "hero": {
+      "title": "A propos du Fondateur",
+      "subtitle": "L'Histoire d'Andrew"
+    },
+    "founder": {
+      "imageAlt": "Andrew - Fondateur de Twikka",
+      "intro1": "Je suis podologue de profession, avec une experience a la fois en cabinet prive et dans le monde academique. Je detiens un diplome avec mention, un diplome de troisieme cycle et un master, et je suis diplome de l'Institut Australien des Administrateurs de Societes. Je suis egalement membre de Sports Medicine Australia.",
+      "intro2": "En parallele de mon travail clinique, j'ai toujours eu un fort interet pour les logiciels et la technologie - quelque chose qui a evolue en parallele avec ma carriere dans la sante pendant des annees.",
+      "intro3": "Au cours des deux dernieres decennies, j'ai egalement assume divers roles de gouvernance. Je suis actuellement President de Melville Cares, et j'ai precedemment ete President d'Advocare et President du Conseil de Podologie d'Australasie. J'ai toujours ete attire par des roles qui servent la communaute et aident a ameliorer la vie des gens."
+    },
+    "earlyDays": {
+      "title": "Debuts en Lycra",
+      "paragraph1": "Dans ma vingtaine, j'ai travaille dans l'industrie du fitness en tant qu'instructeur d'aerobic et de gym. C'etait un excellent moyen de rencontrer des personnes de tous horizons et de voir comment le mouvement peut changer des vies - que vous soyez un athlete d'elite ou que vous debutiez.",
+      "paragraph2": "Bien que j'admirais la discipline des sportifs serieux, j'etais souvent plus inspire par ceux qui faisaient leurs premiers pas. Partir de zero peut etre intimidant, mais ceux qui ont persevere ont souvent vu des ameliorations incroyables - pas seulement physiquement, mais en confiance, en humeur et en qualite de vie generale. Se mettre en forme, j'ai appris, est l'une de ces choses qui tend a se vendre d'elle-meme."
+    },
+    "losingRhythm": {
+      "title": "Perdre le Rythme",
+      "paragraph1": "Bien sur, la vie s'en mele. Dans mes 30 et 40 ans, les exigences de la parentalite, du travail et mille petites distractions m'ont amene a ralentir et a prendre du poids. La forme physique n'est pas quelque chose que vous pouvez mettre de cote pour plus tard - vous devez continuer a y travailler!",
+      "paragraph2": "Ce n'est que recemment que j'ai recommence mon propre parcours vers une meilleure sante. Cette fois, je prends mon temps, je profite du processus et je joue sur le long terme."
+    },
+    "whyTwikka": {
+      "title": "Pourquoi Twikka?",
+      "paragraph1": "Apres des annees de travail individuel avec des patients, je voulais faire partie de quelque chose qui pourrait atteindre plus de personnes - quelque chose qui reunissait mon experience clinique, mon experience en technologie et ma croyance en des solutions pratiques et scientifiquement fondees.",
+      "paragraph2": "Twikka est ne de ce desir: une application construite non pas pour les athletes d'elite, mais pour les personnes reelles qui veulent bouger plus, se sentir mieux et que cela dure.",
+      "paragraph3": "Apres quelques annees a affiner le concept, Twikka est pret pour le monde - et je suis impatient de voir ou cela va mener!"
+    },
+    "values": {
+      "title": "Nos Valeurs",
+      "subtitle": "Les principes qui guident tout ce que nous construisons.",
+      "healthFirst": {
+        "title": "La Sante d'Abord",
+        "description": "Nous croyons que chacun merite d'avoir acces a des outils qui rendent la vie saine accessible et agreable."
+      },
+      "simplicity": {
+        "title": "Simplicite",
+        "description": "La sante ne devrait pas etre compliquee. Nous concevons des solutions intuitives qui s'integrent parfaitement a votre vie quotidienne."
+      },
+      "community": {
+        "title": "Communaute",
+        "description": "Le succes est meilleur partage. Nous favorisons une communaute de soutien qui celebre chaque pas en avant."
+      },
+      "sustainability": {
+        "title": "Durabilite",
+        "description": "Les solutions rapides s'estompent. Nous nous concentrons sur la construction d'habitudes durables qui transforment les vies pour le mieux."
+      }
+    },
+    "cta": {
+      "title": "Rejoignez-nous dans ce Parcours",
+      "description": "Nous ne faisons que commencer et nous aimerions que vous en fassiez partie. Inscrivez-vous pour un acces anticipe et aidez a faconner l'avenir de Twikka.",
+      "button": "Obtenir un Acces Anticipe"
+    }
+  },
+  "cta": {
+    "getOrganized": "Prets a Renforcer Votre Relation?",
+    "getOrganizedText": "Twikka fournit les outils et les perspectives dont vous avez besoin pour mieux communiquer, definir des objectifs communs et grandir ensemble.",
+    "downloadApp": "Telecharger l'App"
+  },
+  "privacyPage": {
+    "title": "Politique de Confidentialite",
+    "subtitle": "Politique de Confidentialite de l'Application Twikka",
+    "metaTitle": "Politique de Confidentialite - Twikka",
+    "metaDescription": "Politique de Confidentialite de l'Application Twikka",
+    "companyInfo": {
+      "name": "Novansa OÜ",
+      "registry": "Estonian Registry Code: 17445226",
+      "address": "Sepapaja tn 6, 15551 Tallinn, Harju Maakond, Estonia",
+      "enquiriesLabel": "Questions de Confidentialite:"
+    },
+    "cta": {
+      "title": "Questions Sur Votre Vie Privee?",
+      "subtitle": "Nous nous engageons a proteger vos informations personnelles. Contactez-nous pour toute question relative a la confidentialite.",
+      "button": "Contactez-nous"
+    },
+    "lastUpdated": "Derniere mise a jour: Avril 2026"
+  },
+  "termsPage": {
+    "title": "Conditions Generales",
+    "subtitle": "Conditions Generales d'Utilisation du Site Twikka",
+    "metaTitle": "Conditions Generales - Twikka",
+    "metaDescription": "Conditions Generales d'Utilisation du Site Twikka",
+    "companyInfo": {
+      "name": "Novansa OÜ",
+      "registry": "Estonian Registry Code: 17445226",
+      "address": "Sepapaja tn 6, 15551 Tallinn, Harju Maakond, Estonia",
+      "enquiriesLabel": "Questions:"
+    },
+    "cta": {
+      "title": "Avez-vous des Questions?",
+      "subtitle": "Si vous avez des questions concernant ces conditions generales, n'hesitez pas a nous contacter.",
+      "button": "Contactez-nous"
+    },
+    "lastUpdated": "Derniere mise a jour: Avril 2026"
+  },
+  "blogPage": {
+    "title": "Blog Sante",
+    "subtitle": "Conseils, idees et inspiration pour vous aider a construire des habitudes saines durables et vivre votre meilleure vie.",
+    "blogImagePlaceholder": "Image du Blog",
+    "readMore": "Lire la suite",
+    "comingSoon": {
+      "title": "Blog Bientot Disponible",
+      "description": "Nous preparons du contenu precieux sur la sante, le fitness et comment construire des habitudes durables. Revenez bientot pour nos derniers articles!",
+      "cta": "Obtenir un Acces Anticipe"
+    },
+    "stayUpdated": {
+      "title": "Restez Informe",
+      "description": "Vous voulez etre averti quand nous publions de nouveaux articles? Inscrivez-vous pour un acces anticipe et recevez des mises a jour.",
+      "cta": "S'inscrire aux Mises a Jour"
+    },
+    "breadcrumb": {
+      "home": "Accueil",
+      "blog": "Blog"
+    },
+    "post": {
+      "contentComingSoon": "Contenu complet bientot disponible. Revenez plus tard pour l'article complet.",
+      "tagsLabel": "Tags:",
+      "cta": {
+        "title": "Pret a Construire de Meilleures Habitudes?",
+        "description": "Rejoignez {siteName} et commencez votre parcours vers des habitudes saines durables. Inscrivez-vous pour un acces anticipe aujourd'hui.",
+        "button": "Obtenir un Acces Anticipe"
+      },
+      "relatedArticles": "Articles Similaires"
+    },
+    "category": {
+      "backToBlog": "Retour au Blog",
+      "postCount": "{count, plural, one {# article} other {# articles}}",
+      "unpublished": "Non publie",
+      "minRead": "{minutes} min de lecture",
+      "emptyState": {
+        "title": "Pas encore d'articles dans cette categorie",
+        "description": "Nous travaillons sur du contenu pour cette categorie. Revenez bientot!",
+        "cta": "Voir Tous les Articles"
+      }
+    },
+    "tag": {
+      "backToBlog": "Retour au Blog",
+      "label": "Tag",
+      "postCount": "{count, plural, one {# article} other {# articles}}",
+      "unpublished": "Non publie",
+      "minRead": "{minutes} min de lecture",
+      "defaultCategory": "General",
+      "emptyState": {
+        "title": "Pas encore d'articles avec ce tag",
+        "description": "Nous travaillons sur du contenu pour ce sujet. Revenez bientot!",
+        "cta": "Voir Tous les Articles"
+      }
+    },
+    "pagination": {
+      "previous": "Precedent",
+      "next": "Suivant"
+    }
+  },
+  "contactPageForm": {
+    "labels": {
+      "firstName": "Prénom *",
+      "lastName": "Nom *",
+      "email": "Adresse Email *",
+      "phone": "Téléphone *",
+      "message": "Message *"
+    },
+    "placeholders": {
+      "firstName": "Votre prénom",
+      "lastName": "Votre nom",
+      "email": "votre.email@exemple.com",
+      "phone": "Votre numéro de téléphone",
+      "message": "Dites-nous comment nous pouvons vous aider..."
+    },
+    "buttons": {
+      "submit": "Envoyer le Message",
+      "sending": "Envoi en cours..."
+    },
+    "errors": {
+      "firstNameRequired": "Le prénom est obligatoire",
+      "lastNameRequired": "Le nom est obligatoire",
+      "emailRequired": "L'email est obligatoire",
+      "emailInvalid": "Veuillez entrer une adresse email valide",
+      "phoneRequired": "Le téléphone est obligatoire",
+      "phoneInvalid": "Veuillez entrer un numéro de téléphone valide",
+      "messageRequired": "Le message est obligatoire",
+      "messageMinLength": "Le message doit contenir au moins 10 caractères",
+      "submitError": "Une erreur s'est produite lors de l'envoi de votre formulaire. Veuillez réessayer."
+    },
+    "success": {
+      "title": "Merci !",
+      "message": "Votre message a été envoyé avec succès. Un membre de notre équipe vous répondra dans les 24 heures !",
+      "sendAnother": "Envoyer un autre message"
+    },
+    "hints": {
+      "messageMinLength": "Minimum 10 caractères requis",
+      "responseTime": "Nous répondrons à votre message dans les 24 heures ouvrables."
+    }
+  },
+  "contactPage": {
+    "hero": {
+      "title": "Contactez-nous",
+      "subtitle": "Interesse par un acces anticipe? Vous avez des questions sur Twikka?",
+      "subtitleLine2": "Nous serions ravis de vous entendre."
+    },
+    "contactReasons": {
+      "earlyAccess": {
+        "title": "Acces Anticipe",
+        "description": "Soyez parmi les premiers a essayer Twikka et aidez a faconner notre avenir."
+      },
+      "generalInquiries": {
+        "title": "Questions Generales",
+        "description": "Des questions sur Twikka? Nous serions ravis de vous entendre."
+      },
+      "support": {
+        "title": "Support",
+        "description": "Besoin d'aide? Notre equipe est la pour vous assister."
+      }
+    },
+    "form": {
+      "title": "Envoyez-nous un message",
+      "firstName": "Prenom",
+      "lastName": "Nom",
+      "email": "Adresse Email",
+      "phone": "Telephone (Optionnel)",
+      "interest": "Qu'est-ce qui vous amene?",
+      "message": "Votre Message",
+      "placeholders": {
+        "firstName": "Votre prenom",
+        "lastName": "Votre nom",
+        "email": "votre@email.com",
+        "phone": "Votre numero de telephone",
+        "message": "Dites-nous en plus sur ce que vous recherchez..."
+      },
+      "interestOptions": {
+        "select": "Selectionnez une option",
+        "earlyAccess": "Demande d'Acces Anticipe",
+        "general": "Question Generale",
+        "feedback": "Partager des Commentaires",
+        "partnership": "Opportunite de Partenariat",
+        "media": "Demande Presse/Media",
+        "other": "Autre Chose"
+      },
+      "submit": "Envoyer le Message",
+      "sending": "Envoi en cours...",
+      "responseNote": "Nous repondons generalement sous 24-48 heures.",
+      "requiredFields": "Veuillez remplir tous les champs obligatoires"
+    },
+    "success": {
+      "title": "Message Envoye!",
+      "description": "Merci de nous avoir contactes. Nous vous repondrons sous 24-48 heures.",
+      "sendAnother": "Envoyer un autre message",
+      "toast": "Merci de nous avoir contactes! Nous vous recontacterons bientot."
+    },
+    "error": {
+      "submitFailed": "Echec de l'envoi. Veuillez reessayer."
+    },
+    "waitlist": {
+      "title": "Rejoignez la Liste d'Attente",
+      "description": "Soyez parmi les premiers a experimenter Twikka. Les membres en acces anticipe beneficient d'avantages exclusifs et aident a faconner l'avenir de l'application.",
+      "benefits": {
+        "premium": "Acces premium gratuit pendant la beta",
+        "input": "Influence directe sur les fonctionnalites",
+        "perks": "Avantages de membre fondateur"
+      }
+    },
+    "responseTimes": {
+      "title": "Delais de Reponse",
+      "weekdays": "Jours ouvrables: Sous 24 heures",
+      "weekends": "Week-ends: 24-48 heures",
+      "priority": "Les demandes d'acces anticipe sont prioritaires"
+    },
+    "social": {
+      "title": "Connectez-vous Avec Nous",
+      "description": "Suivez-nous pour des mises a jour, des conseils et des apercu de ce que nous construisons."
+    },
+    "faq": {
+      "title": "Questions Frequentes",
+      "questions": {
+        "earlyAccess": {
+          "question": "Comment rejoindre le programme d'acces anticipe?",
+          "answer": "Remplissez simplement le formulaire de contact ci-dessus et selectionnez \"Demande d'Acces Anticipe\" comme motif. Nous vous ajouterons a notre liste d'attente et vous informerons des que des places seront disponibles."
+        },
+        "availability": {
+          "question": "Quand Twikka sera-t-il disponible?",
+          "answer": "Nous developpons activement Twikka et prevoyons de lancer notre programme beta bientot. Les membres en acces anticipe seront les premiers informes quand il sera pret. Inscrivez-vous pour les mises a jour et restez informe!"
+        },
+        "feedback": {
+          "question": "Comment puis-je donner des commentaires ou des suggestions?",
+          "answerPrefix": "Nous adorons entendre notre communaute! Utilisez le formulaire ci-dessus avec \"Partager des Commentaires\" selectionne, ou envoyez-nous un email directement a",
+          "answerSuffix": "Votre avis aide a faconner l'avenir de Twikka."
+        }
+      }
+    },
+    "bottomCta": {
+      "title": "Pret a Commencer Votre Parcours Sante?",
+      "description": "Rejoignez des milliers de personnes qui construisent des habitudes plus saines avec Twikka.",
+      "learnAbout": "En Savoir Plus sur Twikka",
+      "readBlog": "Lire Notre Blog"
+    }
+  },
+  "joinPage": {
+    "meta": {
+      "title": "Rejoindre Twikka - Acces Anticipe",
+      "description": "Inscrivez-vous pour un acces anticipe a Twikka et soyez parmi les premiers a decouvrir une facon plus intelligente de bouger et de rester actif."
+    },
+    "title": "Rejoindre Twikka",
+    "subtitle": "Soyez parmi les premiers a decouvrir une facon plus intelligente de bouger et de rester actif.",
+    "form": {
+      "name": "Votre Nom",
+      "namePlaceholder": "Nom complet",
+      "email": "Adresse Email",
+      "emailPlaceholder": "your@email.com",
+      "goal": "Quel est votre objectif avec Twikka?",
+      "goalPlaceholder": "Dites-nous ce que vous aimeriez accomplir...",
+      "submit": "Rejoindre l'Acces Anticipe",
+      "sending": "Envoi en cours..."
+    },
+    "errors": {
+      "nameRequired": "Le nom est obligatoire",
+      "emailRequired": "L'email est obligatoire",
+      "emailInvalid": "Veuillez entrer une adresse email valide"
+    },
+    "success": {
+      "title": "Vous etes sur la liste!",
+      "message": "Merci d'avoir rejoint l'acces anticipe de Twikka. Nous vous contacterons bientot avec des mises a jour et les prochaines etapes.",
+      "backHome": "Retour a l'Accueil"
+    }
+  },
+  "deletePage": {
+    "meta": {
+      "title": "Supprimer Vos Donnees - Twikka",
+      "description": "Demandez la suppression de votre compte Twikka et de vos donnees personnelles."
+    },
+    "title": "Supprimer Vos Donnees",
+    "subtitle": "Nous respectons votre droit de controler vos informations personnelles.",
+    "instructions": {
+      "title": "Comment Demander la Suppression de Donnees",
+      "step1": "Envoyez un email a l'adresse ci-dessous avec pour objet 'Demande de Suppression de Donnees'.",
+      "step2": "Incluez l'adresse email associee a votre compte Twikka.",
+      "step3": "Nous traiterons votre demande dans un delai de 30 jours et confirmerons la suppression par email."
+    },
+    "contact": {
+      "title": "Contactez-nous",
+      "email": "support@twikka.com",
+      "description": "Pour les demandes de suppression de donnees ou toute question relative a la confidentialite, envoyez-nous un email a:"
+    },
+    "note": "Veuillez noter que la suppression de vos donnees est permanente et ne peut pas etre annulee. Certaines donnees peuvent etre conservees conformement aux exigences legales."
+  },
+  "supportPage": {
+    "hero": {
+      "title": "Twikka Support",
+      "subtitle": "Need help with your account, a bug, or something not working as expected?",
+      "subtitleLine2": "Send us a message below or email us directly at"
+    },
+    "topics": {
+      "account": {
+        "title": "Account & Login",
+        "description": "Trouble signing in, changing email, or managing your subscription."
+      },
+      "bug": {
+        "title": "Bug Report",
+        "description": "Something not working right? Tell us what happened and we'll investigate."
+      },
+      "feedback": {
+        "title": "Feedback & Suggestions",
+        "description": "Ideas to make Twikka better? We'd love to hear them."
+      }
+    },
+    "emailDirect": {
+      "title": "Prefer Email?",
+      "description": "You can email our support team directly anytime. We aim to respond within 24-48 hours."
+    },
+    "form": {
+      "title": "Open a support request",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email Address",
+      "phone": "Phone (Optional)",
+      "topic": "What can we help with?",
+      "message": "Describe your issue",
+      "placeholders": {
+        "firstName": "Your first name",
+        "lastName": "Your last name",
+        "email": "your@email.com",
+        "phone": "Your phone number",
+        "message": "Please include any relevant details, error messages, device, and the steps you've already tried..."
+      },
+      "topicOptions": {
+        "select": "Select a topic",
+        "account": "Account & Login",
+        "billing": "Billing & Subscription",
+        "bug": "Bug Report",
+        "feature": "Feature Request",
+        "data": "Data, Privacy or Deletion",
+        "other": "Something Else"
+      },
+      "submit": "Send Support Request",
+      "sending": "Sending...",
+      "responseNote": "We typically respond within 24-48 hours during business days.",
+      "requiredFields": "Please fill in all required fields"
+    },
+    "success": {
+      "title": "Request Received",
+      "description": "Thanks for reaching out. Our support team will get back to you within 24-48 hours.",
+      "sendAnother": "Send another request",
+      "toast": "Support request sent! We'll be in touch shortly."
+    },
+    "error": {
+      "submitFailed": "Failed to submit. Please try again or email support@twikka.com."
+    },
+    "responseTimes": {
+      "title": "Response Times",
+      "weekdays": "Weekdays: Within 24 hours",
+      "weekends": "Weekends: 24-48 hours",
+      "priority": "Critical issues are prioritised"
+    },
+    "helpfulLinks": {
+      "title": "Helpful Links",
+      "contact": "General contact",
+      "privacy": "Privacy Policy",
+      "terms": "Terms & Conditions",
+      "delete": "Delete your data"
+    },
+    "faq": {
+      "title": "Common Support Questions",
+      "questions": {
+        "account": {
+          "question": "How do I reset my password or change my email?",
+          "answer": "You can manage your password and email from inside the Twikka app under Settings → Account. If you can't access your account, send us a message above and include the email you signed up with so we can help."
+        },
+        "bug": {
+          "question": "How do I report a bug effectively?",
+          "answer": "Please include: what you were trying to do, what happened instead, your device and OS version, and your Twikka app version (Settings → About). Screenshots or short screen recordings help us reproduce and fix issues faster."
+        },
+        "data": {
+          "question": "How do I request my data or delete my account?",
+          "answer": "You can request a copy or deletion of your data at any time. Email support@twikka.com from the address linked to your account, or use the form above and select 'Data, Privacy or Deletion'. We process requests within 30 days as required by GDPR."
+        }
+      }
+    }
+  }
+}

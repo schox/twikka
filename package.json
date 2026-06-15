@@ -1,10 +1,20 @@
 {
-  "name": "twikka-convex",
+  "name": "twikka",
   "private": true,
-  "description": "Convex backend for Twikka (Flutter client in the same repo root).",
+  "description": "Twikka monorepo — Convex backend (root) + apps/{mobile,website,admin}.",
+  "workspaces": [
+    "apps/website",
+    "apps/admin",
+    "packages/*"
+  ],
   "scripts": {
     "convex:dev": "convex dev",
-    "convex:deploy": "convex deploy"
+    "convex:deploy": "convex deploy",
+    "website:dev": "npm --workspace apps/website run dev",
+    "website:build": "npm --workspace apps/website run build",
+    "admin:dev": "npm --workspace apps/admin run dev",
+    "admin:build": "npm --workspace apps/admin run build",
+    "packages:build": "npm --workspace packages/config run build; npm --workspace packages/database run build; npm --workspace packages/content run build; npm --workspace packages/ui run build; npm --workspace packages/providers run build; npm --workspace packages/auth run build; npm --workspace packages/revalidation run build"
   },
   "dependencies": {
     "@convex-dev/r2": "^0.10.1",

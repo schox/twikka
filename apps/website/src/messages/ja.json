@@ -1,0 +1,730 @@
+{
+  "notFound": {
+    "title": "ページが見つかりません",
+    "description": "お探しのページが見つかりませんでした。移動したか、存在しなくなった可能性があります。",
+    "buttons": {
+      "home": "ホームへ",
+      "contact": "お問い合わせ"
+    },
+    "helpfulLinks": {
+      "title": "お役立ちリンク：",
+      "about": "Twikkaについて",
+      "blog": "ブログ",
+      "contact": "お問い合わせ"
+    }
+  },
+  "blogNotFound": {
+    "title": "ブログ記事が見つかりません",
+    "description": "申し訳ございませんが、お探しのブログ記事が見つかりませんでした。移動または削除された可能性があります。",
+    "buttons": {
+      "backToBlog": "ブログに戻る",
+      "home": "ホームへ"
+    }
+  },
+  "common": {
+    "home": "ホーム",
+    "about": "Twikkaについて",
+    "blog": "Blog",
+    "contact": "お問い合わせ",
+    "pricing": "料金プラン",
+    "help": "ヘルプ",
+    "faq": "FAQ",
+    "getApp": "Appを入手",
+    "learnMore": "詳しく見る",
+    "readMore": "続きを読む",
+    "viewAll": "すべて見る",
+    "loading": "読み込み中...",
+    "error": "エラー",
+    "translationComingSoon": "このコンテンツは現在英語のみでご利用いただけます。翻訳は近日公開予定です。"
+  },
+  "header": {
+    "navigation": {
+      "home": "ホーム",
+      "about": "Twikkaについて",
+      "blog": "Blog",
+      "contact": "お問い合わせ"
+    },
+    "cta": "早期アクセスに参加",
+    "languageSwitcher": {
+      "label": "言語",
+      "english": "英語",
+      "spanish": "スペイン語",
+      "portuguese": "ポルトガル語",
+      "french": "フランス語",
+      "german": "ドイツ語",
+      "italian": "イタリア語",
+      "japanese": "日本語"
+    }
+  },
+  "footer": {
+    "tagline": "あなたの健康とフィットネスの旅をサポートします",
+    "copyright": "© {year} Novansa OÜ. All rights reserved.",
+    "sections": {
+      "quickLinks": "クイックリンク",
+      "legal": "法的情報"
+    },
+    "links": {
+      "home": "ホーム",
+      "about": "Twikkaについて",
+      "blog": "ブログ",
+      "contact": "お問い合わせ",
+      "privacy": "プライバシーポリシー",
+      "terms": "利用規約",
+      "support": "Support"
+    }
+  },
+  "contactForm": {
+    "placeholders": {
+      "firstName": "名",
+      "lastName": "姓",
+      "email": "メール",
+      "phone": "電話",
+      "message": "メッセージ"
+    },
+    "buttons": {
+      "submit": "送信",
+      "sending": "送信中..."
+    },
+    "errors": {
+      "firstNameRequired": "名は必須です",
+      "lastNameRequired": "姓は必須です",
+      "emailRequired": "メールアドレスは必須です",
+      "emailInvalid": "有効なメールアドレスを入力してください",
+      "phoneRequired": "電話番号は必須です",
+      "phoneInvalid": "有効な電話番号を入力してください",
+      "messageRequired": "メッセージは必須です",
+      "messageMinLength": "メッセージは10文字以上で入力してください",
+      "submitError": "送信中にエラーが発生しました。もう一度お試しください。"
+    },
+    "success": {
+      "title": "ありがとうございます！",
+      "message": "メッセージが正常に送信されました。すぐにご連絡いたします！",
+      "sendAnother": "別のメッセージを送信"
+    }
+  },
+  "home": {
+    "hero": {
+      "badge": "近日公開 - 早期アクセス受付中",
+      "titlePart1": "アクティブに",
+      "titlePart2": "生きよう！",
+      "subtitle": "Twikkaは、科学に基づいたサポーティブな方法で、長期的に持続可能な運動習慣を築くお手伝いをします。",
+      "tagline": "恥ではなく科学に基づいて。アスリートではなく、あなたのために。",
+      "getEarlyAccess": "早期アクセスに参加！",
+      "learnMore": "詳しく見る"
+    },
+    "features": {
+      "title": "成功に必要なすべてが揃っています",
+      "subtitle": "Twikkaは、パワフルな機能とシンプルで直感的なデザインを組み合わせ、あなたの健康目標の達成をサポートします。",
+      "items": {
+        "goals": {
+          "title": "目標を設定する",
+          "description": "あなたのライフスタイルやスケジュールに合わせた、パーソナライズされた健康・フィットネス目標を設定できます。"
+        },
+        "progress": {
+          "title": "進捗を記録する",
+          "description": "直感的なトラッキングツールであなたの歩みを記録し、達成したマイルストーンを一緒にお祝いしましょう。"
+        },
+        "habits": {
+          "title": "習慣を築く",
+          "description": "科学的なアプローチにより、日々の小さな行動を継続的な健康習慣へと変えていきます。"
+        },
+        "motivation": {
+          "title": "モチベーションを維持する",
+          "description": "サポーティブなコミュニティに参加し、前に進み続けるために必要な励ましを受けられます。"
+        }
+      }
+    },
+    "earlyAccess": {
+      "title": "いち早く体験してください",
+      "subtitle": "早期アクセスプログラムに参加して、Twikkaの未来を一緒に作りませんか。早期メンバーには限定特典と開発への参加機会をご用意しています。",
+      "benefits": {
+        "premium": "Beta期間中はPremium機能を無料で利用可能",
+        "input": "機能やデザインへの直接フィードバック",
+        "perks": "創設メンバー限定特典"
+      },
+      "joinWaitlist": "ウェイトリストに登録"
+    },
+    "learnMore": {
+      "title": "詳しく見る",
+      "faqs": {
+        "whatIs": {
+          "question": "Twikkaとは？",
+          "answer": {
+            "intro": "Twikkaは、人々がよりアクティブになり、それを続けられるようサポートする習慣形成Appです。",
+            "description": "ワークアウトや回数、ランキングを競うものではありません。Twikkaは、もう少し体を動かしたい、気分を良くしたい、長続きするルーティンを作りたいと願う、普通の人々のためのAppです。",
+            "points": {
+              "science": "科学に基づき、丁寧に設計されています",
+              "sustainability": "短期的な成果ではなく、持続可能性を重視しています",
+              "designed": "以前挑戦して続かなかった方、今度こそ続けたい方のために設計されています",
+              "social": "モチベーションを維持するためのソーシャル機能、チャレンジ、励ましの仕組みがあります"
+            },
+            "conclusion": "ゼロから始める方も、再スタートする方も、Twikkaは今のあなたに寄り添います。"
+          }
+        },
+        "why": {
+          "question": "なぜTwikkaなのか？",
+          "answer": {
+            "intro": "多くのフィットネスAppは、すでにモチベーションがある人向けに作られています。Twikkaは、モチベーションを育てるお手伝いをします。",
+            "description": "ランナーや筋トレ愛好家、ジム通いの人向けのツールはたくさんあります。Twikkaは違います。アクティブなライフスタイルを作りたいけれど、どこから始めればいいかわからない方、または以前試して挫折した方のために設計されています。",
+            "points": {
+              "steps": "大きな約束ではなく、小さな一歩を大切にします",
+              "progress": "完璧さではなく、時間をかけた進歩を記録します",
+              "science": "行動科学とスウェーデンのFaRモデルの原則を活用しています",
+              "support": "罪悪感ではなく、構造、サポート、コミュニティを提供します"
+            },
+            "conclusion": "私たちの目標は、「もっと運動しなきゃ」という思いを「これは私の生活の一部」に変えることです。"
+          }
+        },
+        "howWorks": {
+          "question": "どのように機能しますか？",
+          "answer": {
+            "intro": "シンプルに始めて、チェックインして、習慣を育てましょう。",
+            "description": "Twikkaは、明確で科学に基づいたサイクルで構築されています：",
+            "steps": {
+              "plan": {
+                "title": "週間プランを作成",
+                "description": "いくつかの質問に答えると、Appが現実的なアクティビティテンプレート（有酸素運動、筋力トレーニング、または両方）の設計をサポートします。"
+              },
+              "checkins": {
+                "title": "毎日のチェックイン",
+                "description": "何をしたか、またはなぜできなかったかを記録します。時間とともに進捗を視覚的に確認できます。"
+              },
+              "adapt": {
+                "title": "進みながら調整",
+                "description": "Appがあなたのことを学ぶにつれて、プランの微調整をサポートします。また、モチベーションを維持するためのヒント、リマインダー、励ましも受け取れます。"
+              },
+              "join": {
+                "title": "参加する",
+                "description": "チャレンジに参加し、他の人とつながり、サポーティブなグループやイベントを通じてアカウンタビリティを築きましょう。"
+              }
+            },
+            "conclusion": "目標は「もっとやること」ではなく、「あなたに合ったことを一貫して行うこと」です。"
+          }
+        },
+        "forMe": {
+          "question": "私に向いていますか？",
+          "answer": {
+            "intro": "「また運動を始めなきゃ」と思ったことがあるなら、これはあなたのためのAppです。",
+            "description": "Twikkaは特にこのような方に役立ちます：",
+            "points": {
+              "age": "40代以上の方",
+              "tried": "過去に運動を始めてはやめてしまった経験がある方",
+              "notFitness": "「フィットネス好き」ではないと感じている方",
+              "support": "プレッシャーではなく、サポートと構造が欲しい方",
+              "change": "今度こそ本当に続く変化を起こしたい方"
+            },
+            "conclusion": "また、一緒にアクティブになりたい小グループ、クラブ、コミュニティ組織、職場にも最適です。"
+          }
+        },
+        "start": {
+          "question": "どこから始めればいいですか？",
+          "answer": {
+            "intro": "ここから始められます。数分で完了します。",
+            "description": "現在、Twikkaの未来を形作りたい早期アクセスユーザーを募集しています。いち早く以下を体験できます：",
+            "points": {
+              "try": "Appを試用する",
+              "feedback": "改善に役立つフィードバックを提供する",
+              "community": "より良い習慣を築くコミュニティに参加する",
+              "perks": "（はい、早期サポーターには永久特典があります！）"
+            }
+          }
+        }
+      }
+    },
+    "newsletter": {
+      "title": "最新情報をお届けします",
+      "subtitle": "ニュースレターに登録して、最新のアップデート、健康に関するヒント、限定の早期アクセス情報を受け取りましょう。",
+      "cta": "健康への旅を始める準備はできましたか？今すぐコミュニティに参加しましょう。",
+      "button": "早期アクセスに参加",
+      "form": {
+        "name": "お名前",
+        "namePlaceholder": "氏名",
+        "email": "メールアドレス",
+        "emailPlaceholder": "your@email.com",
+        "submit": "登録する",
+        "description": "「Get Active for Life」ニュースレターに登録しましょう。いつでも解除できます。",
+        "success": "ありがとうございます！登録が完了しました。近日中にご連絡いたします。",
+        "errors": {
+          "nameRequired": "名前は必須です",
+          "emailRequired": "メールアドレスは必須です",
+          "emailInvalid": "有効なメールアドレスを入力してください"
+        }
+      }
+    },
+    "blogPreview": {
+      "title": "健康・フィットネスの知見",
+      "subtitle": "あなたのウェルネスの旅をサポートする専門家のヒントとアドバイス",
+      "button": "Blogを見る"
+    }
+  },
+  "blog": {
+    "title": "Twikka Blog",
+    "subtitle": "共に成長したいカップルのための知見、ヒント、ストーリー。",
+    "featured": "注目の記事",
+    "recentPosts": "最新の投稿",
+    "allPosts": "すべての投稿",
+    "readingTime": "{minutes}分で読めます",
+    "publishedBy": "{author}著",
+    "categories": "カテゴリー",
+    "tags": "タグ",
+    "relatedArticles": "関連記事",
+    "noPostsYet": "まだ投稿がありません",
+    "blogComingSoon": "価値あるコンテンツを準備中です。もうしばらくお待ちください！",
+    "subscribeTitle": "最新情報を見逃さないように",
+    "subscribeSubtitle": "最新のBlog記事と人間関係のヒントを毎週メールでお届けします。",
+    "subscribe": "ニュースレターに登録"
+  },
+  "contact": {
+    "title": "お問い合わせ",
+    "subtitle": "ぜひお気軽にご連絡ください",
+    "form": {
+      "name": "お名前",
+      "email": "Email",
+      "message": "メッセージ",
+      "submit": "メッセージを送信",
+      "sending": "送信中...",
+      "success": "メッセージが正常に送信されました！",
+      "error": "メッセージの送信に失敗しました。もう一度お試しください。"
+    }
+  },
+  "about": {
+    "meta": {
+      "title": "{siteName}について - 私たちのミッションとストーリー",
+      "description": "持続可能な健康習慣を築くためにデザインされた健康・フィットネスApp、Twikkaについてご紹介します。私たちのミッション、価値観、そしてAppを支えるチームをご覧ください。",
+      "ogAlt": "{siteName}について"
+    },
+    "hero": {
+      "title": "創設者について",
+      "subtitle": "Andrewのストーリー"
+    },
+    "founder": {
+      "imageAlt": "Andrew - Twikka創設者",
+      "intro1": "私は足病医として、開業医と学術の両方で経験を積んできました。優等学位、大学院ディプロマ、修士号を取得しており、オーストラリア企業取締役協会の卒業生でもあります。また、スポーツメディシン・オーストラリアの会員でもあります。",
+      "intro2": "臨床業務と並行して、ソフトウェアとテクノロジーにも強い関心を持ち続けてきました。これは長年にわたり、私の医療キャリアと並行して続いてきたことです。",
+      "intro3": "過去20年間で、さまざまなガバナンスの役割も担ってきました。現在はMelville Caresの会長を務め、以前はAdvocareの会長やオーストラレーシア足病医学協議会の会長を務めていました。私は常に、コミュニティに奉仕し、人々の生活を改善する役割に惹かれてきました。"
+    },
+    "earlyDays": {
+      "title": "レオタード時代の始まり",
+      "paragraph1": "20代の頃、フィットネス業界でエアロビクスとジムのインストラクターとして働いていました。さまざまな人々と出会い、運動がいかに人生を変えるかを目の当たりにする素晴らしい機会でした。エリートアスリートから始めたばかりの人まで。",
+      "paragraph2": "真剣にスポーツに取り組む人々の規律を尊敬する一方で、私はしばしば最初の一歩を踏み出す人々により感銘を受けました。ゼロから始めることは大変ですが、続けた人々は信じられないほどの改善を見せました。体だけでなく、自信、気分、全体的な生活の質においても。フィットネスは、その価値を自ら証明するものだと学びました。"
+    },
+    "losingRhythm": {
+      "title": "リズムを失う",
+      "paragraph1": "もちろん、人生は邪魔をします。30代、40代では、子育て、仕事、そして数え切れない小さなことに追われ、運動が減り、体重が増えました。フィットネスは後で取り出せるものではありません。続けなければならないのです！",
+      "paragraph2": "最近になってようやく、自分自身の健康への旅を再開しました。今回はゆっくりと、プロセスを楽しみながら、長期的な視点で取り組んでいます。"
+    },
+    "whyTwikka": {
+      "title": "なぜTwikkaなのか？",
+      "paragraph1": "長年にわたり患者さんと一対一で向き合ってきた後、より多くの人々に届くものに関わりたいと思いました。臨床経験、テクノロジーの背景、そして実践的で科学的根拠に基づいたソリューションへの信念を融合させたものを。",
+      "paragraph2": "Twikkaはその願いから生まれました。エリートアスリートのためではなく、もっと動きたい、気分を良くしたい、それを続けたいと願う普通の人々のために作られたAppです。",
+      "paragraph3": "コンセプトを数年間練り上げた後、Twikkaは世界に向けて準備が整いました。次にどこへ向かうのか、楽しみにしています！"
+    },
+    "values": {
+      "title": "私たちの価値観",
+      "subtitle": "私たちが作るすべてのものを導く原則です。",
+      "healthFirst": {
+        "title": "健康第一",
+        "description": "私たちは、誰もが健康的な生活を実現可能で楽しいものにするツールにアクセスできるべきだと信じています。"
+      },
+      "simplicity": {
+        "title": "シンプルさ",
+        "description": "健康は複雑であるべきではありません。私たちは日常生活にシームレスにフィットする直感的なソリューションをデザインします。"
+      },
+      "community": {
+        "title": "コミュニティ",
+        "description": "成功は分かち合うとより良くなります。私たちは、すべての前進を称えるサポーティブなコミュニティを育てます。"
+      },
+      "sustainability": {
+        "title": "持続可能性",
+        "description": "即効性は長続きしません。私たちは、人生をより良く変える持続的な習慣を築くことに注力します。"
+      }
+    },
+    "cta": {
+      "title": "この旅に参加しませんか",
+      "description": "私たちはまだ始まったばかりです。ぜひ一緒に参加してください。早期アクセスに登録して、Twikkaの未来を形作りましょう。",
+      "button": "早期アクセスを申し込む"
+    }
+  },
+  "cta": {
+    "getOrganized": "人間関係を強化する準備はできましたか？",
+    "getOrganizedText": "Twikkaは、より良いコミュニケーション、共通の目標設定、共に成長するために必要なツールと知見を提供します。",
+    "downloadApp": "Appを入手"
+  },
+  "privacyPage": {
+    "title": "プライバシーポリシー",
+    "subtitle": "Twikkaアプリケーション プライバシーポリシー",
+    "metaTitle": "プライバシーポリシー - Twikka",
+    "metaDescription": "Twikkaアプリケーション プライバシーポリシー",
+    "companyInfo": {
+      "name": "Novansa OÜ",
+      "registry": "Estonian Registry Code: 17445226",
+      "address": "Sepapaja tn 6, 15551 Tallinn, Harju Maakond, Estonia",
+      "enquiriesLabel": "プライバシーに関するお問い合わせ："
+    },
+    "cta": {
+      "title": "プライバシーについてご質問がありますか？",
+      "subtitle": "私たちはお客様の個人情報の保護に尽力しています。プライバシーに関するご質問はお気軽にお問い合わせください。",
+      "button": "お問い合わせ"
+    },
+    "lastUpdated": "最終更新: 2026年4月"
+  },
+  "termsPage": {
+    "title": "利用規約",
+    "subtitle": "Twikkaウェブサイト利用規約",
+    "metaTitle": "利用規約 - Twikka",
+    "metaDescription": "Twikkaウェブサイト利用規約",
+    "companyInfo": {
+      "name": "Novansa OÜ",
+      "registry": "Estonian Registry Code: 17445226",
+      "address": "Sepapaja tn 6, 15551 Tallinn, Harju Maakond, Estonia",
+      "enquiriesLabel": "お問い合わせ："
+    },
+    "cta": {
+      "title": "ご質問がありますか？",
+      "subtitle": "この利用規約についてご質問がある場合は、お気軽にお問い合わせください。",
+      "button": "お問い合わせ"
+    },
+    "lastUpdated": "最終更新: 2026年4月"
+  },
+  "blogPage": {
+    "title": "健康 Blog",
+    "subtitle": "持続可能な健康習慣を築き、最高の人生を送るためのヒント、知見、インスピレーション。",
+    "blogImagePlaceholder": "Blog画像",
+    "readMore": "続きを読む",
+    "comingSoon": {
+      "title": "Blog 近日公開",
+      "description": "健康、フィットネス、持続可能な習慣づくりに関する価値あるコンテンツを準備中です。最新記事をお楽しみに！",
+      "cta": "早期アクセスを申し込む"
+    },
+    "stayUpdated": {
+      "title": "最新情報を受け取る",
+      "description": "新しいBlog記事が公開されたら通知を受け取りたいですか？早期アクセスに登録してアップデートを受け取りましょう。",
+      "cta": "アップデートに登録"
+    },
+    "breadcrumb": {
+      "home": "ホーム",
+      "blog": "Blog"
+    },
+    "post": {
+      "contentComingSoon": "全文は近日公開予定です。完全な記事は後ほどご確認ください。",
+      "tagsLabel": "タグ：",
+      "cta": {
+        "title": "より良い習慣を築く準備はできましたか？",
+        "description": "{siteName}に参加して、持続可能な健康習慣への旅を始めましょう。今すぐ早期アクセスに登録してください。",
+        "button": "早期アクセスを申し込む"
+      },
+      "relatedArticles": "関連記事"
+    },
+    "category": {
+      "backToBlog": "Blogに戻る",
+      "postCount": "{count, plural, one {#件の記事} other {#件の記事}}",
+      "unpublished": "未公開",
+      "minRead": "{minutes}分で読めます",
+      "emptyState": {
+        "title": "このカテゴリーにはまだ記事がありません",
+        "description": "このカテゴリーのコンテンツを準備中です。もうしばらくお待ちください！",
+        "cta": "すべての記事を見る"
+      }
+    },
+    "tag": {
+      "backToBlog": "Blogに戻る",
+      "label": "タグ",
+      "postCount": "{count, plural, one {#件の記事} other {#件の記事}}",
+      "unpublished": "未公開",
+      "minRead": "{minutes}分で読めます",
+      "defaultCategory": "一般",
+      "emptyState": {
+        "title": "このタグの記事はまだありません",
+        "description": "このトピックのコンテンツを準備中です。もうしばらくお待ちください！",
+        "cta": "すべての記事を見る"
+      }
+    },
+    "pagination": {
+      "previous": "前へ",
+      "next": "次へ"
+    }
+  },
+  "contactPageForm": {
+    "labels": {
+      "firstName": "名 *",
+      "lastName": "姓 *",
+      "email": "メールアドレス *",
+      "phone": "電話番号 *",
+      "message": "メッセージ *"
+    },
+    "placeholders": {
+      "firstName": "お名前（名）",
+      "lastName": "お名前（姓）",
+      "email": "your.email@example.com",
+      "phone": "電話番号",
+      "message": "どのようにお手伝いできるかお聞かせください..."
+    },
+    "buttons": {
+      "submit": "メッセージを送信",
+      "sending": "送信中..."
+    },
+    "errors": {
+      "firstNameRequired": "名を入力してください",
+      "lastNameRequired": "姓を入力してください",
+      "emailRequired": "メールアドレスを入力してください",
+      "emailInvalid": "有効なメールアドレスを入力してください",
+      "phoneRequired": "電話番号を入力してください",
+      "phoneInvalid": "有効な電話番号を入力してください",
+      "messageRequired": "メッセージを入力してください",
+      "messageMinLength": "メッセージは10文字以上で入力してください",
+      "submitError": "フォームの送信中にエラーが発生しました。もう一度お試しください。"
+    },
+    "success": {
+      "title": "ありがとうございます！",
+      "message": "メッセージが正常に送信されました。24時間以内に担当者よりご連絡いたします。",
+      "sendAnother": "別のメッセージを送信"
+    },
+    "hints": {
+      "messageMinLength": "10文字以上必要です",
+      "responseTime": "営業日24時間以内にご返信いたします。"
+    }
+  },
+  "contactPage": {
+    "hero": {
+      "title": "お問い合わせ",
+      "subtitle": "早期アクセスにご興味がありますか？Twikkaについてご質問がありますか？",
+      "subtitleLine2": "ぜひお気軽にご連絡ください。"
+    },
+    "contactReasons": {
+      "earlyAccess": {
+        "title": "早期アクセス",
+        "description": "Twikkaをいち早く試して、未来を一緒に作りましょう。"
+      },
+      "generalInquiries": {
+        "title": "一般的なお問い合わせ",
+        "description": "Twikkaについてご質問がありますか？ぜひお聞かせください。"
+      },
+      "support": {
+        "title": "サポート",
+        "description": "お困りですか？私たちのチームがサポートいたします。"
+      }
+    },
+    "form": {
+      "title": "メッセージを送る",
+      "firstName": "名",
+      "lastName": "姓",
+      "email": "Emailアドレス",
+      "phone": "電話番号（任意）",
+      "interest": "ご連絡の目的",
+      "message": "メッセージ",
+      "placeholders": {
+        "firstName": "お名前（名）",
+        "lastName": "お名前（姓）",
+        "email": "your@email.com",
+        "phone": "電話番号",
+        "message": "お探しのものについて詳しくお聞かせください..."
+      },
+      "interestOptions": {
+        "select": "選択してください",
+        "earlyAccess": "早期アクセスのリクエスト",
+        "general": "一般的なご質問",
+        "feedback": "フィードバックの共有",
+        "partnership": "パートナーシップのご提案",
+        "media": "プレス・メディアのお問い合わせ",
+        "other": "その他"
+      },
+      "submit": "メッセージを送信",
+      "sending": "送信中...",
+      "responseNote": "通常24〜48時間以内に返信いたします。",
+      "requiredFields": "必須項目をすべてご入力ください"
+    },
+    "success": {
+      "title": "メッセージを送信しました！",
+      "description": "お問い合わせいただきありがとうございます。24〜48時間以内にご連絡いたします。",
+      "sendAnother": "別のメッセージを送信",
+      "toast": "お問い合わせいただきありがとうございます！まもなくご連絡いたします。"
+    },
+    "error": {
+      "submitFailed": "送信に失敗しました。もう一度お試しください。"
+    },
+    "waitlist": {
+      "title": "ウェイトリストに登録",
+      "description": "Twikkaをいち早く体験しましょう。早期アクセスメンバーは限定特典を受け取り、Appの未来を形作るお手伝いができます。",
+      "benefits": {
+        "premium": "Beta期間中はPremium機能を無料で利用可能",
+        "input": "機能への直接フィードバック",
+        "perks": "創設メンバー特典"
+      }
+    },
+    "responseTimes": {
+      "title": "返信時間の目安",
+      "weekdays": "平日：24時間以内",
+      "weekends": "週末：24〜48時間",
+      "priority": "早期アクセスのリクエストは優先対応"
+    },
+    "social": {
+      "title": "フォローしてください",
+      "description": "アップデート、ヒント、開発中の機能のスニークピークをお届けします。"
+    },
+    "faq": {
+      "title": "よくあるご質問",
+      "questions": {
+        "earlyAccess": {
+          "question": "早期アクセスプログラムに参加するには？",
+          "answer": "上記のお問い合わせフォームに記入し、目的として「早期アクセスのリクエスト」を選択してください。ウェイトリストに追加し、空きが出次第お知らせいたします。"
+        },
+        "availability": {
+          "question": "Twikkaはいつ利用できますか？",
+          "answer": "現在Twikkaを積極的に開発中で、まもなくBetaプログラムを開始する予定です。早期アクセスメンバーには準備が整い次第、いち早くお知らせいたします。最新情報を受け取るために登録してください！"
+        },
+        "feedback": {
+          "question": "フィードバックや提案を送るには？",
+          "answerPrefix": "コミュニティからのご意見をお待ちしています！上記のフォームで「フィードバックの共有」を選択するか、直接メールでお送りください：",
+          "answerSuffix": "皆様のご意見がTwikkaの未来を形作ります。"
+        }
+      }
+    },
+    "bottomCta": {
+      "title": "健康への旅を始める準備はできましたか？",
+      "description": "Twikkaでより健康的な習慣を築いている多くの人々に加わりましょう。",
+      "learnAbout": "Twikkaについて詳しく",
+      "readBlog": "Blogを読む"
+    }
+  },
+  "joinPage": {
+    "meta": {
+      "title": "Twikkaに参加 - 早期アクセス",
+      "description": "早期アクセスに登録して、いち早くTwikkaを体験しましょう。"
+    },
+    "title": "Twikkaに参加",
+    "subtitle": "よりスマートにアクティブになり、アクティブであり続ける方法を、いち早く体験してください。",
+    "form": {
+      "name": "お名前",
+      "namePlaceholder": "氏名",
+      "email": "メールアドレス",
+      "emailPlaceholder": "your@email.com",
+      "goal": "Twikkaで達成したい目標は何ですか？",
+      "goalPlaceholder": "達成したいことをお聞かせください...",
+      "submit": "早期アクセスに参加",
+      "sending": "送信中..."
+    },
+    "errors": {
+      "nameRequired": "お名前は必須です",
+      "emailRequired": "メールアドレスは必須です",
+      "emailInvalid": "有効なメールアドレスを入力してください"
+    },
+    "success": {
+      "title": "登録完了！",
+      "message": "Twikkaの早期アクセスにご登録いただきありがとうございます。アップデートと今後の手順について、まもなくご連絡いたします。",
+      "backHome": "ホームに戻る"
+    }
+  },
+  "deletePage": {
+    "meta": {
+      "title": "データの削除 - Twikka",
+      "description": "Twikkaアカウントと個人データの削除をリクエストできます。"
+    },
+    "title": "データの削除",
+    "subtitle": "お客様の個人情報を管理する権利を尊重いたします。",
+    "instructions": {
+      "title": "データ削除のリクエスト方法",
+      "step1": "以下のメールアドレスに、件名を「データ削除リクエスト」として送信してください。",
+      "step2": "Twikkaアカウントに登録されているメールアドレスを記載してください。",
+      "step3": "30日以内にリクエストを処理し、メールで削除完了をお知らせいたします。"
+    },
+    "contact": {
+      "title": "お問い合わせ",
+      "email": "support@twikka.com",
+      "description": "データ削除のリクエストやプライバシーに関するご質問は、以下のメールアドレスまでご連絡ください："
+    },
+    "note": "データの削除は永久的であり、元に戻すことはできませんのでご注意ください。法律で義務付けられている一部のデータは保持される場合があります。"
+  },
+  "supportPage": {
+    "hero": {
+      "title": "Twikka Support",
+      "subtitle": "Need help with your account, a bug, or something not working as expected?",
+      "subtitleLine2": "Send us a message below or email us directly at"
+    },
+    "topics": {
+      "account": {
+        "title": "Account & Login",
+        "description": "Trouble signing in, changing email, or managing your subscription."
+      },
+      "bug": {
+        "title": "Bug Report",
+        "description": "Something not working right? Tell us what happened and we'll investigate."
+      },
+      "feedback": {
+        "title": "Feedback & Suggestions",
+        "description": "Ideas to make Twikka better? We'd love to hear them."
+      }
+    },
+    "emailDirect": {
+      "title": "Prefer Email?",
+      "description": "You can email our support team directly anytime. We aim to respond within 24-48 hours."
+    },
+    "form": {
+      "title": "Open a support request",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email Address",
+      "phone": "Phone (Optional)",
+      "topic": "What can we help with?",
+      "message": "Describe your issue",
+      "placeholders": {
+        "firstName": "Your first name",
+        "lastName": "Your last name",
+        "email": "your@email.com",
+        "phone": "Your phone number",
+        "message": "Please include any relevant details, error messages, device, and the steps you've already tried..."
+      },
+      "topicOptions": {
+        "select": "Select a topic",
+        "account": "Account & Login",
+        "billing": "Billing & Subscription",
+        "bug": "Bug Report",
+        "feature": "Feature Request",
+        "data": "Data, Privacy or Deletion",
+        "other": "Something Else"
+      },
+      "submit": "Send Support Request",
+      "sending": "Sending...",
+      "responseNote": "We typically respond within 24-48 hours during business days.",
+      "requiredFields": "Please fill in all required fields"
+    },
+    "success": {
+      "title": "Request Received",
+      "description": "Thanks for reaching out. Our support team will get back to you within 24-48 hours.",
+      "sendAnother": "Send another request",
+      "toast": "Support request sent! We'll be in touch shortly."
+    },
+    "error": {
+      "submitFailed": "Failed to submit. Please try again or email support@twikka.com."
+    },
+    "responseTimes": {
+      "title": "Response Times",
+      "weekdays": "Weekdays: Within 24 hours",
+      "weekends": "Weekends: 24-48 hours",
+      "priority": "Critical issues are prioritised"
+    },
+    "helpfulLinks": {
+      "title": "Helpful Links",
+      "contact": "General contact",
+      "privacy": "Privacy Policy",
+      "terms": "Terms & Conditions",
+      "delete": "Delete your data"
+    },
+    "faq": {
+      "title": "Common Support Questions",
+      "questions": {
+        "account": {
+          "question": "How do I reset my password or change my email?",
+          "answer": "You can manage your password and email from inside the Twikka app under Settings → Account. If you can't access your account, send us a message above and include the email you signed up with so we can help."
+        },
+        "bug": {
+          "question": "How do I report a bug effectively?",
+          "answer": "Please include: what you were trying to do, what happened instead, your device and OS version, and your Twikka app version (Settings → About). Screenshots or short screen recordings help us reproduce and fix issues faster."
+        },
+        "data": {
+          "question": "How do I request my data or delete my account?",
+          "answer": "You can request a copy or deletion of your data at any time. Email support@twikka.com from the address linked to your account, or use the form above and select 'Data, Privacy or Deletion'. We process requests within 30 days as required by GDPR."
+        }
+      }
+    }
+  }
+}
